@@ -20,18 +20,29 @@ condense_slashes(char *str)
 	len = strlen(str);
 
 	for (i = 0, wptr = 0; i < len; i++) {
+		/*
+		 * After the first time, every subsequent contigous occurrance of a '/'
+		 * we should not not take any action.
+		 */
 		if (flag && str[i] == '/') {
 			continue;
 		}
+		/*
+		 * After a '/' when ever a '/' is not seen, reset the flag.
+		 */
 		if (flag) {
 			flag = 0;
 			
 		} else {
+			/*
+			 * The first time a '/' is seen set the flag.
+			 */
 			if (str[i] == '/') {
 				flag = 1;
 			}
 		}	
-		str[wptr++] = str[i];		
+		str[wptr] = str[i];
+		wptr++;
 	}
 	str[wptr] = '\0';
 }

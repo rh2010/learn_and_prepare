@@ -13,10 +13,15 @@ def checkBalancedParenthesis(expr):
                    '}':'{',
                    ')':'(',
                    }
+
+    # List of open parenthesis
     list_open = paren_pairs.values()
+
+    # List of closed parenthesis
     list_close = paren_pairs.keys()
 
 
+    # An empty list - use as a stack
     stack = []
 
     # no sanity checking
@@ -24,6 +29,13 @@ def checkBalancedParenthesis(expr):
         if c in list_open:
             stack.append(c)
         if c in list_close:
+            # There should be a matching open brace right at the top of the
+            # stack.
+            #
+            # - If the stack is EMPYT, then return FALSE.
+            # - If the top element of the stack does not match with the
+            #   corresponding open parenthesis then, return FALSE.
+            #
             if (len(stack) == 0):
                 return "FALSE"
             match = stack.pop()
@@ -31,12 +43,14 @@ def checkBalancedParenthesis(expr):
                 return "FALSE"
         # end for
 
+    # Once the complete expression is processed, there is be nothing present
+    # on the stack.
     if (len(stack) == 0):
         return "TRUE"
     else:
         return "FALSE"
 
-    ## End twoSum
+    ## End checkBalancedParenthesis()
 
 if __name__ == "__main__":
     expr = "[()]{}{[()()]()}"
