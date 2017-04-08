@@ -1,1 +1,95 @@
 This file details the contents of all the files in this directory.
+
+README
+
+Directories:
+-----------
+
+heaps
+	- contains code for various heap implementations.
+
+sorting
+	- contains implementation for various sorting algorithms
+	- contains implementation for counting inversions - which is based on merge-sort.
+tree
+	- contains implementations for
+		- Binary Search Tree
+			- Various operations like, find, insert, delete, rank, select,
+				isBST, isFullBST, isCompleteBST,
+			- Traversals (recursive algorithms)
+			- TODO: Implement iterative algorithms.
+			
+		- AVL Tree
+			- insert, 
+			- left and right rotations
+addition
+	- n-bit addition.
+strings
+	- contains implementation to various strings related problems.
+bit_manipulations
+	- contains implementations to various bit manipulations related problems.
+linked-list
+	- contains various linked list related implementations.
+
+Files:
+------
+
+Makefile
+	- This make should be a able to compile all the 'c' code in this directory
+	  It is not working at present.
+my_header.h
+	- A Common header files which include all the basic needed headers.
+helper.c
+	- Contains implementations of various helper Macros and routines
+	- These are exported through my_header.h
+2darr.c
+	- allocate a 2 dimensional array.
+asc_to_int.c
+	- Implement a function to convert from ascii to integer.
+circle.c
+	- Implement a function to draw a circle.
+endian.c
+	- Implement a fucntion to find out the endian-ness of a system.
+insert.c
+	- Given a sorted array of integers and a number 'num' find the index in the
+	  sorted array after which the number should be inserted to keep the array
+	  sorted.
+replay.c
+	- not sure what this is supposed to be.
+binsrch.c
+	- Implement recursive and iteratitve version of the binary searching algorithm.
+condensIt is not working at present.e_slashes.c
+	- Implement a routine to condense all multiple slashes occurring together
+	  into a single slash.
+factorial.c
+	- Implement a function to compute the factorial of a given number.
+min_search.c
+	- Given a circularly sorted array find the index of the minimum element.
+rev_digits.c
+	- Reserse the digits of an integer.
+url.c
+	- Some url based question
+arr_rev.c
+	- Implement a function to reverse an array in-place.
+dir.c
+	- TODO
+fibonaci.c
+	- Implement a function to calculate the fibonaci series.
+lower.c
+	- Implement a fnction to convert all alphabetes to lower case.
+mult.c
+	- Implement a function to compute multiplication operation without using
+	  relational operators.
+power.c
+	- implement a function to compute a ^ b.
+ring_buffer.c
+	- Implement a circular buffer.
+swap.c
+	- Swap two values
+readf.c
+	- open ifile and read integers from ifile
+	- open ofile and write the integers read from ifile into ofile.
+
+ofile
+ifile
+
