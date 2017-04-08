@@ -18,9 +18,9 @@ tree
 				isBST, isFullBST, isCompleteBST,
 			- Traversals (recursive algorithms)
 			- TODO: Implement iterative algorithms.
-			
+
 		- AVL Tree
-			- insert, 
+			- insert,
 			- left and right rotations
 addition
 	- n-bit addition.
