@@ -50,6 +50,7 @@ void remove_all_files(char *dir_name)
 				printf("\t Skipping \n");
 				continue;
 			}
+			// make sure no data is leaked.
 			bzero(filename, sizeof(filename));
 //			snprintf(filename, 256, "pit_files/%s", ent->d_name);
 			snprintf(filename, 256, "%s/%s", dir_name, ent->d_name);
@@ -64,7 +65,6 @@ void remove_all_files(char *dir_name)
 		printf("Could not open dir: %s\n", dir_name);
 		perror("Error opening dir");
 	}
-
 }
 void uninitialize(void)
 {
