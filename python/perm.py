@@ -16,11 +16,38 @@ def swap(one, two):
     # End swap()
 
 def perm(string):
-    print("Not Implemented\n")
     length = len(string)
     count = factorial(length)
-
     print("String length: %d, count: %d" % (length, count))
+
+    i = 0
+    j = 1
+    m = 0
+
+    while (i < count):
+        perm = string
+
+        k = 0
+        while (k != count/length):
+            while (j != length-1):
+                # print the permutation
+                print("%s" % ("".join(perm)))
+
+                # swap perm[j] and perm[j+1]
+                perm[j], perm[j+1] = perm[j+1], perm[j]
+
+                j = j + 1
+                k = k + 1
+                i = i + 1
+            # outer while
+            j = 1
+
+        m = m + 1
+        if (m == length):
+            break
+
+        # swap perm[0] and perm[m]
+        perm[0], perm[m] = perm[m], perm[0]
     # End of Iterative permutation.
 
 def recursive_perm(string, start, end):
