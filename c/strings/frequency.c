@@ -13,10 +13,10 @@ void main()
  
     printf("Enter the string\n");
     scanf(" %[^\n]s", str);
-    printf("string length is %d\n", strlen(str));
+    printf("string length is %lu\n", strlen(str));
     for (i = 0;i<strlen(str);i++)
     {
-        if ((str[i] == ' ')||(str[i] == ', ')||(str[i] == '.'))
+        if ((str[i] == ' ')||(str[i] == ',')||(str[i] == '.'))
         {
             space++;
         }
