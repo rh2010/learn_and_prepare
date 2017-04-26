@@ -1,7 +1,9 @@
 /* 
- *  * C Program to Find the Frequency of  Every Word in a 
- *   * given String
- *    */
+ *  C Program to Find the Frequency of  Every Word in a 
+ *  given String
+ *
+ *  Very slow algorithm. Never use it
+ */
 #include <stdio.h>
 #include <string.h>
  
@@ -23,14 +25,20 @@ void main()
     }
     for (i = 0, j = 0, k = 0;j < strlen(str);j++)
     {
+		/*
+		 * when a space, ',' or a '.' is seen, start a new word.
+		 */
         if ((str[j] == ' ')||(str[j] == 44)||(str[j] == 46))  
         {    
             p[i][k] = '\0';
             i++;
             k = 0;
-        }        
-        else
+        } else {
+			/*
+			 * put all the words in p.
+			 */
              p[i][k++] = str[j];
+		}
     }
     k = 0;
     for (i = 0;i <= space;i++)
@@ -39,6 +47,9 @@ void main()
         {
             if (i == j)
             {
+				/*
+				 * ptr1 contains all the distinct words.
+				 */
                 strcpy(ptr1[k], p[i]);
                 k++;
                 count++;
@@ -57,9 +68,14 @@ void main()
     {
         for (j = 0;j <= space;j++)
         {
+			/*
+			 * Each word in ptr1 is compared against all the words in
+			 * p, and a count of the word in ptr1 is arrived at.
+			 */
             if (strcmp(ptr1[i], p[j]) == 0)
                 c++;
         }
+		// Print the count of a distinct word in the input string.
         printf("%s -> %d times\n", ptr1[i], c);
         c = 0;
     }
