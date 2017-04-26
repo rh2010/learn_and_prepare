@@ -14,7 +14,7 @@ merge(int *arr, int left, int mid, int right)
 	llen = mid - left + 1;
 	rlen = right - mid;
 
-	// copy arrays
+	// copy data in the left / right sub-array from the original array.
 	for (i = 0; i < llen; i++) {
 		larr[i] = arr[left + i];
 	}
@@ -30,6 +30,13 @@ merge(int *arr, int left, int mid, int right)
 	print_int_arr(larr, llen);
 	print_int_arr(rarr, rlen);
 
+	/*
+	 * while there is data to be processed in both the sub-arrays, compare the
+	 * first element in each sub-array and put the smaller on in the main
+	 * array and move on.
+	 *
+	 * the left and the right sub-arrays are themselves sorted.
+	 */
 	while ( (i < llen) && (j < rlen) ) {
 		if (larr[i] <= rarr[j]) {
 			arr[k] = larr[i];
