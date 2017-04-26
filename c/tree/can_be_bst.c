@@ -15,17 +15,17 @@ canBstFromPreorder(int *arr, int size)
 	
 	// the first element in the root of the BST
 	root = arr[0];
-//	printf("root: %d\nsub-array\n", root);
+/*	printf("root: %d\nsub-array\n", root);
 	
 	for(i = 0; i < size; i++) {
-//		printf("%d ", arr[i]);
+		printf("%d ", arr[i]);
 	}
-//	printf("\n");
-
+	printf("\n");
+*/
 
 	lSize = rSize = 0;
 
-	// left sub-tree starts right after the roo
+	// left sub-tree starts right after the root
 	lIdx = 1;
 	for (i=1; arr[i] < root && i < size; i++);
 
