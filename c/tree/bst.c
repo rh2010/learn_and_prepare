@@ -91,7 +91,12 @@ bst_find_node(struct bst* root, int data)
 		return root;
 	}
 
-	if (data < root->data) {
+	/*
+	 * Left sub tree contains data which is less
+	 * than or equal to the data at the root of
+	 * the tree.
+	 */
+	if (data <= root->data) {
 		// search in left sub-tree
 		return bst_find_node(root->left, data);
 	} else {
@@ -110,7 +115,7 @@ bst_find_node_iterative(struct bst* root, int data)
 			res = temp;
 			break;
 		}
-		if (data < temp->data) {
+		if (data <= temp->data) {
 			// go left
 			temp = temp->left;
 		} else {
@@ -124,6 +129,8 @@ bst_find_node_iterative(struct bst* root, int data)
 
 /*
  * returns the node with minimum value in the tree.
+ *
+ * This is the left-most node in the tree.
  */
 struct bst*
 bst_get_min(struct bst* root)
@@ -138,6 +145,24 @@ bst_get_min(struct bst* root)
 }
 
 /*
+ * returns the node with maximum value in the tree.a
+ *
+ * This is the right-most node in the tree.
+ */
+struct bst*
+bst_get_max(struct bst* root)
+{
+	struct bst* node = root;
+
+	while(node->right != NULL) {
+		node = node->right;
+	}
+
+	return node;
+}
+
+
+/*
  * Delete the node with value data.
  *
  * Return the root of the new tree.
@@ -147,11 +172,12 @@ bst_delete_node(struct bst* root, int data)
 {
 	struct bst* temp;
 
+	// base case.
 	if (root == NULL) {
 		return NULL;
 	}
 
-	// base case.
+	// Handle the current case.
 	if (root->data == data) {
 		// zero or one child case.
 		if (root->left == NULL || root->right == NULL) {
@@ -180,6 +206,7 @@ bst_delete_node(struct bst* root, int data)
 		return root;
 	}
 
+	// recurse down the tree.
 	if (data < root->data) {
 		root->left = bst_delete_node(root->left, data);
 	} else {
