@@ -16,19 +16,42 @@ int
 partition(int *arr, int start, int end)
 {
 	int p, p_index;
+	int i, j;
+
+	printf("\npartition: Enter\n");
+	printf("partition: start: %d, end: %d\n", start, end);
 
 	if (start >= end) {
+		printf("partition: Exit: Done\n");
 		// error
 		return -1;
 	}
+	printf("partition: PIndex: %d, PValue: %d\n", end, arr[end]);
 
-	p = arr[end];
 	p_index = end;
+	p = arr[end];
+
+	i = start;
+
+	for (j = start; j <= end - 1; j++) {
+		printf("partition: i: %d, j: %d\n", i, j);
+		if (arr[j] <= p) {
+			printf("partition: Swapping %d and %d\n", *(arr+i), *(arr+j));
+			SWAP(arr+i, arr+j);
+			i++;
+		}
+	}
+	printf("partition: Final SWAP: %d and %d\n", *(arr+1), *(arr+end));
+	SWAP((arr+i), (arr+end));
 
 	// partition the array
 	//
-}
+	printf("partition: PIndex: %d, PValue: %d\n", i+1, arr[i+1]);
+	print_int_arr(arr, end-start+1);
+	printf("partition: Exit\n\n");
 
+	return i;
+}
 void
 quick_sort(int *arr, int start, int end)
 {
@@ -40,18 +63,18 @@ quick_sort(int *arr, int start, int end)
 
 	p_index = partition(arr, start, end);
 
+	// For debugging
+	printf("partition index: %d\n", p_index);
+
 	quick_sort(arr, start, p_index -1);
 	quick_sort(arr, p_index + 1, end);
 }
 
 int
-main(void)
+main(int argc, char **argv)
 {
 	int i = 0;
-	int size;
-
-	int orig_arr[ARRAY_SIZE] = {8, 4, 2, 1};
-
+	int count;
 	int *arr = NULL;
 
 	if (argc < 3) {
@@ -67,15 +90,15 @@ main(void)
 		exit(-1);
 	}
 
-	arr = (int *)malloc(i(sizeof int) * count);
+	arr = (int *)malloc(sizeof (int) * count);
 	if (arr == NULL) {
 		printf("Unable to allocate memory for the array\n");
 		return (-1);
 	}
 
-	// init the array
+	// fill the array
 	for (i = 0; i < count; i++) {
-		arr[i] = orig_arr[i];
+		arr[i] = atoi(argv[i+2]);
 	}
 
 	printf("Input array\n");
