@@ -12,7 +12,6 @@ typedef struct queue {
 typedef struct queue_head {
 	int size;
 	struct queue *head;
-	struct queue *tail;
 } queue_head_t;
 
 // Init a queue
@@ -33,5 +32,8 @@ bool queue_is_empty(queue_head_t *head);
 // get memory for the new element in the queue
 //
 queue_t *queue_get_new_element(void *data);
+// Un-init a queue
+//
+void queue_uninit(queue_head_t *head);
 
 #endif // _QUEUE_H

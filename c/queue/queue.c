@@ -9,7 +9,35 @@ queue_init(queue_head_t *head)
 
 	head->size = 0;
 	head->head = NULL;
-	head->tail = NULL;
+}
+
+// Init a queue
+//
+void
+queue_uninit(queue_head_t *head)
+{
+	queue_t *temp;
+	queue_t *element;
+
+	assert(head != NULL);
+
+	if (head->size == 0) {
+		// nothing to be done
+		return;
+	}
+
+	// free all the elements hanging off the queue.
+	temp = head->head;
+
+	assert(temp != NULL);
+
+	while (temp != NULL) {
+		element = temp;
+		temp = temp->next;
+
+		free(element);
+	}
+	queue_init(head);
 }
 
 // Add a new element to the queue
@@ -30,10 +58,6 @@ queue_enqueue(queue_head_t *head, void *data)
 		return;
 	}
 	new->next = head->head;
-	if (head->head == NULL) {
-		// if this is the first element, set the tail pointer
-		head->tail = new;
-	}
 	head->head = new;
 	head->size++;
 }
@@ -57,6 +81,8 @@ queue_remove(queue_head_t *head)
 	}
 
 	prev = NULL;
+	temp = head->head;
+
 	while(temp->next != NULL) {
 		prev = temp;
 		temp = temp->next;
@@ -65,13 +91,14 @@ queue_remove(queue_head_t *head)
 	if (prev == NULL) {
 		// if only one element is present in the list
 		assert(head->size == 1);
+		data = temp->data;
+		free(temp);
 		queue_init(head);
 	} else {
 		// if more than one element in the list
 		assert(head->size > 1);
 
-		// adjust the tail pointer
-		head->tail = prev;
+		prev->next = NULL;
 		data = temp->data;
 		free(temp);
 		head->size--;
