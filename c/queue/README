@@ -1,0 +1,8 @@
+README
+
+- queue.h
+	- header to be used is using the queue library
+- queue.c
+	- contains the implementation of the methods of the queue library
+- queue_test.c
+	- test program to verify the queue functionality

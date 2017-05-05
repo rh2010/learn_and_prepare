@@ -30,6 +30,14 @@ bit_manipulations
 	- contains implementations to various bit manipulations related problems.
 linked-list
 	- contains various linked list related implementations.
+queue
+	- contains a queue implementation which can use used as a library.
+	- also containts a test program to test the queue-library
+graphs
+	- contains various graphs related implementations.
+hash
+	- contains a basic hash implementation which can use used as a library.
+	- also containts a test program to test the hash-library
 
 Files:
 ------
