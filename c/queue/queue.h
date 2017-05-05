@@ -1,14 +1,18 @@
 #include "../my_header.h"
 
+#ifndef _QUEUE_H_
+#define _QUEUE_H_
+
+
 typedef struct queue {
 	void *data;
-	queue_t *next
+	struct queue *next;
 } queue_t;
 
 typedef struct queue_head {
 	int size;
-	queue_t *head;
-	queue_t *tail;
+	struct queue *head;
+	struct queue *tail;
 } queue_head_t;
 
 // Init a queue
@@ -29,3 +33,5 @@ bool queue_is_empty(queue_head_t *head);
 // get memory for the new element in the queue
 //
 queue_t *queue_get_new_element(void *data);
+
+#endif // _QUEUE_H

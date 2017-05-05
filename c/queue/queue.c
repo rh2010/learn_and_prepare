@@ -43,7 +43,7 @@ queue_enqueue(queue_head_t *head, void *data)
 void *
 queue_remove(queue_head_t *head)
 {
-	queue_t *element;
+	queue_t *prev;
 	queue_t *temp;
 	void *data;
 
@@ -55,7 +55,6 @@ queue_remove(queue_head_t *head)
 		printf("Empty Queue\n");
 		return NULL;
 	}
-	element = head->tail;
 
 	prev = NULL;
 	while(temp->next != NULL) {
@@ -105,7 +104,7 @@ queue_get_new_element(void *data)
 {
 	queue_t *new;
 
-	new = (queue_t*)malloc(sizeof queue_t);
+	new = (queue_t*)malloc(sizeof (queue_t));
 	if (new == NULL) {
 		printf("queue_get_new_element: Error - No Memory\n");
 		return NULL;
