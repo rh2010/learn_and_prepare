@@ -1,4 +1,4 @@
-#include "../my_header.h"
+#include "../util.h"
 
 int
 bits_to_be_flipped(int num)

@@ -1,4 +1,4 @@
-#include "my_header.h"
+#include "util.h"
 
 /*
  * Program to implement Quick-Sort sorting algorithm.

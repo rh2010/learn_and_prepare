@@ -1,4 +1,4 @@
-#include "my_header.h"
+#include "util.h"
 
 void
 print_int_arr(int *arr, int size)

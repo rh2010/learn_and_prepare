@@ -1,4 +1,4 @@
-#include "../my_header.h"
+#include "../util.h"
 
 /*
  * Adjacency list to represent graphs.

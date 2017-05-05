@@ -45,11 +45,11 @@ Files:
 Makefile
 	- This make should be a able to compile all the 'c' code in this directory
 	  It is not working at present.
-my_header.h
+util.h
 	- A Common header files which include all the basic needed headers.
 helper.c
 	- Contains implementations of various helper Macros and routines
-	- These are exported through my_header.h
+	- These are exported through util.h
 2darr.c
 	- allocate a 2 dimensional array.
 asc_to_int.c

@@ -1,4 +1,4 @@
-#include "../my_header.h"
+#include "../util.h"
 
 /*
  * 	1) string copy

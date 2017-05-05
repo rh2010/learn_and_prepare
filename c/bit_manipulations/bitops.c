@@ -1,4 +1,4 @@
-#include "../my_header.h"
+#include "../util.h"
 
 #define POSITIVE 1 // positive sign
 #define NEGATIVE 0 // negative sign

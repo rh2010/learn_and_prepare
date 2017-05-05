@@ -1,4 +1,4 @@
-#include "../my_header.h"
+#include "graph.h"
 
 /*
  * Implement:
