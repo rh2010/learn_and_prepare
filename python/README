@@ -15,5 +15,8 @@ paren.py
 perm.py
 	- Implement recursive and iterative methods for generating all the
 	  permutations of a given string.
+twoArraySum.py
+	- Given two array of integers and a number 'num', find all the pairs
+	  (one integer from each array) that sum up to 'num' in a efficient manner.
 
 
