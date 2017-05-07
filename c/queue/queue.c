@@ -1,5 +1,6 @@
 #include "queue.h"
 
+/* Queue */
 // Init a queue
 //
 void
@@ -141,3 +142,84 @@ queue_get_new_element(void *data)
 
 	return new;
 }
+
+
+/* Stack */
+
+// Init a stack
+//
+void
+stack_init(stack_head_t *head)
+{
+	queue_init((queue_head_t *)head);
+}
+
+// Add a new element to the stack
+//
+void
+stack_enqueue(stack_head_t *head, void *data)
+{
+	queue_enqueue((queue_head_t *)head, data);
+}
+
+// remove an element from the stack
+//
+void *
+stack_remove(stack_head_t *head)
+{
+	stack_t *temp;
+	void *data;
+
+	assert(head != NULL);
+
+	temp = head->head;
+
+	if (temp == NULL) {
+		// empty stack
+		printf("Empty Stack\n");
+		return NULL;
+	}
+
+	// remove the first node.
+	// make the head point to what ever the first not is pointing to.
+	head->head = temp->next;
+	data = temp->data;
+	head->size--;
+
+	free(temp);
+
+	return data;
+}
+
+// return the size of the stack
+//
+int
+stack_size(stack_head_t *head)
+{
+	return head->size;
+}
+
+// return is the stack is empty or not
+//
+bool
+stack_is_empty(stack_head_t *head)
+{
+	return (head->size == 0);
+}
+
+// get memory for the new element in the stack
+//
+stack_t *
+stack_get_new_element(void *data)
+{
+	return (stack_t *)queue_get_new_element(data);
+}
+
+// Un-init a stack
+//
+void
+stack_uninit(stack_head_t *head)
+{
+	queue_uninit((queue_head_t *)head);
+}
+
