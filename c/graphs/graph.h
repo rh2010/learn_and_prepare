@@ -32,5 +32,24 @@ typedef struct graph {
 	edgenode_t *edges[MAXV+1];
 } graph_t;
 
+// init a graph
+//
+void graph_init(graph_t *graph);
+// add a new vertice to the graph
+//
+graph_t *graph_add_vertice(graph_t *graph, int vertice);
+// add a new edge to the graph
+//
+graph_t *graph_add_edge(graph_t *graph, int from_vertice, int to_vertice);
+// print the graph
+//
+void graph_print(graph_t *graph);
+// Traverse the graph in BFS way
+//
+void graph_traverse_bfs(graph_t *graph);
+// Traverse the graph in DFS way
+//
+void graph_traverse_bfs(graph_t *graph);
+//
 #endif // _GRAPH_H_
 
