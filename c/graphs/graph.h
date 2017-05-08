@@ -18,29 +18,66 @@
 
 #define MAXV	1000	// maximum number of vertices.
 
-typedef struct edgenode {
-	int y; // adjacency infomation
+//typedef struct edgenode {
+//	int val; // adjacency infomation
+//	int weight;
+//	struct edgenode *next;
+//} edgenode_t;
+//
+//typedef struct graph {
+//	int nvertices;
+//	int nedges;
+//	bool directed;
+//	int degree[MAXV+1];
+//	edgenode_t *edges[MAXV+1];
+//} graph_t;
+
+/*
+ * NOTE: To make various operations faster we should be using a hash table in
+ * conjunction with singly / doubly linked lists.
+ */
+typedef struct edge {
 	int weight;
-	struct edgenode *next;
-} edgenode_t;
+	// pointer to the next edge from the same vertice.
+	struct edge *next;
+
+	// pointer to the other vertice which this edge consists of.
+	struct vertice *vertice;
+} edge_t;
+
+typedef struct vertice {
+	int val; // or else we can use a void *data, to represent an arbitrary data.
+	char node; // use either 'val' or 'char'
+	int degree;
+	int edge_count;
+	bool isVisited;
+
+	// singly linked to other vertices.
+	struct vertice *next;
+
+	// singly linked list for edges going out from this vertice.
+	struct edge *edges;
+} vertice_t;
 
 typedef struct graph {
 	int nvertices;
 	int nedges;
 	bool directed;
-	int degree[MAXV+1];
-	edgenode_t *edges[MAXV+1];
+
+	// head pointer for the list of vertices.
+	vertice_t *vertices;
 } graph_t;
+
 
 // init a graph
 //
-void graph_init(graph_t *graph);
+void graph_init(graph_t *graph, bool directed);
 // add a new vertice to the graph
 //
-graph_t *graph_add_vertice(graph_t *graph, int vertice);
+vertice_t *graph_add_vertice(graph_t *graph, int vertice);
 // add a new edge to the graph
 //
-graph_t *graph_add_edge(graph_t *graph, int from_vertice, int to_vertice);
+edge_t *graph_add_edge(graph_t *graph, int from_vertice, int to_vertice, int weight);
 // print the graph
 //
 void graph_print(graph_t *graph);
@@ -49,7 +86,18 @@ void graph_print(graph_t *graph);
 void graph_traverse_bfs(graph_t *graph);
 // Traverse the graph in DFS way
 //
-void graph_traverse_bfs(graph_t *graph);
+void graph_traverse_dfs(graph_t *graph);
+// After a traverse - mark all vertices as not visited.
 //
+void graph_clear_visited(graph_t *graph);
+// Create a new vertice
+//
+vertice_t *get_new_vertice(int vertice);
+// Create a new edge
+//
+edge_t *get_new_edge(vertice_t *to, int weight);
+// uninit a graph
+//
+void graph_uninit(graph_t *g);
 #endif // _GRAPH_H_
 
