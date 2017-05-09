@@ -145,22 +145,28 @@ graph_add_edge(graph_t *g, int from_vertice, int to_vertice, int weight)
 
 	if (from == NULL) {
 		printf("Vertice: %d if not present in graph!", from_vertice);
+		goto out;
+		/*
 		from = graph_add_vertice(g, from_vertice);
 		if (from == NULL) {
 			printf("Unable to add a new vertice %d\n", from_vertice);
 			goto out;
 		}
 		printf("Added new vertice %d\n", from_vertice);
+		*/
 	}
 
 	if (to == NULL) {
 		printf("Vertice: %d if not present in graph!", to_vertice);
+		goto out;
+		/*
 		to = graph_add_vertice(g, to_vertice);
 		if (to == NULL) {
 			printf("Unable to add a new vertice %d\n", to_vertice);
 			goto out;
 		}
 		printf("Added new vertice %d\n", to_vertice);
+		*/
 	}
 
 	// We have located both from and to vertices.
@@ -196,7 +202,11 @@ graph_add_edge(graph_t *g, int from_vertice, int to_vertice, int weight)
 success:
 	if (!g->directed) {
 		// if graph is not directed then add the reverse edge too.
-		graph_add_edge(g, to_vertice, from_vertice, weight);
+		if (graph_add_edge(g, to_vertice, from_vertice, weight)) {
+			// if an edge was actually added (which would be the reverse edge
+			// the adjust the double increment of nedges.
+			g->nedges--;
+		}
 	}
 	g->nedges++;
 out:
@@ -284,19 +294,7 @@ graph_traverse_bfs(graph_t *g, int start)
 
 	// find the starting vertice
 	//
-	v = g->vertices;
-	if (v == NULL) {
-		printf("Empty Graph, no vertices\n");
-		return;
-	}
-
-	while (v != NULL) {
-		if (v->val == start) {
-			break;
-		}
-		v = v->next;
-	}
-
+	v = find_vertice(g, start);
 	if (v == NULL) {
 		printf("Starting vertice %d, Not Found!\n", start);
 		return;
@@ -341,18 +339,7 @@ graph_traverse_dfs(graph_t *g, int start)
 	stack_init(&s);
 
 	// Find the starting vertex
-	v = g->vertices;
-	if (v == NULL) {
-		printf("Empty Graph, no vertices\n");
-		return;
-	}
-
-	while (v != NULL) {
-		if (v->val == start) {
-			break;
-		}
-		v = v->next;
-	}
+	v = find_vertice(g, start);
 	if (v == NULL) {
 		printf("Starting vertice %d, Not Found!\n", start);
 		return;
@@ -401,4 +388,36 @@ graph_clear_visited(graph_t *g)
 	}
 
 	return;
+}
+
+// given a value find it's corresponding vertice node.
+vertice_t *
+find_vertice(graph_t *g, int val)
+{
+	vertice_t *v;
+	v = NULL;
+
+	assert(g != NULL);
+
+	v = g->vertices;
+
+	if (v == NULL) {
+		printf("Empty graph, no vertex with val %d\n", val);
+		assert(g->nvertices == 0);
+		goto out;
+	}
+
+	while (v != NULL) {
+		if (v->val == val) {
+			break;
+		}
+		v = v->next;
+	}
+
+	if (v == NULL) {
+		printf("Starting vertice %d, Not Found!\n", val);
+	}
+
+out:
+	return v;
 }

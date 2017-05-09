@@ -99,5 +99,9 @@ edge_t *get_new_edge(vertice_t *to, int weight);
 // uninit a graph
 //
 void graph_uninit(graph_t *g);
+// given a value find it's corresponding vertice node.
+// 
+vertice_t * find_vertice(graph_t *g, int val);
+//
 #endif // _GRAPH_H_
 
