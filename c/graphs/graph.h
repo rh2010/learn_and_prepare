@@ -83,10 +83,10 @@ edge_t *graph_add_edge(graph_t *graph, int from_vertice, int to_vertice, int wei
 void graph_print(graph_t *graph);
 // Traverse the graph in BFS way
 //
-void graph_traverse_bfs(graph_t *graph);
+void graph_traverse_bfs(graph_t *graph, int start);
 // Traverse the graph in DFS way
 //
-void graph_traverse_dfs(graph_t *graph);
+void graph_traverse_dfs(graph_t *graph, int start);
 // After a traverse - mark all vertices as not visited.
 //
 void graph_clear_visited(graph_t *graph);

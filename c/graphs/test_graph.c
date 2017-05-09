@@ -31,11 +31,15 @@ main(int argc, char **argv)
 				graph_print(&graph);
 				break;
 			case 4: // bfs
-				graph_traverse_bfs(&graph);
+				printf("Enter Staring Vertice: ");
+				scanf("%d", &val);
+				graph_traverse_bfs(&graph, val);
 				graph_clear_visited(&graph);
 				break;
 			case 5: // dfs
-				graph_traverse_dfs(&graph);
+				printf("Enter Starting Vertice: ");
+				scanf("%d", &val);
+				graph_traverse_dfs(&graph, val);
 				graph_clear_visited(&graph);
 				break;
 			case 6:

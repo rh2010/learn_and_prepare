@@ -1,4 +1,5 @@
 #include "graph.h"
+#include "queue.h"
 
 /*
  * Implement:
@@ -269,18 +270,116 @@ graph_uninit(graph_t *g)
 // Traverse the graph in BFS way
 //
 void
-graph_traverse_bfs(graph_t *g)
+graph_traverse_bfs(graph_t *g, int start)
 {
+	queue_head_t q;
+	vertice_t *v;
+	edge_t *e;
+
 	assert(g!= NULL);
+
+	queue_init(&q);
+
+	// find the starting vertice
+	//
+	v = g->vertices;
+	if (v == NULL) {
+		printf("Empty Graph, no vertices\n");
+		return;
+	}
+
+	while (v != NULL) {
+		if (v->val == start) {
+			break;
+		}
+		v = v->next;
+	}
+
+	if (v == NULL) {
+		printf("Starting vertice %d, Not Found!\n", start);
+		return;
+	}
+
+	// v is the starting vertice.
+	//
+	enqueue(&q, v);
+	v->isVisited = TRUE;
+
+	while (!queue_is_empty(&q)) {
+		v = dequeue(&q);
+
+		// pre-process node v
+		printf("%d ", v->val);
+		e = v->edges;
+
+		while (e != NULL) {
+			v = e->vertice;
+			if (!v->isVisited) {
+				v->isVisited = TRUE;
+				enqueue(&q, v);
+			}
+			e = e->next;
+		}
+		// post-process vertice 'v'
+	}
 	return;
 }
 
 // Traverse the graph in DFS way
 //
 void
-graph_traverse_dfs(graph_t *g)
+graph_traverse_dfs(graph_t *g, int start)
 {
+	stack_head_t s;
+	vertice_t *v;
+	edge_t *e;
+
 	assert(g!= NULL);
+
+	stack_init(&s);
+
+	// Find the starting vertex
+	v = g->vertices;
+	if (v == NULL) {
+		printf("Empty Graph, no vertices\n");
+		return;
+	}
+
+	while (v != NULL) {
+		if (v->val == start) {
+			break;
+		}
+		v = v->next;
+	}
+	if (v == NULL) {
+		printf("Starting vertice %d, Not Found!\n", start);
+		return;
+	}
+
+	// we have 'v' as the starting vertice
+	//
+	push(&s, v);
+	v->isVisited = TRUE;
+
+	while (!stack_is_empty(&s)) {
+		v = pop(&s);
+
+		// pre-process node v.
+		printf("%d ", v->val);
+		e = v->edges;
+
+		while (e != NULL) {
+			v = e->vertice; // get the 2nd vertice of edge
+
+			if (!v->isVisited) {
+				v->isVisited = TRUE;
+				push(&s, v);
+			}
+			e = e->next;
+		}
+		// post process vertice 'v'
+	}
+
 	return;
 }
 
