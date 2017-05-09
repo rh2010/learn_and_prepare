@@ -479,7 +479,13 @@ graph_dfs(graph_t *g, vertice_t *starting_vertex, stack_head_t *res)
 					/*
 					 * push the vertex whose edges we are processing back on
 					 * the stack if it has at least one edge which is not yet
-					 * processed
+					 * processed.
+					 *
+					 * We push the vertex being processed back on the stack
+					 * so that when it has no out-going edges left to process
+					 * it can go on the result stack.
+					 *
+					 * Essentially, this implements Kahn's Alrogithm.
 					 */
 					push(s, t);
 				}
@@ -488,6 +494,12 @@ graph_dfs(graph_t *g, vertice_t *starting_vertex, stack_head_t *res)
 			}
 			e = e->next;
 		}
+		/*
+		 * We will only push a vertex onto the result stack when it
+		 * has no out going edges left to process.
+		 *
+		 * A count of '0' represent that no edges were processed in this loop.
+		 */
 		if (count == 0) {
 			// push the vertex 't' on the result stack
 			push(res, t);
