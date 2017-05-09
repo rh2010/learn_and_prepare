@@ -123,7 +123,6 @@ graph_add_edge(graph_t *g, int from_vertice, int to_vertice, int weight)
 	edge_t *new, *te, *prev;
 
 	assert(g!= NULL);
-	printf("graph_add_edge: (%d, %d) \n", from_vertice, to_vertice);
 
 	temp = g->vertices;
 	from = to = NULL;
@@ -195,7 +194,10 @@ graph_add_edge(graph_t *g, int from_vertice, int to_vertice, int weight)
 	prev->next = new;
 
 success:
-	graph_add_edge(g, to_vertice, from_vertice, weight);
+	if (!g->directed) {
+		// if graph is not directed then add the reverse edge too.
+		graph_add_edge(g, to_vertice, from_vertice, weight);
+	}
 	g->nedges++;
 out:
 	return new;

@@ -7,12 +7,26 @@ main(int argc, char **argv)
 	int val;
 	int x, y;
 	graph_t graph;
+	bool directed;
+	int option;
 
-	graph_init(&graph, FALSE);
+	option = 0; // by default graph is undirected.
+
+	if (argc > 2) {
+		printf("Bad Parameters \n");
+		printf("./a.out <1 or 0>\n");
+		exit(-1);
+	} else if (argc == 2) {
+		option = atoi(argv[1]);
+	}
+	directed = (option) ? TRUE : FALSE;
+
+	printf("Initializing a %s graph\n", (directed) ? "Directed" : "Undirected");
+	graph_init(&graph, directed);
 
 	while(TRUE) {
 		printf("\n1) Add Vertice\n2) Add Edge \n3) Display Graph\n4) BFS\n"
-			   "5) DFS \n6)Exit\nChoice: ");
+			   "5) DFS \n6) Exit\n   Choice: ");
 		scanf("%d", &choice);
 
 		switch (choice) {
@@ -23,8 +37,7 @@ main(int argc, char **argv)
 				break;
 			case 2:
 				printf("Enter Edge: ");
-				scanf("%d", &x);
-				scanf("%d", &y);
+				scanf("%d %d", &x, &y);
 				graph_add_edge(&graph, x, y, 0); // weight is 0 for now.
 				break;
 			case 3:
