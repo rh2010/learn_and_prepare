@@ -6,6 +6,9 @@
 #include <string.h>
 #include <assert.h> // assert()
 #include <limits.h>
+
+#ifndef _UTIL_H_
+#define _UTIL_H_
 //#include <stdbool.h> // boolean
 
 // All the helper MACROs go here.
@@ -40,3 +43,5 @@ typedef enum {FALSE, TRUE} bool;
 void print_int_arr(int *arr, int size);
 void print_int_arr_reverse(int *arr, int size);
 void swap_int(int *a, int *b);
+
+#endif // __UTIL_H_
