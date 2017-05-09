@@ -23,10 +23,10 @@ typedef queue_head_t stack_head_t;
 void queue_init(queue_head_t *head);
 // Add a new element to the queue
 //
-void queue_enqueue(queue_head_t *head, void *data);
+void enqueue(queue_head_t *head, void *data);
 // remove an element from the queue
 //
-void *queue_remove(queue_head_t *head);
+void *dequeue(queue_head_t *head);
 // return the size of the queue
 //
 int queue_size(queue_head_t *head);
@@ -47,10 +47,10 @@ void queue_uninit(queue_head_t *head);
 void stack_init(stack_head_t *head);
 // Add a new element to the queue
 //
-void stack_enqueue(stack_head_t *head, void *data);
+void push(stack_head_t *head, void *data);
 // remove an element from the queue
 //
-void *stack_remove(stack_head_t *head);
+void *pop(stack_head_t *head);
 // return the size of the queue
 //
 int stack_size(stack_head_t *head);

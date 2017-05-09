@@ -88,7 +88,7 @@ main(int argc, char **argv)
 		for (i = 0; i < count; i++) {
 			arr[i] = atoi(argv[i+3]);
 
-			queue_enqueue(&queue, (void*)(&arr[i]));
+			enqueue(&queue, (void*)(&arr[i]));
 		}
 		printf("%d elements inserted into the queue\n", i);
 
@@ -99,13 +99,13 @@ main(int argc, char **argv)
 
 		// remove the first element.
 		//
-		ptr = (int *)queue_remove(&queue);
+		ptr = (int *)dequeue(&queue);
 		printf("The first element is %d\n", *ptr);
 
 		display_queue(&queue);
 		// remove the second element.
 		//
-		ptr = (int *)queue_remove(&queue);
+		ptr = (int *)dequeue(&queue);
 		printf("The second element is %d\n", *ptr);
 
 		display_queue(&queue);
@@ -116,7 +116,7 @@ main(int argc, char **argv)
 		// add the first element again.
 		//
 		printf("Adding the first element again\n");
-		queue_enqueue(&queue, (void *)arr);
+		enqueue(&queue, (void *)arr);
 		// check if the queue is empty.
 		//
 		printf("Is the queue empty: %s\n", queue_is_empty(&queue) ? "YES" : "NO");
@@ -140,7 +140,7 @@ main(int argc, char **argv)
 		for (i = 0; i < count; i++) {
 			arr[i] = atoi(argv[i+3]);
 
-			stack_enqueue(&stack, (void*)(&arr[i]));
+			push(&stack, (void*)(&arr[i]));
 		}
 		printf("%d elements inserted into the stack\n", i);
 
@@ -151,13 +151,13 @@ main(int argc, char **argv)
 
 		// remove the first element.
 		//
-		ptr = (int *)stack_remove(&stack);
+		ptr = (int *)pop(&stack);
 		printf("The first element is %d\n", *ptr);
 
 		display_stack(&stack);
 		// remove the second element.
 		//
-		ptr = (int *)stack_remove(&stack);
+		ptr = (int *)pop(&stack);
 		printf("The second element is %d\n", *ptr);
 
 		display_stack(&stack);
@@ -168,7 +168,7 @@ main(int argc, char **argv)
 		// add the first element again.
 		//
 		printf("Adding the first element again\n");
-		stack_enqueue(&stack, (void *)arr);
+		push(&stack, (void *)arr);
 		// check if the queue is empty.
 		//
 		printf("Is the stack empty: %s\n", stack_is_empty(&stack) ? "YES" : "NO");

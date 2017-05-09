@@ -44,7 +44,7 @@ queue_uninit(queue_head_t *head)
 // Add a new element to the queue
 //
 void
-queue_enqueue(queue_head_t *head, void *data)
+enqueue(queue_head_t *head, void *data)
 {
 	queue_t *temp;
 	queue_t *new;
@@ -66,7 +66,7 @@ queue_enqueue(queue_head_t *head, void *data)
 // remove an element from the queue
 //
 void *
-queue_remove(queue_head_t *head)
+dequeue(queue_head_t *head)
 {
 	queue_t *prev;
 	queue_t *temp;
@@ -157,15 +157,15 @@ stack_init(stack_head_t *head)
 // Add a new element to the stack
 //
 void
-stack_enqueue(stack_head_t *head, void *data)
+push(stack_head_t *head, void *data)
 {
-	queue_enqueue((queue_head_t *)head, data);
+	enqueue((queue_head_t *)head, data);
 }
 
 // remove an element from the stack
 //
 void *
-stack_remove(stack_head_t *head)
+pop(stack_head_t *head)
 {
 	stack_t *temp;
 	void *data;
