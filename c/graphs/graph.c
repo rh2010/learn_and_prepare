@@ -1,5 +1,4 @@
 #include "graph.h"
-#include "queue.h"
 
 /*
  * Implement:
@@ -82,7 +81,8 @@ graph_add_vertice(graph_t *g, int vertice)
 		if (temp->val == vertice) {
 			printf("Vertice %d already present\n", vertice);
 			free(new);
-			goto out;
+			new = NULL;
+			goto error;
 		}
 		temp = temp->next;
 	}
@@ -420,4 +420,137 @@ find_vertice(graph_t *g, int val)
 
 out:
 	return v;
+}
+
+bool
+graph_hasCycles(graph_t *g)
+{
+	assert(g != NULL);
+	assert(g->directed);
+
+	return FALSE;
+}
+
+/*
+ * DFS used for topological sort.
+ * Takes pointer to the graph and pointer to the starting
+ * vertex to perform DFS.
+ */
+void
+graph_dfs(graph_t *g, vertice_t *starting_vertex, stack_head_t *res)
+{
+	vertice_t *t; // temp
+	vertice_t *v; // temp
+	stack_head_t stack;
+	stack_head_t *s;
+	edge_t *e;
+	int count;
+
+	assert(g != NULL);
+	assert(starting_vertex != NULL);
+	assert(s != NULL);
+
+	// we shouldn't start a DFS from a already visited vertex.
+	assert(!starting_vertex->isVisited);
+
+	s = &stack;
+	stack_init(s);
+
+	t = starting_vertex;
+	// we have 'v' as the starting vertice
+	//
+	push(s, t);
+	t->isVisited = TRUE;
+
+	while (!stack_is_empty(s)) {
+		t = pop(s);
+
+		// pre-process node v.
+		//printf("%d ", v->val);
+		e = t->edges;
+		count = 0;
+
+		while (e != NULL) {
+			v = e->vertice; // get the 2nd vertice of edge
+
+			if (!v->isVisited) {
+				v->isVisited = TRUE;
+				if (count == 0) {
+					/*
+					 * push the vertex whose edges we are processing back on
+					 * the stack if it has at least one edge which is not yet
+					 * processed
+					 */
+					push(s, t);
+				}
+				push(s, v);
+				count++;
+			}
+			e = e->next;
+		}
+		if (count == 0) {
+			// push the vertex 't' on the result stack
+			push(res, t);
+		}
+	}
+
+	stack_uninit(s);
+	return;
+}
+
+void
+graph_topologicalSort(graph_t *g)
+{
+	stack_head_t result;
+	stack_head_t *r;
+	vertice_t *v;
+	edge_t *e;
+
+	assert(g != NULL);
+
+	v = g->vertices;
+
+	if (!g->directed) {
+		printf("graph_topologicalSort: Can't run topological sort on undirected"
+				" graph\n");
+		printf("graph_topologicalSort: Topological Sort can only be run on a "
+				" Directed Acyclic Graph (DAG)\n");
+		return;
+	}
+
+	if (v == NULL) {
+		printf("graph_topologicalSort: Empty Graph\n");
+		return;
+	}
+
+	if (graph_hasCycles(g)) {
+		printf("graph_topologicalSort: Graph has cycles\n");
+		printf("graph_topologicalSort: Topological Sort can only be run on a "
+				" Directed Acyclic Graph (DAG)\n");
+		return;
+	}
+	r = &result;
+
+	// stack to hold the topologoical sorting order
+	stack_init(r);
+
+	// For each vertex, if it is not already visited, do a DFS.
+	while (v != NULL) {
+		if (!v->isVisited) {
+			graph_dfs(g, v, r);
+		}
+		v = v->next;
+	}
+
+	// print the result stack
+	printf("Topological Sort Order is:\n");
+	while(!stack_is_empty(r)) {
+		v = (vertice_t *)pop(r);
+		printf("%d ", v->val);
+	}
+	printf("\n");
+
+	stack_uninit(r);
+
+	return;
 }

@@ -1,4 +1,5 @@
 #include "../util.h"
+#include "queue.h"
 
 /*
  * Adjacency list to represent graphs.
@@ -103,5 +104,13 @@ void graph_uninit(graph_t *g);
 // 
 vertice_t * find_vertice(graph_t *g, int val);
 //
+//
+bool graph_hasCycles(graph_t *g);
+//
+//
+void graph_dfs(graph_t *g, vertice_t *starting_vertex, stack_head_t *res);
+//
+//
+void graph_topologicalSort(graph_t *g);
 #endif // _GRAPH_H_
 
