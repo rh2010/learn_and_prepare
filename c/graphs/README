@@ -1,5 +1,19 @@
 README
 
 - graphs.c
+	Contains implementation of graph APIs
 
 - graphs.h
+	Header for graph APIs
+
+- queue.c
+	Contains implementation of stack and queue APIs
+
+- queue.h
+	Header for stack and queue APIs
+
+- README
+	This file
+
+- test_graph.c
+	Test program to test graph APIs
