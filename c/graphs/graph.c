@@ -44,6 +44,7 @@ get_new_vertice(int vertice)
 	new->degree = 0;
 	new->edge_count = 0; // no edges initially
 	new->isVisited = FALSE;
+	new->isProcessed = FALSE;
 	new->next = NULL;
 	new->edges = NULL; // no edges initially
 
@@ -384,6 +385,7 @@ graph_clear_visited(graph_t *g)
 
 	while(temp != NULL) {
 		temp->isVisited = FALSE;
+		temp->isProcessed = FALSE;
 		temp = temp->next;
 	}
 
@@ -423,12 +425,55 @@ out:
 }
 
 bool
+dfs_recursive(graph_t *g, vertice_t *v)
+{
+	edge_t *e;
+	vertice_t *t;
+
+	assert(g != NULL);
+	assert(v != NULL);
+
+	v->isVisited = TRUE;
+
+	e = v->edges;
+	while(e != NULL) {
+		t = e->vertice;
+		if (!t->isVisited) {
+			return dfs_recursive(g, t);
+		} else if (!t->isProcessed) {
+			return TRUE;
+		}
+		e = e->next;
+	}
+	v->isProcessed = TRUE;
+
+	return FALSE;
+}
+
+bool
 graph_hasCycles(graph_t *g)
 {
+	vertice_t *v; // temp
+	bool hasCycle = FALSE;
+
 	assert(g != NULL);
 	assert(g->directed);
 
-	return FALSE;
+	v = g->vertices;
+
+	if (v == NULL) {
+		printf("graph_hasCycles: Empty Graph\n");
+		return FALSE;
+	}
+
+	// For each vertex, if it is not already visited, do a DFS.
+	while (v != NULL) {
+		if (!v->isVisited) {
+			hasCycle = dfs_recursive(g, v);
+		}
+		v = v->next;
+	}
+	return hasCycle;
 }
 
 /*

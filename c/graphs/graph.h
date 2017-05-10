@@ -52,6 +52,7 @@ typedef struct vertice {
 	int degree;
 	int edge_count;
 	bool isVisited;
+	bool isProcessed;
 
 	// singly linked to other vertices.
 	struct vertice *next;
