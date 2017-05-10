@@ -101,7 +101,9 @@ permute(char *arr, int l, int r)
 
 	if ( l == r ) {
 		printf("%s\n", arr);
+		return;
 	}
+
 	for (i = l; i <= r; i++) {
 		swap((arr+l), (arr+i));
 		permute(arr, l+1, r);
