@@ -5,6 +5,8 @@
  * build a binary tree.
  */
 
+// TODO: Not Implemented!
+//
 struct node {
 	int data;
 	struct node* left;
