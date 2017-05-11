@@ -63,7 +63,7 @@ ring_buffer_remove(ring_buffer *rbuf)
 {
 	int data;
 	// is empty
-	if (rbuf->buffer[rbuf->head] == rbuf->buffer[rbuf->tail]) {
+	if (rbuf->head == rbuf->tail) {
 		return (-1);
 	}
 	data = rbuf->buffer[rbuf->tail];
