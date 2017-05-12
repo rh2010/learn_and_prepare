@@ -5,6 +5,22 @@
  *
  * The algorithm doesn't work if all the integers in the array are -ve
  */
+int ls(int *arr, int size)
+{
+	int i;
+	int max_so_far;
+	int curr_so_far;
+
+	max_so_far = arr[0];
+	curr_so_far = arr[0];
+
+	for (i = 1; i < size; i++) {
+		curr_so_far = MAX(arr[i], (arr[i] + curr_so_far));
+		max_so_far = MAX(max_so_far, curr_so_far);
+	}
+	return max_so_far;
+}
+
 int
 longest_sum(int *arr, int start, int end)
 {
@@ -61,6 +77,8 @@ main(int argc, char **argv)
 	}
 	sum = longest_sum(arr, 0, size-1);
 	printf("The longest sum is: %d\n", sum);
+
+	printf("The longest sum ls (handle all -ve numbers): %d\n", ls(arr, size));
 
 	return(0);
 }
