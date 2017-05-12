@@ -1,5 +1,8 @@
 #include "../util.h"
 
+/*
+ * TODO: Implement Karp Rabin.
+ */
 void
 naive_strstr(char *txt, char *pat)
 {
@@ -98,6 +101,14 @@ kmp(char *txt, char *pat)
 	free(lps);
 }
 
+void
+karp_rabin(char *txt, char *pat)
+{
+	printf("Karp Rabin - Pattern Search\n");
+
+	printf("Not Implemented\n");
+}
+
 int
 main(int argc, char **argv)
 {
@@ -110,6 +121,12 @@ main(int argc, char **argv)
 	txt = argv[1];
 	pat = argv[2];
 
+	// naive pattern searching
 	naive_strstr(txt, pat);
+
+	// KMP
 	kmp(txt, pat);
+
+	// Rabin Karp
+	karp_rabin(txt, pat);
 }
