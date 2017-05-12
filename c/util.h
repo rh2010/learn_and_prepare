@@ -23,9 +23,9 @@
 
 // pass integers by value	
 #define SWAP_FAST(x, y) {\
-	*(x) = *(x) ^ *(y) \
-	*(y) = *(x) ^ *(y) \
-	*(x) = *(x) ^ *(y) \
+	(x) = (x) ^ (y); \
+	(y) = (x) ^ (y); \
+	(x) = (x) ^ (y); \
 	}
 
 // mamimum of two integers
