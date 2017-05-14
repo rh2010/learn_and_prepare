@@ -1,0 +1,259 @@
+A Basic Reader-Writer lock (using two mutex)
+
+struct rw_lock {
+	int readers;
+	mutex_t r; // for readers
+	mutex_t w; // for writers
+}
+
+void rw_read_lock(struct rw_lock *lock);
+void rw_read_unlock(struct rw_lock *lock);
+void rw_write_lock(struct rw_lock *lock);
+void rw_write_unlock(struct rw_lock *lock);
+void rw_init_lock(struct rw_lock *lock);
+
+void
+rw_init_lock(struct rw_lock *lock)
+{
+	lock->readers = 0;	
+	mutex_init(&lock->r);
+	mutex_init(&lock->w);
+}
+
+void
+rw_read_lock(struct rw_lock *lock)
+{
+	mutex_lock(&lock-r);
+
+	lock->readers++;
+	if (lock->readers == 1) {
+		// if it is the first reader, then take the write lock too
+		// so, no writers can go ahead
+		mutex_lock(&lock->w);
+	}
+	mutex_unlock(&lock->r);
+}
+
+void
+rw_read_unlock(struct rw_lock *lock)
+{
+	mutex_lock(&lock->r);
+	lock_readers--;
+	if (lock->readers == 0) {
+		// if this is the last reader, then, release the writer
+		// mutex so that any waiting writers can go ahead.
+		mutex_unlock(&lock->w);
+	}
+	mutex_unlock(&lock->r);
+}
+
+void
+rw_write_lock(struct rw_lock *lock)
+{
+	mutex_lock(&lock->w); // wait
+}
+
+void
+rw_write_unlock(struct rw_lock *lock)
+{
+	mutex_unlock(&lock->w); // signal
+}
+
+Unit Testing:
+-------------
+
+1) A good unit test
+	- only one reader can be waiting on the lock->w mutex but multiple
+	writers can wait on the lock->w mutex.
+2) When a reader releases the lock->w mutex, no one should have the rw_lock 
+   as a whole.
+
+=============================================================
+Starvation.
+In the above implementation the writer can get starved.
+
+To prevent startvation add another mutex.
+
+struct rw_lock {
+	int readers;
+	mutex_t r; // for readers
+	mutex_t w; // for writers
+	mutex_t s; // to prevent writers for getting starved.
+};
+
+void
+rw_read_lock(struct rw_lock *lock)
+{
+	mutex_lock(&lock->s);
+	mutex_unlock(&lock->s);
+
+	mutex_lock(&lock->r);
+	lock->readers++;
+	if (lock->readers == 1) {
+		// first reader, take the write lock too.
+		//
+		// if there are any writer active, then wait till it gets done.
+		mutex_lock(&lock->w);
+	}
+	mutex_unlock(&lock->r);
+}
+
+void
+rw_read_unlock(struct rw_lock *lock)
+{
+	mutex_lock(&lock->r);
+	lock->readers--;
+	if (lock->readers == 0) {
+		// if there are no readers, the let the waiting writers continue
+		mutex_unlock(&lock->w);
+	}
+	mutex_unlock(&lock->r);	
+}
+
+void
+rw_write_lock(struct rw_lock *lock)
+{
+	// first take the 's' lock, so that new readers can't starve us.
+	mutex_lock(&lock->s);
+
+	// now grab the 'w' mutex
+	mutex_lock(&lock->w);
+}
+
+
+void
+rw_write_unlock(struct rw_lock *lock)
+{
+	mutex_unlock(&lock->w);
+	mutex_unlock(&lock->s);
+}
+
+
+void
+rw_init_lock(struct rw_lock *lock)
+{
+	lock->readers = 0;
+	mutex_init(&lock->r);
+	mutex_init(&lock->w);
+	mutex_init(&lock->s);
+}
+
+Notes:-
+	- In this implementation for eg:
+		R-1 R-2 R-3 W-1  R-4 R-5 W-2 W-3
+		if above is the order of arrival of reader and writers then,
+		R-1 ... R-3 can be active at the same time, then when W-1 comes
+		it will hold the lock->s mutex and wait on lock->w to be available.
+
+		R-4, R-5, W-2, W-3 all will wait on lock->s mutex. When W-1 gets done
+		anyone from (R-4, R-5, W-2, W-3) can come in and get the lock.
+	- For some cases we might want to give writers preference over readers.
+		- For example: If we want all the readers to see the best / latest data possible
+			or if the writers are making time critical updates to a data-structure, it is
+			best to minimize the number of readers that see the old data before the waiting
+			writer has a chance to proceed.
+
+
+================================================================
+Implementation to give preference to writers.
+
+struct rw_lock {
+	// for readers.
+	int readers;
+	mutex_t r;
+
+	// for writers
+	int writers;
+	mutex_t w;
+
+	// taken by the first writers and released by the last writer
+	// so no readers can get in when 1 or more writers have the lock
+	mutex_t no_readers;
+
+	//
+	mutex_t no_writers;
+}
+
+void
+rw_read_lock(struct rw_lock *lock)
+{
+	mutex_lock(&lock->no_readers);
+
+	// read lock - to protect lock->readers
+	mutex_lock(&lock->r);
+	lock->readers++;
+	// if first reader, then take the lock so no
+	// writers are allowed
+	if (lock->readers == 1) {
+		mutex_lock(&lock->no_writers);
+	}
+	mutex_unlock(&lock->r);
+
+	mutex_unlock(&lock->no_readers);
+}
+
+void
+rw_read_unlock(struct rw_lock *lock)
+{
+	mutex_lock(&lock->r);
+	lock->readers--;
+
+	// last readers, open the gate for writers to come in.
+	if (lock->readers == 0) {
+		mutex_unlock(&lock->no_writers);
+	}
+	mutex_unlock(&lock->r);
+}
+
+void
+rw_write_lock(struct rw_lock *lock)
+{
+
+	// write-lock - lock to protect writers
+	mutex_lock(&lock->w);
+	lock->writers++;
+
+	// if first writer, then grab the no_readers lock, to
+	// give writers priority over readers.
+	if (lock->writers == 1) {
+		mutex_lock(&lock->no_readers);
+	}
+
+	// don't allow other writers to come in when one writer is already
+	// in the 'critical section'.
+	mutex_lock(&lock->no_writers);
+
+	mutex_unlock(&lock->w);
+}
+
+
+void
+rw_write_unlock(struct rw_lock *lock)
+{
+	mutex_lock(&lock->w);
+	
+	// allow the next writer to come in.
+	mutex_unlock(&lock->no_writers);
+
+	lock->writers--;
+
+	if (lock->writers == 0) {
+		mutex_unlock(&lock->no_readers);
+	}
+
+	mutex_unlock(&lock->w);
+}
+
+
+void
+rw_init_lock(struct rw_lock *lock)
+{
+	lock->readers = 0;
+	lock->writers = 0;
+
+	mutex_init(&lock->r);
+	mutex_init(&lock->w);
+	mutex_init(&lock->no_readers);
+	mutex_init(&lock->no_writers);
+}
+
