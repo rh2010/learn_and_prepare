@@ -46,22 +46,15 @@ def longest_consecutive_integer_sequence(arr):
 if __name__ == "__main__":
     length = 0
     #arr = [4, 3, 10, 2, 7]
-    arr = [4, 100, 40, 11, 3, 7, 2, 1, 44, 8, 111, 6]
-    #size = len(sys.argv)
-    #args = sys.argv[1:]
+    #arr = [4, 100, 40, 11, 3, 7, 2, 1, 44, 8, 111, 6]
+    size = len(sys.argv)
+    args = sys.argv[1:]
 
-    #print args
+    if size < 2:
+        print "Not enough arsuments"
+        exit()
 
-    #if size < 2:
-    #    print "Not enough arsuments"
-    #    exit()
-
-    #arr = map(int, args.split())
-
-    #size = len(args)
-    #for ele in args:
-    #    #arr = arr.extend(int(ele))
-    #    arr = arr.append(int(ele))
+    arr = map(int, args)
 
     length = longest_consecutive_integer_sequence(arr)
     print("Longest consecutive integer subarray size is: %d" % (length))
