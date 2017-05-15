@@ -8,6 +8,36 @@ mmax(int a, int b)
 
 /*
  * LCS - Longest Common Sub-sequence
+ *
+ * Examples:
+ * LCS for input Sequences “ABCDGH” and “AEDFHR” is “ADH” of length 3.
+ * LCS for input Sequences “AGGTAB” and “GXTXAYB” is “GTAB” of length 4.
+ *
+ * Naive solution:
+ * 	- Generate all possible sub-sequences of both given sequences and find the
+ * 	longest matching subsequence.
+ * 	- Time complexity: Exponential
+ *
+ */
+int
+lcs_naive(char *x, char *y, int sizex, int sizey)
+{
+	if (sizex == 0 || sizey == 0) {
+		return 0;
+	}
+
+	if (x[sizex-1] == y[sizey-1]) {
+		return 1 + lcs_naive(x, y, sizex-1, sizey-1);
+	} else {
+		return mmax(lcs_naive(x, y, sizex-1, sizey),
+					lcs_naive(x, y, sizex, sizey-1));
+	}
+}
+
+/*
+ * Dynamic programming solution:
+ *
+ * - Table building solution
  */
 int find_lcs(char *x, char *y, int m, int n)
 {
@@ -27,7 +57,6 @@ int find_lcs(char *x, char *y, int m, int n)
 
 	for (i = 0; i <= m; i++) {
 		for (j = 0; j <= n; j++) {
-			// TODO: Fill this
 			if (i == 0 || j == 0) {
 				lcs[i][j] = 0;
 			} else if (x[i-1] == y[j-1]) {
@@ -58,7 +87,6 @@ main(int argc, char **argv)
 	int sizey;
 	char *x;
 	char *y;
-	int max;
 
 	if (argc != 3) {
 		printf("Error, bad input\n");
@@ -70,8 +98,8 @@ main(int argc, char **argv)
 	sizex = strlen(x);
 	sizey = strlen(y);
 
-	max = find_lcs(x, y, sizex, sizey);
-	printf("LCS: %d\n", max);
+	printf("lcs_naive: %d\n", lcs_naive(x, y, sizex, sizey));
+	printf("LCS: %d\n", find_lcs(x, y, sizex, sizey));
 
 	return (0);
 }

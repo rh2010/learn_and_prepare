@@ -13,44 +13,6 @@
  *  If found the minumum number, the Index in the array
  */
 
-int minsrch(int *arr, int start, int end, int len)
-{
-	int mid;
-	int idx1, idx2;
-	
-	mid = (start+end) / 2;
-
-	if (start == end) {
-		return -1; // not found
-	}
-
-	if (arr[mid] > arr[mid+1]) {
-		return (mid+1);
-	}
-
-	if ((start + 1) == end) {
-		return -1;
-	}
-
-	idx1 = minsrch(arr, start, mid, len);
-	idx2 = minsrch(arr, mid+1, end, len);
-
-	if ((idx1 == -1) && (idx2 == -1)) {
-		if ((end - start + 1) == len) {
-			return 0;
-		}
-		return -1;
-	}
-	if (idx1 == -1) {
-		return idx2;
-	} else {
-		return idx1;
-	}
-
-	printf("Should not be here!!\n");
-	return -1;
-}
-
 int
 minsearch(int *arr, int start, int end)
 {
