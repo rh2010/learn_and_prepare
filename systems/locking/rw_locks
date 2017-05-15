@@ -59,6 +59,47 @@ rw_write_unlock(struct rw_lock *lock)
 	mutex_unlock(&lock->w); // signal
 }
 
+/*
+ * For a simple read-write lock implementation, the following routine will
+ * upgrade a read lock to a write lock.
+ *
+ * It waits for all the readers to finish and the upgrades self to a writer.
+ *
+ * After calling this routine, call rw_write_unlock() to release the rw_lock
+ *
+ * Note: This approach is not going to work, as multiple read-locks can ask to be
+ * upgraded to a write-lock at the same time. We should handle this case.
+ * 	- the solution to this problem is to use tryLock()
+ *
+ * 	- a tryLock() is 'non-blocking', that is it will return 'FALSE' if the lock
+ * 	is busy.
+ *
+ * 	- Unless we know for sure that only one thread will ever want to upgrade to a write lock
+ * 	at any time, then when upgrading read locks to write locks always use 'try locks'.
+ *
+ * 	- 
+ *
+ */
+void
+rw_upgrade_read_lock(struct rw_lock *lock)
+{
+	// write lock is already grabbed
+	//
+	// So, wait for the readers go down to zero
+	//
+	while (1) {
+		mutex_lock(&lock->r);
+		// just 'self' remaining
+		if (lock->readers == 1) {
+			lock->readers--; // now there are no readers and we still have the write lock.
+			mutex_unlock(&lock->r);
+			break;
+		}
+		mutex_unlock(&lock->r);
+		yield();
+	}
+}
+
 Unit Testing:
 -------------
 
@@ -256,4 +297,75 @@ rw_init_lock(struct rw_lock *lock)
 	mutex_init(&lock->no_readers);
 	mutex_init(&lock->no_writers);
 }
+
+================================================================
+Implement up-gradable Read-Write Locks
+
+struct rw_lock {
+	int readers;
+	mutex_t r;
+	mutex_t w;
+};
+
+void rw_read_lock(struct rw_lock *lock);
+void rw_read_unlock(struct rw_lock *lock);
+void rw_write_lock(struct rw_lock *lock);
+void rw_write_unlock(struct rw_lock *lock);
+void rw_init_lock(struct rw_lock *lock);
+void rw_upgrade_read_lock(struct rw_lock *lock);
+void rw_downgrade_write_lock(struct rw_lock *lock);
+
+void
+rw_read_lock(struct rw_lock *lock)
+{
+
+}
+
+void
+rw_read_unlock(struct rw_lock *lock)
+{
+
+}
+
+void
+rw_write_lock(struct rw_lock *lock)
+{
+
+}
+
+void
+rw_write_unlock(struct rw_lock *lock)
+{
+
+}
+
+void
+rw_init_lock(struct rw_lock *lock)
+{
+
+}
+
+void
+rw_upgrade_read_lock(struct rw_lock *lock)
+{
+
+}
+
+void
+rw_downgrade_write_lock(struct rw_lock *lock)
+{
+
+}
+
+================================================================
+Mutex Concepts:
+ - Recursive mutexes
+ - Non-Recursive mutexes
+
+Types of mutexes / locks
+ - Lockable
+ - TimedLockable - (timed locks)
+ - SharedLockable - (read-write locks a.k.a. shared locks)
+ - UpgradeLockable - (read-write locks where read locks can be upgraded to write locks).
+
 
