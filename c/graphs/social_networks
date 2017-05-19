@@ -1,0 +1,84 @@
+/*
+ * Write the data structure and routine to identify the degree of seperation of 
+ * two persons in a social network like linkedin or facebook.
+ *
+ *  - identify the degree of seperation
+ *  - identify through how many person is A connected to B.
+ */
+struct edge {
+	struct vertice *vertice; // back pointer to the 2nd vertice which the edge contains
+	struct edge *next; // pointer to the next edge out of this vertice.
+};
+
+struct vertice {
+	bool isVisited;
+	int id; // val
+	struct vertice *next; // list of vertices
+	struct edge *edges; // edges for this vertice
+};
+
+struct graph {
+	int vertices;
+	struct vertice *vertices;
+}
+
+level(struct graph *g, struct vertice *start, struct vertice *end, unsigned int degree)
+{
+	int level;
+	int level_count;
+	struct vertice *v, *tv; // temp vertice used for traversal
+	struct edge *e; // temp edge pointer, used for traversal
+	queue_t queue;
+	queue_t *q;
+	bool res = False;
+
+	assert(g != NULL);
+	assert(start != NULL);
+	assert(end != NULL);
+
+	q = &queue;
+
+	init_queue(q);
+
+	// mark all the vertices as not visited.
+	//
+	markNotVisited(g);
+
+	start->isVisited = True;
+	enqueue(q, start);
+	
+	level = 0;
+
+	while(!is_queue_empty(q) && (level <= degree)) {
+		level_count = queue_size(q);
+
+		while (level_count > 0) {
+			v = dequeue(q);
+			level_count--;
+
+			e = v->edges;
+
+			while (e != NULL) {
+				tv = e->vertice;
+				if (tv->id == end->id) {
+					if (level == degree) {
+						result = True;
+					} 
+					// else, end is connected to the strting vertice more closely
+					// than we are looking for.
+					goto done;
+				}
+				if (!tv->isVisited) {
+					tv->isVisited = True;
+					enqueue(q, tv);
+				}
+				e = e->next;
+			} // while - all edge
+		} // while - level
+		level++;
+	} // while - outmost
+
+done:
+	uninit_queue(q);
+	return res;
+}
