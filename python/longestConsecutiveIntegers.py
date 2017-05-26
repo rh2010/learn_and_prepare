@@ -1,5 +1,10 @@
 #! /usr/bin/env python
 
+#
+# Longest consecutive integer sequence.
+#
+# - From a given array of integers, find the max count of integers
+#   which are consecutive
 import os
 import sys
 
