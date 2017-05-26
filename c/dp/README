@@ -1,0 +1,12 @@
+
+ - lcs.c
+ 	Longest common sub-sequence
+
+ - lis.c
+ 	Longest increasing sub-sequence
+
+ - lpalin_subsequence.c
+ 	Longest palindromic subsequence
+
+ - lpalin_substring.c
+ 	Longest palindromic substring
