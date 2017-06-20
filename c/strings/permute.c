@@ -37,7 +37,11 @@ ipermute(char *arr)
 	int i, j, k, m;
 	char *perm;
 
+	// length of the input array.
 	length = (int)strlen(arr);
+
+	// based on the length calculate the total number of 
+	// permutations possible - factorial number of permutations.
 	factorial = fact(length);
 
 	k = 0;
@@ -50,6 +54,7 @@ ipermute(char *arr)
 		exit(-1);
 	}
 
+	// total limiting count is the factorial.
 	for (i = 0; i < factorial; ) {
 
 		// set the perm string to the original string
