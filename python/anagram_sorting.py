@@ -5,6 +5,15 @@ import sys
 # Given a list of strings, write a function to sort / re-arrange the
 # list in such a way that anagrams get grouped together.
 #
+
+#
+# this routine will be effective only if all the characters in each
+# string are unique.
+#
+# If there are duplicate characters in the string then the hashing algorithm
+# does not work well.
+#
+#
 def calc_hash(word):
     res = 0
 
@@ -29,12 +38,12 @@ def group_anagrams(str_list):
             ana_list = sort_dict[word_hash]
 
             # something already exists in the list for this hash, update it
-            print("First time")
+            print("Not first time")
             ana_list.append(word)
             sort_dict.update({word_hash:ana_list})
         except KeyError:
             # first time, just add a one element list
-            print("Not First time")
+            print("First time")
             ana_list = [word]
             sort_dict.update({word_hash:ana_list})
 
