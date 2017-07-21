@@ -8,10 +8,10 @@ test.py
 twoSum.py
 	- Implement the two-sum problem.
 	- Given an array of integers and a number 'num', find all the pairs that
-	  sum up to 'num' in a efficient manner.
+	  sum up to 'num' in an efficient manner.
 paren.py
 	- Given an expression with a bunch of parenthesis find out if for each
-	  open parenthesis there is a corresponding matching/ closing parenthesis.
+	  open parenthesis there is a corresponding matching / closing parenthesis.
 perm.py
 	- Implement recursive and iterative methods for generating all the
 	  permutations of a given string.
