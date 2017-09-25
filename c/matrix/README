@@ -3,5 +3,5 @@ matrix_rotate.c
 	- Use only one temp variable.
 
 matrix_transpose.c
-	- Implement a fcuntion to do a transpose of a matrix in-place.
+	- Implement a function to do a transpose of a matrix in-place.
 	- Implement 2nd method to rotate matrix in-place.

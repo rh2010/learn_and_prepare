@@ -186,14 +186,15 @@ Notes:-
 		R-1 ... R-3 can be active at the same time, then when W-1 comes
 		it will hold the lock->s mutex and wait on lock->w to be available.
 
+    - Once R-1, R-2, R-3 finish, then W-1 will be able to get lock->w and proceed.
 		R-4, R-5, W-2, W-3 all will wait on lock->s mutex. When W-1 gets done
-		anyone from (R-4, R-5, W-2, W-3) can come in and get the lock.
+		anyone from (R-4, R-5, W-2, W-3) can come in and get the lock->s.
+
 	- For some cases we might want to give writers preference over readers.
 		- For example: If we want all the readers to see the best / latest data possible
 			or if the writers are making time critical updates to a data-structure, it is
 			best to minimize the number of readers that see the old data before the waiting
 			writer has a chance to proceed.
-
 
 ================================================================
 Implementation to give preference to writers.
