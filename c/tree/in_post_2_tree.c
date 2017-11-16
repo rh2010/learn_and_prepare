@@ -1,12 +1,15 @@
 #include "../util.h"
 
 /*
- * From an inorder and a post order traversal
- * build a binary tree.
+ * Implement a function to check if from the given traversal
+ * in-order / post-order / pre-order 
+ * can it represent a binary search tree.
+ *
+ * TODO:
+ *  - Post-Order
+ *  - In-Order are pending
  */
 
-// TODO: Not Implemented!
-//
 struct node {
 	int data;
 	struct node* left;

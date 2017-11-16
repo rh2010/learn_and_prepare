@@ -4,6 +4,8 @@
 #define RCHILD(x)	((x)->right)
 #define HEIGHT(x)	((x) ? (x)->height : 0)
 
+// TODO: Implement Delete Node.
+//
 /*
  * http://www.geeksforgeeks.org/avl-tree-set-1-insertion/
  */

@@ -502,8 +502,8 @@ graph_dfs(graph_t *g, vertice_t *starting_vertex, stack_head_t *res)
 	stack_init(s);
 
 	t = starting_vertex;
-	// we have 'v' as the starting vertice
-	//
+	
+	// put the starting vertex on the stack
 	push(s, t);
 	t->isVisited = TRUE;
 
@@ -530,7 +530,7 @@ graph_dfs(graph_t *g, vertice_t *starting_vertex, stack_head_t *res)
 					 * so that when it has no out-going edges left to process
 					 * it can go on the result stack.
 					 *
-					 * Essentially, this implements Kahn's Alrogithm.
+					 * Essentially, this implements Kahn's Algorithm.
 					 */
 					push(s, t);
 				}
