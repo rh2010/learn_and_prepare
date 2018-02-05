@@ -1,0 +1,75 @@
+Notes from Week2:
+
+Type extensibility
+
+C Type extension:
+ - this can be done using a struct.
+ - 
+
+In C++ structs can have functions defined in a struct.
+
+Class is almost equivalent to struct.
+
+Operator overloading
+
+--
+This is the promitive way of type extension in the C.
+struct as a point
+	typedef struct point {
+		double x, y;
+	} point;
+
+	void add_points(point *p1, point *p2, point *sum)
+	{
+		sum->x = p1->x + p2->x;
+		sum->y = p1->y + p2->y;
+	}
+
+
+---
+
+C++ point type
+
+class point{
+	public:
+		double getx() { return x; } // this is inline
+
+		void setx(double v) {x = v;} // A mutator method
+
+	private:
+		double x, y;
+
+};
+
+// access keywords: public, private and protected.
+//
+// public: everybody can see
+//
+// private: can be see only inside the class
+// 	- this is where we hide the representation.
+//
+// protected: friends can see it.
+//
+// a member function is also called a 'method'
+//
+//
+//
+// overloading:
+// 	The usual signature for overloading ostream& operator<< 
+// 		(ostream& out, const my_Type& v)
+//
+// 		both arguments are passed by reference
+// 		my_type is passed with a const modifier so as to not to be modified.
+//
+//
+// constructor
+// 	the name of the constructor is the same as the class-name
+//
+//
+// default-constructor
+// 	the constructor whose argument is void
+//
+// 	uses this.
+// 		- self-referential 
+//
+//
