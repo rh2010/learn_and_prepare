@@ -1,5 +1,9 @@
 #include "../util.h"
 
+//
+// Write a function to count the maximum contiguous 1's and 0's back-to-back
+// contiguously.
+//
 //count_0
 //count_1
 //max_count
