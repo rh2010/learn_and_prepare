@@ -8,6 +8,7 @@ using namespace std;
 // Class for representing a graph using adjacency list.
 class graph {
 	int vertices_count;
+	struct vertice;
 	//int nedges; // not really needed
 	bool directed; // used when inserting edge.
 
@@ -39,10 +40,10 @@ class graph {
 	// so, looking up a vertice is quick.
 	//
 
-	struct vertice*
-	get_new_vertice(int vertice)
+	vertice*
+	get_new_vertice(int value)
 	{
-		struct vertice *v = (struct vertice*)new(sizeof (struct vertice));
+		vertice *v = new vertice;
 		if (v == NULL) {
 			printf("Error: Unable to get memory for vertice\n");
 			return NULL;
@@ -52,15 +53,15 @@ class graph {
 		memset(v, 0, sizeof(*v));
 
 		// set the value of the vertice.
-		v->val = vertice;
+		v->val = value;
 		return v;
 	}
 
 	// the vertice will be the to vertice.
-	struct edge*
-	get_new_edge(struct vertice* vertice, int weight)
+	edge*
+	get_new_edge(vertice* vertice, int weight)
 	{
-		struct edge *e = (struct edge*)new(sizeof(struct edge));
+		edge *e = new edge;
 		if (e == NULL) {
 			printf("Error: Unable to allocate memory for edge\n");
 			return NULL;
@@ -73,11 +74,10 @@ class graph {
 		return e;
 	}
 
-	struct vertice*
-	find_vertice(int vertice)
+	vertice*
+	find_vertice(int value)
 	{
-		struct vertice* temp;
-		temp = vertices;
+		vertice *temp = vertices;
 
 		if (vertices == NULL) {
 			return NULL;	
@@ -88,14 +88,14 @@ class graph {
 		}
 
 		while (temp != NULL) {
-			if (temp->val == vertice) {
+			if (temp->val == value) {
 				return temp;
 			}
 			temp = temp->next;
 		}
 		assert(temp != NULL);
 
-		printf("%d not in the existing vertices.\n", vertice);
+		printf("%d not in the existing vertices.\n", value);
 
 		return NULL;
 	}
@@ -120,9 +120,9 @@ class graph {
 		void
 		add_vertice(int data)
 		{
-			struct vertice *temp;
-			struct vertice *new_vertice = get_new_vertice(data);
-			struct vertice *head = vertices;
+			vertice *temp;
+			vertice *new_vertice = get_new_vertice(data);
+			vertice *head = vertices;
 
 			if (new_vertice == NULL) {
 				printf("Error: Failed to get a new vertice\n");
@@ -151,10 +151,11 @@ class graph {
 		bool
 		add_edge(int from, int to, int weight)
 		{
-			struct vertice *from_vertice;
-			struct vertice *to_vertice;
-			struct edge *new_edge;
-			struct edge *temp;
+			vertice *from_vertice;
+			vertice *to_vertice;
+			vertice *temp_vertice;
+			edge *new_edge;
+			edge *temp;
 			unsigned int add_edge = (directed ? 1 : 2);
 
 			from_vertice = find_vertice(from);
@@ -177,7 +178,7 @@ class graph {
 			}
 
 			while (add_edge > 0) {
-				temp = from->edges;
+				temp = from_vertice->edges;
 
 				// first edge
 				if (from_vertice->edges == NULL) {
@@ -207,46 +208,52 @@ class graph {
 				add_edge--;
 
 				// swap to and from pointers to add the reverse edge incase of un-directed graph.
-				temp = from_vertice;
+				temp_vertice = from_vertice;
 				from_vertice = to_vertice;
-				to_vertice = temp;
+				to_vertice = temp_vertice;
 			}
 
-			// print the graph
-			void
-			show()
-			{
-				struct vertice *tempv;
-				struct edge *tempe;
-
-				printf("Graph:\n");
-				printf("\tVertices count: %d\n", vertices_count);
-				printf("\t%s\n", directed ? "Directed" : "Un-directed");
-
-				printf("Vertices and Edges:\n");
-
-				tempv = vertices;
-				while (tempv != NULL) {
-					tempe = tempv->edges;
-
-					printf("[%d]: ", tempv->val);
-					while (tempe != NULL) {
-						printf("-> (%d) ", tempe->vertice->val);
-						// next edge
-						tempe = tempe->next;
-					}
-
-					// next vertice
-					tempv = tempv->next;
-				}
-			}
-
-			void
-			dijkistra(int from, int to)
-			{
-				printf("Empty\n");
-			}
 			return true;
+		}
+
+		// print the graph
+		void
+		show()
+		{
+			vertice *tempv;
+			edge *tempe;
+
+			printf("Graph:\n");
+			printf("\tVertices count: %d\n", vertices_count);
+			printf("\t%s\n", directed ? "Directed" : "Un-directed");
+
+			printf("Vertices and Edges:\n");
+
+			tempv = vertices;
+			while (tempv != NULL) {
+				tempe = tempv->edges;
+
+				printf("[%d]: ", tempv->val);
+				while (tempe != NULL) {
+					printf("-> (%d) ", tempe->vertice->val);
+					// next edge
+					tempe = tempe->next;
+				}
+
+				// next vertice
+				tempv = tempv->next;
+			}
+		}
+
+		void
+		dijkistra(int from, int to)
+		{
+			printf("Empty\n");
 		}
 };
 
+int
+main(int argc, char **argv)
+{
+	return (0);
+}
