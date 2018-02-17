@@ -13,17 +13,17 @@ const char *graph_file;
 class graph {
 
 	// init params for the graph
-	int max_vertices; // The number of vertices to which the graph should goto.
+	const int max_vertices; // The number of vertices to which the graph should goto.
 	int vertices_count; // the current vertex count in the graph 
 
-	unsigned int edge_density; // Edge density: ranges between 1 - 10.
+	const unsigned int edge_density; // Edge density: ranges between 1 - 10.
 							   // 1 -> 10 percent
 							   // 2 -> 20 percent
 							   // 3 -> 30 percent
 							   // ...
 							   // 10 -> 100 percent i.e. A Complete Graph
-	unsigned int weight_range;
-	bool directed; // used when inserting edge.
+	const unsigned int weight_range;
+	const bool directed; // used when inserting edge.
 
 	struct vertice;
 	//int nedges; // not really needed
@@ -196,11 +196,10 @@ class graph {
 	public:
 		// constructor
 		graph(bool is_directed)
+		:directed(is_directed), vertices_count(0),
+		max_vertices(0), edge_density(0),
+		weight_range(0)
 		{
-			directed = is_directed;
-			vertices_count = 0;
-			max_vertices = 0;
-			directed = false;
 			vertices = NULL;
 
 			// All manually done.	
@@ -208,10 +207,10 @@ class graph {
 
 		// constructor
 		graph(char *graph_file)
+		:directed(false), vertices_count(0),
+		max_vertices(0), edge_density(0),
+		weight_range(0)
 		{
-			vertices_count = 0;
-			max_vertices = 0;
-			directed = false;
 			vertices = NULL;
 
 			/*
@@ -219,10 +218,6 @@ class graph {
 			 * Everything will get populated from the file.
 			 */
 			
-			// set the seed for rand()
-			// though not needed if we are reading the graph from a file.
-			srand(clock());
-
 			// Build the graph from the file.
 			build_graph_from_file();
 		}
@@ -230,41 +225,35 @@ class graph {
 		// constructor
 		graph(bool is_directed,
 			  int num_vertices,
-			  unsigned int density,
-			  unsigned int range_distance)
+			  unsigned int edge_density,
+			  unsigned int weight_range)
+			  :max_vertices(num_vertices),
+			  directed(is_directed),
+			  edge_density(edge_density),
+			  weight_range(weight_range)
 		{
 			vertices_count = 0;
-			max_vertices = num_vertices;
-			directed = is_directed;
 			vertices = NULL;
-			edge_density = density;
-			weight_range = range_distance;
-
-			// set the seed for rand()
-			srand(clock());
 
 			// Create the graph randomly from input parameters.
 			cout << "Creating graph with params" << endl;
 			cout << "is_directed: " << directed << endl;
 			cout << "Maximum vertices: " << max_vertices << endl;
-			cout << "Edge density: " << edge_density << endl;
-			cout << "Weight Range: " << weight_range << endl << endl;
+			cout << "Edge density: " << this->edge_density << endl;
+			cout << "Weight Range: " << this->weight_range << endl << endl;
 			
 			create_graph_randomly();
 		}
 
 		// default constructor
 		graph()
+		:vertices_count(0),
+		max_vertices(0),
+		directed(false),
+		edge_density(2), // default edge density : 20%
+		weight_range(10) // default range is 1 - 10
 		{
-			vertices_count = 0;
-			max_vertices = 0;
-			directed = false;
 			vertices = NULL;
-			edge_density = 2; // default edge density : 20%
-			weight_range = 10; // default range is 1 - 10
-
-			// set the seed for rand()
-			srand(clock());
 		}
 	
 		vertice* add_vertice(char data);
@@ -487,6 +476,10 @@ graph::create_graph_randomly(void)
 
 	cout << "Entry : create_graph_randomly" << endl << endl;
 
+	// set the seed for rand()
+	srand(time(0));
+
+
 	while (vertices_count != max_vertices) {
 	
 		// get a new vertex to add to the graph
@@ -580,6 +573,7 @@ main(int argc, char **argv)
 		exit(-1);
 
 	}
+
 	/*
 	if (argc == 2) {
 		is_directed = true;

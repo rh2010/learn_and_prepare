@@ -13,17 +13,17 @@ const char *graph_file;
 class graph {
 
 	// init params for the graph
-	int max_vertices; // The number of vertices to which the graph should goto.
+	const int max_vertices; // The number of vertices to which the graph should goto.
 	int vertices_count; // the current vertex count in the graph 
 
-	unsigned int edge_density; // Edge density: ranges between 1 - 10.
+	const unsigned int edge_density; // Edge density: ranges between 1 - 10.
 							   // 1 -> 10 percent
 							   // 2 -> 20 percent
 							   // 3 -> 30 percent
 							   // ...
 							   // 10 -> 100 percent i.e. A Complete Graph
-	unsigned int weight_range;
-	bool directed; // used when inserting edge.
+	const unsigned int weight_range;
+	const bool directed; // used when inserting edge.
 
 	struct vertice;
 	//int nedges; // not really needed
@@ -190,16 +190,13 @@ class graph {
 			  int num_vertices,
 			  unsigned int density,
 			  unsigned int range_distance)
+			  :max_vertices(num_vertices),
+			  directed(is_directed),
+			  edge_density(edge_density),
+			  weight_range(weight_range)
 		{
 			vertices_count = 0;
-			max_vertices = num_vertices;
-			directed = is_directed;
 			vertices = NULL;
-			edge_density = density;
-			weight_range = range_distance;
-
-			// set the seed for rand()
-			srand(clock());
 
 			// Create the graph randomly from input parameters.
 			cout << "Creating graph with params" << endl;
@@ -213,16 +210,13 @@ class graph {
 
 		// default constructor
 		graph()
+		:vertices_count(0),
+		max_vertices(0),
+		directed(false),
+		edge_density(2), // default edge density : 20%
+		weight_range(10) // default range is 1 - 10
 		{
-			vertices_count = 0;
-			max_vertices = 0;
-			directed = false;
 			vertices = NULL;
-			edge_density = 2; // default edge density : 20%
-			weight_range = 10; // default range is 1 - 10
-
-			// set the seed for rand()
-			srand(clock());
 		}
 	
 		vertice* add_vertice(char data);
@@ -433,6 +427,9 @@ graph::create_graph_randomly(void)
 	vertice *vertex;
 	int edges;
 	int w;
+
+	// set the seed for rand()
+	srand(time(0));
 
 	while (vertices_count != max_vertices) {
 	
