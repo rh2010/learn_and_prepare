@@ -255,6 +255,36 @@ class graph {
 		{
 			vertices = NULL;
 		}
+
+		~graph()
+		{
+			vertice *tempv;
+			vertice *prev_v;
+			edge *tempe;
+			edge *prev_e;
+
+			cout << "Destructor Start" << endl;
+			tempv = vertices;
+
+			while (tempv != NULL) {
+				tempe = tempv->edges;
+
+				while (tempe != NULL) {
+					prev_e = tempe;
+					// next edge
+					tempe = tempe->next;
+					delete prev_e;
+				}
+
+				prev_v = tempv;
+				// next vertice
+				tempv = tempv->next;
+				delete prev_v;
+			}
+			vertices = NULL;
+
+			cout << "Destructor End" << endl;
+		}
 	
 		vertice* add_vertice(char data);
 

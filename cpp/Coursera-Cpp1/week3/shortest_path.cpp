@@ -188,8 +188,8 @@ class graph {
 		// constructor
 		graph(bool is_directed,
 			  int num_vertices,
-			  unsigned int density,
-			  unsigned int range_distance)
+			  unsigned int edge_density,
+			  unsigned int weight_range)
 			  :max_vertices(num_vertices),
 			  directed(is_directed),
 			  edge_density(edge_density),
@@ -202,8 +202,8 @@ class graph {
 			cout << "Creating graph with params" << endl;
 			cout << "is_directed: " << directed << endl;
 			cout << "Maximum vertices: " << max_vertices << endl;
-			cout << "Edge density: " << edge_density << endl;
-			cout << "Weight Range: " << weight_range << endl << endl;
+			cout << "Edge density: " << this->edge_density << endl;
+			cout << "Weight Range: " << this->weight_range << endl << endl;
 			
 			create_graph_randomly();
 		}
@@ -219,6 +219,36 @@ class graph {
 			vertices = NULL;
 		}
 	
+		~graph()
+		{
+			vertice *tempv;
+			vertice *prev_v;
+			edge *tempe;
+			edge *prev_e;
+
+			cout << "Destructor Start" << endl;
+			tempv = vertices;
+
+			while (tempv != NULL) {
+				tempe = tempv->edges;
+
+				while (tempe != NULL) {
+					prev_e = tempe;
+					// next edge
+					tempe = tempe->next;
+					delete prev_e;
+				}
+
+				prev_v = tempv;
+				// next vertice
+				tempv = tempv->next;
+				delete prev_v;
+			}
+			vertices = NULL;
+
+			cout << "Destructor End" << endl;
+		}
+
 		vertice* add_vertice(char data);
 
 		bool
