@@ -4,6 +4,7 @@
 #include <cstring>
 #include <ctime>
 #include <cstdlib>
+#include <climits>
 
 using namespace std;
 
@@ -59,6 +60,12 @@ class graph {
 
 		// edges can also be a hash-map for faster lookups.
 		struct edge *edges;
+
+		// book keeping data for shortest path
+		struct sp {
+			int distance;
+			struct vertice *p;
+		} sp;
 	} *vertices;
 
 	// TODO: vertices should ideally be a hash-map
@@ -106,18 +113,6 @@ class graph {
 	}
 
 	char
-	get_second_vertex_for_edge(char s)
-	{
-		char t;
-
-		do {
-			t = get_new_vertex_value();
-		} while (t == s);
-
-		return t;
-	}
-
-	char
 	get_vertex_value(vertice *v)
 	{
 		assert(v != NULL);
@@ -140,6 +135,8 @@ class graph {
 		v->next = NULL;
 		v->edges = NULL;
 		v->is_visited = false;
+		v->sp.distance = INT_MAX; // INFINITY
+		v->sp.p = NULL; // parent is NULL
 
 		return v;
 	}
@@ -192,6 +189,53 @@ class graph {
 	build_graph_from_file(void)
 	{
 		cout << "Empty" << endl;
+	}
+
+	inline bool
+	vertex_visited(vertice *v)
+	{
+		assert(v);
+
+		return v->is_visited;
+	}
+
+	inline void
+	vertex_mark_visited(vertice *v)
+	{
+		assert(v);
+		v->is_visited = true;
+	}
+
+	int
+	vertex_distance(vertice *v)
+	{
+		assert(v);
+		return v->sp.distance;
+	}
+
+	int
+	edge_weight(edge *e)
+	{
+		assert(e);
+		return e->weight;
+	}
+
+	void
+	init_for_dijkistra(void)
+	{
+		vertice *temp;
+
+		assert(vertices);
+		temp = vertices;
+
+		while (temp != NULL) {
+			temp->is_visited = false;
+			temp->sp.distance = INT_MAX;
+			temp->sp.p = NULL;
+
+			// next
+			temp = temp->next;
+		}
 	}
 
 	public:
@@ -407,9 +451,93 @@ class graph {
 		}
 
 		void
-		dijkistra(int from, int to)
+		dijkistra(char from, char to)
 		{
-			cout << "Empty\n";
+			vertice *v_from, *v_temp;
+			vertice *v_to;
+			vertice *v; // temp vertice pointer
+			edge *e; // temp edge pointer
+			int distance;
+
+			cout << "dijkistra: Start" << endl;
+			cout << "Finding shortest path from [" << from <<
+					"] to [" << to << "]" << endl;
+
+			// init all the vertices for dijkistra shortest path.
+			init_for_dijkistra();
+
+			// get start and end vertices.
+			v_from = find_vertice(from);
+			assert(v_from);
+
+			v_to = find_vertice(to);
+			assert(v_to);
+
+			// distance of starting to starting is always 'zero'.
+			v_from->sp.distance = 0;
+
+			// starting vertex.
+			v = v_from;
+
+			while (!vertex_visited(v)) {
+				vertex_mark_visited(v);
+
+				if (v == v_to) {
+					// shortest path found.
+					// print the path and break.
+					v_temp = v_to;
+
+					cout << "Shortest Path" << endl;
+					while (v_temp != NULL) {
+						cout << v_temp->node << " <- ";
+
+						// follow the parent
+						v_temp = v_temp->sp.p;
+						if (v_temp == NULL) {
+							cout << endl << "No shortest path found." << endl;
+						}
+						if (v_temp == v_from) {
+							cout << v_temp->node << endl;
+							break;
+						}
+					}
+					break; // break the main while loop, the algo is done.
+				}
+				
+				e = v->edges;
+
+				while (e != NULL) {
+					if (vertex_distance(e->vertice) >
+						(vertex_distance(v) + edge_weight(e)) ) {
+						e->vertice->sp.distance = vertex_distance(v) + edge_weight(e);
+						e->vertice->sp.p = v;
+					}
+					e = e->next;
+				} // end of while - edges
+				
+				// find the next vertex whose distance is minimum and who is not already visited.
+				distance = INT_MAX;
+				v_temp = vertices;
+				v = v_from; // some sane initial value - if no new vertex is slected, this
+							// will help break the while loop.
+
+				while(v_temp != NULL) {
+					// if the vertex is not already visited and the distance is more than
+					// the distance of the current 'v_temp' vertex from the starting vertex
+					// then select this vertex.
+					if (!vertex_visited(v_temp) &&
+						(distance > vertex_distance(v_temp))) {
+
+						distance = vertex_distance(v_temp);
+						v = v_temp;
+		
+					}
+					v_temp = v_temp->next;
+				}
+
+			} // end of while.
+
+			cout << "dijkistra: End" << endl;
 		}
 };
 
@@ -467,6 +595,11 @@ graph::create_graph_randomly(void)
 	vertice *vertex;
 	int w;
 	double ed = (static_cast<double>(edge_density) / 100);
+
+	if ((max_vertices == 0) || (edge_density == 0) || (weight_range == 0)) {
+		cout << "Graph will be created manually" << endl;
+		return;
+	}
 
 	cout << "Entry : create_graph_randomly, Edge Density: " << ed << endl << endl;
 
