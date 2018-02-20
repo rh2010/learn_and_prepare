@@ -60,6 +60,8 @@ class graph {
 	{
 		// return a random number from 50 - 52.
 		// for now keep it fixed at 50.
+		assert(max_vertices <= 52);
+
 		return (max_vertices);
 	}
 
@@ -95,18 +97,6 @@ class graph {
 		//cout << "get_new_vertex_value: " << rand_val << "-> " << val << endl;
 
 		return val;
-	}
-
-	char
-	get_second_vertex_for_edge(char s)
-	{
-		char t;
-
-		do {
-			t = get_new_vertex_value();
-		} while (t == s);
-
-		return t;
 	}
 
 	char
@@ -328,8 +318,8 @@ class graph {
 
 
 			while (add_new_edge > 0) {
-				//printf("Adding edge: %c -> %c : %d (w)).\n",
-				//		from_vertice->node, to_vertice->node, weight);
+				printf("Adding edge: %c -> %c : %d (w)).\n",
+						from_vertice->node, to_vertice->node, weight);
 			
 				// No loops in the graph.
 				assert(to_vertice != from_vertice);
@@ -492,6 +482,16 @@ done:
 	return new_vertice;
 }
 
+double
+prob()
+{
+	double num;
+
+	num = static_cast<double>(rand() % 100 + 1); // a number between 1 - 100
+
+	return (num/100);
+}
+
 /*
  * create the graph : randomly
  */
@@ -501,59 +501,98 @@ graph::create_graph_randomly(void)
 	char v;
 	char t; // target vertex for a new edge.
 	vertice *vertex;
-	int edges;
 	int w;
+	double ed = (static_cast<double>(edge_density) / 100);
 
-	cout << "Entry : create_graph_randomly" << endl << endl;
+	cout << "Entry : create_graph_randomly, Edge Density: " << ed << endl << endl;
 
 	// set the seed for rand()
 	srand(time(0));
 
 
+	// Add all the vertices.
 	while (vertices_count != max_vertices) {
 	
 		// get a new vertex to add to the graph
 		v = get_new_vertex_value();
 		printf("[%d: %d] New Vertex: %c\n\n", vertices_count, max_vertices, v);
 
-		vertex = find_vertice(v);
-		if (vertex == NULL) {
-			// add the vertex to the graph
-			cout << "Adding vertex: " << v << endl;
-			vertex = add_vertice(v);
-			assert(vertex != NULL);
-		}
-		edges = (edge_density * max_vertices)/ 10;
-
-		if (edges <= vertex->edge_count) {
-			cout << "Vertex " << v << "  is already processed " << edges << ": Max : " << vertex->edge_count << endl;
-			// vertex already processed 
+		if (find_vertice(v)) {
+			// if the vertex is already present in the graph, continue.
 			continue;
 		}
+		cout << "Adding vertex: " << v << endl;
+		vertex = add_vertice(v);
+		assert(vertex != NULL);
+	}
 
-		cout << "Adding edges to vertex " << v << endl;
+	cout << "All [" << vertices_count << "] vertices created." << endl;
 
-		// Add edges to the vertex.
-		while (vertex->edge_count < edges) {
+	vertice *tempv;
+	int edges;
 
-			// get a new vertex to add an edge too.
-			t = get_second_vertex_for_edge(v);
-			printf("[%d: %d] %c -> %c \n", vertex->edge_count, edges, v, t);
+	tempv = vertices;
 
-			// if the edge is not already present, add the edge
+	while (tempv != NULL) {
+		edges = 0;
+
+		v = tempv->node;
+		tempv = tempv->next;
+
+		// re-set the seed for rand() for each vertex.
+		srand(time(0));
+
+		int idx;
+		for (idx = 0; idx < 52; idx++) {
+
+			if (idx < 26) {
+				// 0 - 25
+				// A - Z
+				t = static_cast<char>('A' + idx);
+			} else {
+				// 26 - 51
+				// a  - z
+				t = static_cast<char>('a' + (idx - 26));
+			}
+
+			if (v == t) {
+				continue;
+			}
+
+			if (!find_vertice(t)) {
+				// if some vertice in the range is not added, move to the next.
+				continue;
+			}
+
+			// Do we want to add this edge per probability of edge density.
+			// If not, move to the next possible edge.
+			if (prob() > ed) {
+				continue;
+			}
+
+			// if the edge is already present, move on ...
 			if (edge_present_in_vertice(vertex, t)) {
 				continue;
 			}
 
 			// get a weight to attach to the edge
 			w = get_weight();
-
-			printf("adding edge %c -> %c [%u]\n", v, t, w);
+			cout << "[" << vertex->edge_count << ": ] " << v <<
+				 " -> " << t << " " << w << " (w)." << endl;
 			// add the edge
 			add_edge(v, t, w);
 		}
+		cout << "Added " << edges << " edges to vertex " << v << endl;
 	}
-	cout << "Exit : create_graph_randomly" << endl;
+
+	edges = 0;
+	tempv = vertices;
+	while (tempv != NULL) {
+		edges += tempv->edge_count;
+		tempv = tempv->next;
+	}
+
+	cout << "Exit : create_graph_randomly with " << edges << " edges." << endl;
 }
 
 void

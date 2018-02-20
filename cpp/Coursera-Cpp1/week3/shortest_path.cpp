@@ -9,6 +9,16 @@ using namespace std;
 
 const char *graph_file;
 
+static inline double
+prob()
+{
+	double num;
+
+	num = static_cast<double>(rand() % 100 + 1); // a number between 1 - 100
+
+	return (num/100);
+}
+
 // Class for representing a graph using adjacency list.
 class graph {
 
@@ -314,8 +324,8 @@ class graph {
 				// get to the last edge.
 				while(temp->next != NULL) {
 					if (temp->vertice == to_vertice) {
-						cout << "Edge " << from << " -> " << to << " already "
-								"present : " << weight << " (w)" << endl;
+						//cout << "Edge " << from << " -> " << to << " already "
+						//		"present : " << weight << " (w)" << endl;
 
 						// free up the new edge.
 						delete(new_edge);
@@ -455,49 +465,93 @@ graph::create_graph_randomly(void)
 	char v;
 	char t; // target vertex for a new edge.
 	vertice *vertex;
-	int edges;
 	int w;
+	double ed = (static_cast<double>(edge_density) / 100);
+
+	cout << "Entry : create_graph_randomly, Edge Density: " << ed << endl << endl;
 
 	// set the seed for rand()
 	srand(time(0));
 
+	// Add all the vertices.
 	while (vertices_count != max_vertices) {
 	
 		// get a new vertex to add to the graph
 		v = get_new_vertex_value();
+		//printf("[%d: %d] New Vertex: %c\n\n", vertices_count, max_vertices, v);
 
-		vertex = find_vertice(v);
-		if (vertex == NULL) {
-			// add the vertex to the graph
-			vertex = add_vertice(v);
-			assert(vertex != NULL);
-		}
-		edges = (edge_density * max_vertices)/ 10;
-
-		if (edges <= vertex->edge_count) {
-			// vertex already processed 
+		if (find_vertice(v)) {
+			// if the vertex is already present in the graph, continue.
 			continue;
 		}
+		//cout << "Adding vertex: " << v << endl;
+		vertex = add_vertice(v);
+		assert(vertex != NULL);
+	}
 
-		// Add edges to the vertex.
-		while (vertex->edge_count < edges) {
+	vertice *tempv;
+	int edges;
 
-			// get a new vertex to add an edge too.
-			t = get_second_vertex_for_edge(v);
+	tempv = vertices;
+	while (tempv != NULL) {
+		edges = 0;
 
-			// if the edge is not already present, add the edge
+		v = tempv->node;
+		tempv = tempv->next;
+
+		// re-set the seed for rand() for each vertex.
+		srand(time(0));
+
+		int idx;
+		for (idx = 0; idx < 52; idx++) {
+
+			if (idx < 26) {
+				// 0 - 25
+				// A - Z
+				t = static_cast<char>('A' + idx);
+			} else {
+				// 26 - 51
+				// a  - z
+				t = static_cast<char>('a' + (idx - 26));
+			}
+
+			if (v == t) {
+				continue;
+			}
+
+			if (!find_vertice(t)) {
+				// if some vertice in the range is not added, move to the next.
+				continue;
+			}
+
+			// Do we want to add this edge per probability of edge density.
+			// If not, move to the next possible edge.
+			if (prob() > ed) {
+				continue;
+			}
+
+			// if the edge is already present, move on ...
 			if (edge_present_in_vertice(vertex, t)) {
 				continue;
 			}
 
 			// get a weight to attach to the edge
 			w = get_weight();
-
+			//cout << "[" << vertex->edge_count << ": ] " << v <<
+			//	 " -> " << t << w << "(w)" << endl;
 			// add the edge
 			add_edge(v, t, w);
 		}
 	}
-	cout << "Graph Creation Complete" << endl;
+
+	edges = 0;
+	tempv = vertices;
+	while (tempv != NULL) {
+		edges += tempv->edge_count;
+		tempv = tempv->next;
+	}
+
+	cout << "Exit : create_graph_randomly with " << edges << " edges." << endl;
 }
 
 void
