@@ -482,25 +482,8 @@ class graph {
 			while (!vertex_visited(v)) {
 				vertex_mark_visited(v);
 
+				// if destination is reached, print the path
 				if (v == v_to) {
-					// shortest path found.
-					// print the path and break.
-					v_temp = v_to;
-
-					cout << "Shortest Path" << endl;
-					while (v_temp != NULL) {
-						cout << v_temp->node << " <- ";
-
-						// follow the parent
-						v_temp = v_temp->sp.p;
-						if (v_temp == NULL) {
-							cout << endl << "No shortest path found." << endl;
-						}
-						if (v_temp == v_from) {
-							cout << v_temp->node << endl;
-							break;
-						}
-					}
 					break; // break the main while loop, the algo is done.
 				}
 				
@@ -521,7 +504,7 @@ class graph {
 				v = v_from; // some sane initial value - if no new vertex is slected, this
 							// will help break the while loop.
 
-				while(v_temp != NULL) {
+				while (v_temp != NULL) {
 					// if the vertex is not already visited and the distance is more than
 					// the distance of the current 'v_temp' vertex from the starting vertex
 					// then select this vertex.
@@ -536,6 +519,25 @@ class graph {
 				}
 
 			} // end of while.
+
+			// print the path.
+			v_temp = v_to;
+
+			cout << "Shortest Path" << endl;
+			while (v_temp != NULL) {
+				cout << v_temp->node << " <- ";
+
+				// follow the parent
+				v_temp = v_temp->sp.p;
+
+				if (v_temp == NULL) {
+					cout << endl << "No shortest path found." << endl;
+				}
+				if (v_temp == v_from) {
+					cout << v_temp->node << endl;
+					break;
+				}
+			}
 
 			cout << "dijkistra: End" << endl;
 		}
