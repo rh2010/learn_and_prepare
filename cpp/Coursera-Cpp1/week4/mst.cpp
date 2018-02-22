@@ -42,7 +42,7 @@ class graph {
 
 	// A vertice in the graph.
 	struct vertice {
-		char node; // either use val or node
+		int node; // either use val or node
 		//int degree;
 		int edge_count;
 		bool is_visited;
@@ -86,28 +86,28 @@ class graph {
 		return ((rand() % weight_range) + 1);
 	}
 
-	char
+	int
 	get_new_vertex_value(void)
 	{
 		// TODO: Randomly return a character between a-z or A-Z.
 		int rand_val = rand() % get_max_vertex_count();
-		char val;
+		int val = rand_val;
 
-		if (rand_val < 26) {
-			// 0 - 25
-			// A - Z
-			val = static_cast<char>('A' + rand_val);
-		} else {
-			// 26 - 51
-			// a  - z
-			val = static_cast<char>('a' + (rand_val - 26));
-		}
+		//if (rand_val < 26) {
+		//	// 0 - 25
+		//	// A - Z
+		//	val = static_cast<char>('A' + rand_val);
+		//} else {
+		//	// 26 - 51
+		//	// a  - z
+		//	val = static_cast<char>('a' + (rand_val - 26));
+		//}
 		//cout << "get_new_vertex_value: " << rand_val << "-> " << val << endl;
 
 		return val;
 	}
 
-	char
+	int
 	get_vertex_value(vertice *v)
 	{
 		assert(v != NULL);
@@ -116,7 +116,7 @@ class graph {
 	}
 
 	vertice*
-	get_new_vertice(char value)
+	get_new_vertice(int value)
 	{
 		vertice *v = new vertice;
 		if (v == NULL) {
@@ -156,7 +156,7 @@ class graph {
 	}
 
 	vertice*
-	find_vertice(char  value)
+	find_vertice(int value)
 	{
 		vertice *temp = vertices;
 
@@ -337,16 +337,16 @@ class graph {
 			cout << "Destructor End" << endl;
 		}
 	
-		vertice* add_vertice(char data);
+		vertice* add_vertice(int data);
 
 		bool
-		add_edge(char from, char to)
+		add_edge(int from, int to)
 		{
 			return add_edge(from, to, 0);
 		}
 
 		bool
-		add_edge(char from, char to, int weight)
+		add_edge(int from, int to, int weight)
 		{
 			vertice *from_vertice;
 			vertice *to_vertice;
@@ -361,7 +361,7 @@ class graph {
 
 				from_vertice = add_vertice(from);
 				if (from_vertice == NULL) {
-					printf("Error: Unable to add a new_vertice %c \n", from);
+					printf("Error: Unable to add a new_vertice %d \n", from);
 					return false;
 				}
 			}
@@ -372,14 +372,14 @@ class graph {
 
 				to_vertice = add_vertice(to);
 				if (to_vertice == NULL) {
-					printf("Error: Unable to add a new_vertice %c \n", to);
+					printf("Error: Unable to add a new_vertice %d \n", to);
 					return false;
 				}
 			}
 
 
 			while (add_new_edge > 0) {
-				printf("Adding edge: %c -> %c : %d (w)).\n",
+				printf("Adding edge: %d -> %d : %d (w)).\n",
 						from_vertice->node, to_vertice->node, weight);
 			
 				// No loops in the graph.
@@ -388,7 +388,7 @@ class graph {
 				// get the new edge.
 				new_edge = get_new_edge(to_vertice, weight);
 				if (new_edge == NULL) {
-					printf("Error: Unable to get a new edge(%c -> %c : %d (w))\n",
+					printf("Error: Unable to get a new edge(%d -> %d : %d (w))\n",
 							from, to, weight);
 					return false;
 				}
@@ -436,7 +436,7 @@ class graph {
 		}
 
 		bool
-		edge_present_in_vertice(vertice *v, char edge_val)
+		edge_present_in_vertice(vertice *v, int edge_val)
 		{
 			edge *e;
 
@@ -478,9 +478,9 @@ class graph {
 			while (tempv != NULL) {
 				tempe = tempv->edges;
 
-				printf("[%c]: ", tempv->node);
+				printf("[%d]: ", tempv->node);
 				while (tempe != NULL) {
-					printf("--{%d}-> (%c) ", tempe->weight, tempe->vertice->node);
+					printf("--{%d}-> (%d) ", tempe->weight, tempe->vertice->node);
 					// next edge
 					tempe = tempe->next;
 				}
@@ -492,7 +492,7 @@ class graph {
 		}
 
 		void
-		mst_prim(char from)
+		mst_prim(int from)
 		{
 			vertice *v_from, *v_temp;
 			vertice *v; // temp vertice pointer
@@ -559,31 +559,13 @@ class graph {
 				}
 			} // end of while.
 			cout << endl;
-			// print the path.
-			//v_temp = v_to;
-
-			//cout << "Shortest Path" << endl;
-			//while (v_temp != NULL) {
-			//	cout << v_temp->node << " <- ";
-
-			//	// follow the parent
-			//	v_temp = v_temp->sp.p;
-
-			//	if (v_temp == NULL) {
-			//		cout << endl << "No shortest path found." << endl;
-			//	}
-			//	if (v_temp == v_from) {
-			//		cout << v_temp->node << endl;
-			//		break;
-			//	}
-			//}
 
 			cout << "MST: End" << endl;
 
 		}
 
 		void
-		dijkistra(char from, char to)
+		dijkistra(int from, int to)
 		{
 			vertice *v_from, *v_temp;
 			vertice *v_to;
@@ -679,7 +661,7 @@ class graph {
  * Add a vertice in the graph.
  */
 graph::vertice*
-graph::add_vertice(char data)
+graph::add_vertice(int data)
 {
 	vertice *temp;
 	vertice *head = vertices;
@@ -736,8 +718,8 @@ prob()
 void
 graph::create_graph_randomly(void)
 {
-	char v;
-	char t; // target vertex for a new edge.
+	int v;
+	int t; // target vertex for a new edge.
 	vertice *vertex;
 	int w;
 	double ed = (static_cast<double>(edge_density) / 100);
@@ -786,8 +768,9 @@ graph::create_graph_randomly(void)
 		srand(time(0));
 
 		int idx;
-		for (idx = 0; idx < 52; idx++) {
-
+		for (idx = 0; idx < vertices_count; idx++) {
+			
+			/*
 			if (idx < 26) {
 				// 0 - 25
 				// A - Z
@@ -797,6 +780,7 @@ graph::create_graph_randomly(void)
 				// a  - z
 				t = static_cast<char>('a' + (idx - 26));
 			}
+			*/
 
 			if (v == t) {
 				continue;
@@ -858,8 +842,8 @@ main(int argc, char **argv)
 	unsigned int e_density;
 	unsigned int w_range;
 	bool done = false;
-	char value;
-	char to, from;
+	int value;
+	int to, from;
 	int w;
 
 	if (argc == 1) {
