@@ -8,8 +8,6 @@
 
 using namespace std;
 
-const char *graph_file;
-
 static inline double
 prob()
 {

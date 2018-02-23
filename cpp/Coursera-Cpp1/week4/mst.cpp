@@ -5,14 +5,14 @@
 #include <ctime>
 #include <cstdlib>
 #include <climits>
+#include <fstream>
 
 using namespace std;
-
-const char *graph_file;
 
 // Class for representing a graph using adjacency list.
 class graph {
 
+	const char *graph_file;
 	// init params for the graph
 	const int max_vertices; // The number of vertices to which the graph should goto.
 	int vertices_count; // the current vertex count in the graph 
@@ -133,7 +133,7 @@ class graph {
 		v->next = NULL;
 		v->edges = NULL;
 		v->is_visited = false;
-		printf("get_new_vertice: Created vertex [%p], value [%c]\n", v, v->node);
+		printf("get_new_vertice: Created vertex [%p], value [%d]\n", v, v->node);
 
 		return v;
 	}
@@ -177,7 +177,7 @@ class graph {
 		}
 		assert(temp == NULL);
 
-		//printf("%c not in the existing vertices.\n", value);
+		//printf("%d not in the existing vertices.\n", value);
 
 		return NULL;
 	}
@@ -186,9 +186,30 @@ class graph {
 	create_graph_randomly(void);
 
 	void
-	build_graph_from_file(void)
+	build_graph_from_file(const char *file_name)
 	{
-		cout << "Empty" << endl;
+		int s, t, w;
+		int num_vertices;
+
+		cout << "build_graph_from_file : Start" << endl;
+		
+		assert(file_name != NULL);
+
+		// open the file to read the i/p graph
+		ifstream graph_file(file_name);
+
+		// get the vertex count
+		graph_file >> num_vertices;
+
+		// add the edges
+		while (graph_file >> s >> t >> w) {
+			add_edge(s, t, w);
+		}
+		cout << "build_graph_from_file : End" << endl;
+		assert(num_vertices == vertices_count);
+
+		cout << "Max vertices: " << num_vertices << ", vertices added: " <<
+			 vertices_count << endl;
 	}
 
 	inline bool
@@ -246,42 +267,16 @@ class graph {
 
 	public:
 		// constructor
-		graph(bool is_directed)
-		:directed(is_directed), vertices_count(0),
-		max_vertices(0), edge_density(0),
-		weight_range(0)
-		{
-			vertices = NULL;
-
-			// All manually done.	
-		}
-
-		// constructor
-		graph(char *graph_file)
-		:directed(false), vertices_count(0),
-		max_vertices(0), edge_density(0),
-		weight_range(0)
-		{
-			vertices = NULL;
-
-			/*
-			 * Edge density and weight_range doesn't matter.
-			 * Everything will get populated from the file.
-			 */
-			
-			// Build the graph from the file.
-			build_graph_from_file();
-		}
-		
-		// constructor
 		graph(bool is_directed,
 			  int num_vertices,
 			  unsigned int edge_density,
-			  unsigned int weight_range)
+			  unsigned int weight_range,
+			  char *graph_file)
 			  :max_vertices(num_vertices),
 			  directed(is_directed),
 			  edge_density(edge_density),
-			  weight_range(weight_range)
+			  weight_range(weight_range),
+			  graph_file(graph_file)
 		{
 			vertices_count = 0;
 			vertices = NULL;
@@ -292,8 +287,14 @@ class graph {
 			cout << "Maximum vertices: " << max_vertices << endl;
 			cout << "Edge density: " << this->edge_density << endl;
 			cout << "Weight Range: " << this->weight_range << endl << endl;
-			
-			create_graph_randomly();
+			cout << "Graph File: " << this->graph_file << endl;
+		
+			if (graph_file) {
+				// Build the graph from the file.
+				build_graph_from_file(this->graph_file);
+			} else {
+				create_graph_randomly();
+			}
 		}
 
 		// default constructor
@@ -301,8 +302,9 @@ class graph {
 		:vertices_count(0),
 		max_vertices(0),
 		directed(false),
-		edge_density(2), // default edge density : 20%
-		weight_range(10) // default range is 1 - 10
+		edge_density(2),  // default edge density : 20%
+		weight_range(10), // default range is 1 - 10
+		graph_file(NULL)
 		{
 			vertices = NULL;
 		}
@@ -357,7 +359,7 @@ class graph {
 
 			from_vertice = find_vertice(from);
 			if (from_vertice == NULL) {
-				printf("From vertice %c present, adding it ...\n", from);
+				printf("From vertice %d present, adding it ...\n", from);
 
 				from_vertice = add_vertice(from);
 				if (from_vertice == NULL) {
@@ -368,7 +370,7 @@ class graph {
 
 			to_vertice = find_vertice(to);
 			if (to_vertice == NULL) {
-				printf("To vertice %c not present, adding it ... \n", to);
+				printf("To vertice %d not present, adding it ... \n", to);
 
 				to_vertice = add_vertice(to);
 				if (to_vertice == NULL) {
@@ -407,7 +409,7 @@ class graph {
 				// get to the last edge.
 				while(temp->next != NULL) {
 					if (temp->vertice == to_vertice) {
-						printf("Edge %c -> %c already present : %d (w)\n",
+						printf("Edge %d -> %d already present : %d (w)\n",
 								from, to, temp->weight);
 
 						// free up the new edge.
@@ -422,7 +424,7 @@ class graph {
 
 			next:
 				from_vertice->edge_count++;
-				//printf("Edge: %c -> %c : %d (w)) added.\n",
+				//printf("Edge: %d -> %d : %d (w)) added.\n",
 				//		from_vertice->node, to_vertice->node, weight);
 				add_new_edge--;
 
@@ -450,7 +452,7 @@ class graph {
 
 			while(e != NULL) {
 				if (e->vertice->node == edge_val) {
-					printf("edge_present_in_vertice: %c -> %c\n", v->node, edge_val);
+					printf("edge_present_in_vertice: %d -> %d\n", v->node, edge_val);
 					return  true;
 				}
 				e = e->next;
@@ -471,6 +473,7 @@ class graph {
 			printf("\tMax Vertices count: %u\n", max_vertices);
 			printf("\tEdge density: %u\n", edge_density);
 			printf("\tWeight range: %u\n", weight_range);
+			printf("\tGraph File: %s\n", graph_file);
 
 			printf("Vertices and Edges:\n");
 
@@ -669,7 +672,7 @@ graph::add_vertice(int data)
 	cout << "add_vertice [" << data << "] " << endl;
 
 	if (find_vertice(data)) {
-		printf("Error: vertice %c already present\n", data);
+		printf("Error: vertice %d already present\n", data);
 		return NULL;
 	}
 
@@ -697,7 +700,7 @@ graph::add_vertice(int data)
 	// done
 done:
 	vertices_count++;
-	//printf("Added vertex [%c]\n", new_vertice->node);
+	//printf("Added vertex [%d]\n", new_vertice->node);
 	cout << "[" << vertices_count <<"] Added vertex [" << data << "] " << endl;
 	return new_vertice;
 }
@@ -740,7 +743,7 @@ graph::create_graph_randomly(void)
 	
 		// get a new vertex to add to the graph
 		v = get_new_vertex_value();
-		printf("[%d: %d] New Vertex: %c\n\n", vertices_count, max_vertices, v);
+		printf("[%d: %d] New Vertex: %d\n\n", vertices_count, max_vertices, v);
 
 		if (find_vertice(v)) {
 			// if the vertex is already present in the graph, continue.
@@ -770,17 +773,7 @@ graph::create_graph_randomly(void)
 		int idx;
 		for (idx = 0; idx < vertices_count; idx++) {
 			
-			/*
-			if (idx < 26) {
-				// 0 - 25
-				// A - Z
-				t = static_cast<char>('A' + idx);
-			} else {
-				// 26 - 51
-				// a  - z
-				t = static_cast<char>('a' + (idx - 26));
-			}
-			*/
+			t = idx;
 
 			if (v == t) {
 				continue;
@@ -838,46 +831,26 @@ int
 main(int argc, char **argv)
 {
 	bool is_directed = false;
-	int num_vertices;
-	unsigned int e_density;
-	unsigned int w_range;
+	int num_vertices = 0;
+	unsigned int e_density = 0;
+	unsigned int w_range = 0;
 	bool done = false;
 	int value;
 	int to, from;
 	int w;
+	char *in_file = NULL;
 
 	if (argc == 1) {
 		cout << "usage: ./a.out <number of vertices> "
 				"<edge density> <range of edge weights>" << endl;
-		exit(-1);
+		return (-1);
 	}
 
 	// initialze the graph
-	
-	if (argc == 4) {
-		// count of vertices in the graph
-		num_vertices = atoi(argv[1]);
 
-		// density of edges
-		e_density = atoi(argv[2]);
-
-		// range of weights
-		w_range = atoi(argv[3]);
-
-	} else {
-		cout << "usage: ./a.out <number of vertices> "
-				"<edge density> <range of edge weights>" << endl;
-		exit(-1);
-
-	}
-
-	/*
 	if (argc == 2) {
-		is_directed = true;
-		graph_file = argv[1]; // just for degubbing
-		printf("Initializing the graph from file: %s\n", graph_file);
-		graph g(argv[1]);
-
+		// a graph file name must be given
+		in_file = argv[1];
 	} else if (argc == 4) {
 		// count of vertices in the graph
 		num_vertices = atoi(argv[1]);
@@ -888,13 +861,13 @@ main(int argc, char **argv)
 		// range of weights
 		w_range = atoi(argv[3]);
 
-		graph g(is_directed, num_vertices, e_density, w_range);
 	} else {
-		printf("Initializing an Un-Directed graph\n");
-		graph g(is_directed);
-	}*/
+		cout << "usage: ./a.out <number of vertices> "
+				"<edge density> <range of edge weights>" << endl;
+		return (-1);
+	}
 
-	graph g(is_directed, num_vertices, e_density, w_range);
+	graph g(is_directed, num_vertices, e_density, w_range, in_file);
 
 	int choice;
 
