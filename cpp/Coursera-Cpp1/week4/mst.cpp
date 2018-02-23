@@ -89,22 +89,9 @@ class graph {
 	int
 	get_new_vertex_value(void)
 	{
-		// TODO: Randomly return a character between a-z or A-Z.
 		int rand_val = rand() % get_max_vertex_count();
-		int val = rand_val;
 
-		//if (rand_val < 26) {
-		//	// 0 - 25
-		//	// A - Z
-		//	val = static_cast<char>('A' + rand_val);
-		//} else {
-		//	// 26 - 51
-		//	// a  - z
-		//	val = static_cast<char>('a' + (rand_val - 26));
-		//}
-		//cout << "get_new_vertex_value: " << rand_val << "-> " << val << endl;
-
-		return val;
+		return rand_val;
 	}
 
 	int
@@ -120,7 +107,7 @@ class graph {
 	{
 		vertice *v = new vertice;
 		if (v == NULL) {
-			printf("Error: Unable to get memory for vertice\n");
+			cout << "Error: Unable to get memory for vertice\n";
 			return NULL;
 		}
 
@@ -133,7 +120,6 @@ class graph {
 		v->next = NULL;
 		v->edges = NULL;
 		v->is_visited = false;
-		printf("get_new_vertice: Created vertex [%p], value [%d]\n", v, v->node);
 
 		return v;
 	}
@@ -144,7 +130,7 @@ class graph {
 	{
 		edge *e = new edge;
 		if (e == NULL) {
-			printf("Error: Unable to allocate memory for edge\n");
+			cout << "Error: Unable to allocate memory for edge\n";
 			return NULL;
 		}
 
@@ -170,14 +156,11 @@ class graph {
 
 		while (temp != NULL) {
 			if (temp->node == value) {
-				//printf("Found vertice %d : %p\n", value, temp);
 				return temp;
 			}
 			temp = temp->next;
 		}
 		assert(temp == NULL);
-
-		//printf("%d not in the existing vertices.\n", value);
 
 		return NULL;
 	}
@@ -286,8 +269,8 @@ class graph {
 			cout << "is_directed: " << directed << endl;
 			cout << "Maximum vertices: " << max_vertices << endl;
 			cout << "Edge density: " << this->edge_density << endl;
-			cout << "Weight Range: " << this->weight_range << endl << endl;
-			cout << "Graph File: " << this->graph_file << endl;
+			cout << "Weight Range: " << this->weight_range << endl;
+			cout << "Graph File: " << (this->graph_file?this->graph_file:"NULL") << endl << endl;;
 		
 			if (graph_file) {
 				// Build the graph from the file.
@@ -316,7 +299,6 @@ class graph {
 			edge *tempe;
 			edge *prev_e;
 
-			cout << "Destructor Start" << endl;
 			tempv = vertices;
 
 			while (tempv != NULL) {
@@ -335,8 +317,6 @@ class graph {
 				delete prev_v;
 			}
 			vertices = NULL;
-
-			cout << "Destructor End" << endl;
 		}
 	
 		vertice* add_vertice(int data);
@@ -359,30 +339,26 @@ class graph {
 
 			from_vertice = find_vertice(from);
 			if (from_vertice == NULL) {
-				printf("From vertice %d present, adding it ...\n", from);
 
 				from_vertice = add_vertice(from);
 				if (from_vertice == NULL) {
-					printf("Error: Unable to add a new_vertice %d \n", from);
+					cout << "Error: Unable to add a new_vertice " << from << endl;
 					return false;
 				}
 			}
 
 			to_vertice = find_vertice(to);
 			if (to_vertice == NULL) {
-				printf("To vertice %d not present, adding it ... \n", to);
 
 				to_vertice = add_vertice(to);
 				if (to_vertice == NULL) {
-					printf("Error: Unable to add a new_vertice %d \n", to);
+					cout << "Error: Unable to add a new_vertice "<< to << " \n";
 					return false;
 				}
 			}
 
 
 			while (add_new_edge > 0) {
-				printf("Adding edge: %d -> %d : %d (w)).\n",
-						from_vertice->node, to_vertice->node, weight);
 			
 				// No loops in the graph.
 				assert(to_vertice != from_vertice);
@@ -390,8 +366,8 @@ class graph {
 				// get the new edge.
 				new_edge = get_new_edge(to_vertice, weight);
 				if (new_edge == NULL) {
-					printf("Error: Unable to get a new edge(%d -> %d : %d (w))\n",
-							from, to, weight);
+					cout << "Error: Unable to get a new edge(" << from << 
+							" -> " << to << " : " << weight << " (w))\n";
 					return false;
 				}
 
@@ -409,8 +385,6 @@ class graph {
 				// get to the last edge.
 				while(temp->next != NULL) {
 					if (temp->vertice == to_vertice) {
-						printf("Edge %d -> %d already present : %d (w)\n",
-								from, to, temp->weight);
 
 						// free up the new edge.
 						delete(new_edge);
@@ -424,8 +398,6 @@ class graph {
 
 			next:
 				from_vertice->edge_count++;
-				//printf("Edge: %d -> %d : %d (w)) added.\n",
-				//		from_vertice->node, to_vertice->node, weight);
 				add_new_edge--;
 
 				// swap to and from pointers to add the reverse edge incase of un-directed graph.
@@ -452,7 +424,6 @@ class graph {
 
 			while(e != NULL) {
 				if (e->vertice->node == edge_val) {
-					printf("edge_present_in_vertice: %d -> %d\n", v->node, edge_val);
 					return  true;
 				}
 				e = e->next;
@@ -467,27 +438,28 @@ class graph {
 			vertice *tempv;
 			edge *tempe;
 
-			printf("Graph:\n");
-			printf("\tVertices count: %d\n", vertices_count);
-			printf("\t%s\n", directed ? "Directed" : "Un-directed");
-			printf("\tMax Vertices count: %u\n", max_vertices);
-			printf("\tEdge density: %u\n", edge_density);
-			printf("\tWeight range: %u\n", weight_range);
-			printf("\tGraph File: %s\n", graph_file);
+			cout << "Graph:\n";
+			cout << "\tVertices count: %d\n", vertices_count;
+			cout << "\t%s\n", directed ? "Directed" : "Un-directed";
+			cout << "\tMax Vertices count: %u\n", max_vertices;
+			cout << "\tEdge density: %u\n", edge_density;
+			cout << "\tWeight range: %u\n", weight_range;
+			cout << "\tGraph File: %s\n", graph_file;
 
-			printf("Vertices and Edges:\n");
+			cout << "Vertices and Edges:\n";
 
 			tempv = vertices;
 			while (tempv != NULL) {
 				tempe = tempv->edges;
 
-				printf("[%d]: ", tempv->node);
+				cout << "[" << tempv->node << "]: ";
 				while (tempe != NULL) {
-					printf("--{%d}-> (%d) ", tempe->weight, tempe->vertice->node);
+					cout << "--{" << tempe->weight << "}-> ("
+						 << tempe->vertice->node << ") \n";
 					// next edge
 					tempe = tempe->next;
 				}
-				printf("\n");
+				cout << endl;
 
 				// next vertice
 				tempv = tempv->next;
@@ -669,16 +641,14 @@ graph::add_vertice(int data)
 	vertice *temp;
 	vertice *head = vertices;
 
-	cout << "add_vertice [" << data << "] " << endl;
-
 	if (find_vertice(data)) {
-		printf("Error: vertice %d already present\n", data);
+		cout << "Error: vertice " << data << " already present\n";
 		return NULL;
 	}
 
 	vertice *new_vertice = get_new_vertice(data);
 	if (new_vertice == NULL) {
-		printf("Error: Failed to get a new vertice\n");
+		cout << "Error: Failed to get a new vertice\n";
 		exit(-1);
 	}
 
@@ -700,8 +670,6 @@ graph::add_vertice(int data)
 	// done
 done:
 	vertices_count++;
-	//printf("Added vertex [%d]\n", new_vertice->node);
-	cout << "[" << vertices_count <<"] Added vertex [" << data << "] " << endl;
 	return new_vertice;
 }
 
@@ -743,13 +711,11 @@ graph::create_graph_randomly(void)
 	
 		// get a new vertex to add to the graph
 		v = get_new_vertex_value();
-		printf("[%d: %d] New Vertex: %d\n\n", vertices_count, max_vertices, v);
 
 		if (find_vertice(v)) {
 			// if the vertex is already present in the graph, continue.
 			continue;
 		}
-		cout << "Adding vertex: " << v << endl;
 		vertex = add_vertice(v);
 		assert(vertex != NULL);
 	}
@@ -797,12 +763,9 @@ graph::create_graph_randomly(void)
 
 			// get a weight to attach to the edge
 			w = get_weight();
-			cout << "[" << vertex->edge_count << ": ] " << v <<
-				 " -> " << t << " " << w << " (w)." << endl;
 			// add the edge
 			add_edge(v, t, w);
 		}
-		cout << "Added " << edges << " edges to vertex " << v << endl;
 	}
 
 	edges = 0;
@@ -811,20 +774,19 @@ graph::create_graph_randomly(void)
 		edges += tempv->edge_count;
 		tempv = tempv->next;
 	}
-
 	cout << "Exit : create_graph_randomly with " << edges << " edges." << endl;
 }
 
 void
 show_menu()
 {
-	printf("1. Add vertice\n");
-	printf("2. Add Edge\n");
-	printf("3. Display graph\n");
-	printf("4. Shortest path\n");
-	printf("5. Minimum Spanning Tree\n");
-	printf("0. Exit\n");
-	printf("Enter choice: ");
+	cout << "1. Add vertice" << endl;
+	cout << "2. Add Edge" << endl;
+	cout << "3. Display graph" << endl;
+	cout << "4. Shortest path" << endl;
+	cout << "5. Minimum Spanning Tree" << endl;
+	cout << "0. Exit" << endl;
+	cout << "Enter choice: ";
 }
 
 int
@@ -879,13 +841,13 @@ main(int argc, char **argv)
 
 		switch (choice) {
 			case 1:
-				printf("Vertice to add: ");
+				cout << "Vertice to add: ";
 				cin >> value;
 				g.add_vertice(value);
 				break;
 
 			case 2:
-				printf("Edge to add (from, to): ");
+				cout << "Edge to add (from, to): ";
 				cin >> from >> to >> w;
 				g.add_edge(from, to, w);
 				break;
@@ -895,23 +857,23 @@ main(int argc, char **argv)
 				break;
 
 			case 4:
-				printf("Shortest path between (from, to): ");
+				cout << "Shortest path between (from, to): ";
 				cin >> from >> to;
 				g.dijkistra(from, to);
 				break;
 
 			case 5:
-				printf("MST starting from: ");
+				cout << "MST starting from: ";
 				cin >> from;
 				g.mst_prim(from);
 				break;
 
 			case 0:
 				done = true;
-				printf("Exiting ...\n");
+				cout << "Exiting ...\n";
 				break;
 			default:
-				printf("Unknown option, try again\n");
+				cout << "Unknown option, try again\n";
 				break;
 		}
 	}
