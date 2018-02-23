@@ -25,12 +25,12 @@ class graph {
 	const int max_vertices; // The number of vertices to which the graph should goto.
 	int vertices_count; // the current vertex count in the graph 
 
-	const unsigned int edge_density; // Edge density: ranges between 1 - 10.
-							   // 1 -> 10 percent
-							   // 2 -> 20 percent
-							   // 3 -> 30 percent
+	const unsigned int edge_density; // Edge density: ranges between 1 - 100.
+							   // 11 -> .11 probability of an edge to exist in the graph.
+							   // 23 -> .23 probability
 							   // ...
-							   // 10 -> 100 percent i.e. A Complete Graph
+							   // 100 -> 1 probability i.e. A Complete Graph .. all the edges are
+                               // present in the graph.
 	const unsigned int weight_range;
 	const bool directed; // used when inserting edge.
 
