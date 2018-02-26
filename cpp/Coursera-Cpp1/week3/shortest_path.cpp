@@ -11,11 +11,7 @@ using namespace std;
 static inline double
 prob()
 {
-	double num;
-
-	num = static_cast<double>(rand() % 100 + 1); // a number between 1 - 100
-
-	return (num/100);
+	return (static_cast<double>(rand()) / RAND_MAX);
 }
 
 // Class for representing a graph using adjacency list.
