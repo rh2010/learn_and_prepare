@@ -439,12 +439,12 @@ class graph {
 			edge *tempe;
 
 			cout << "Graph:\n";
-			cout << "\tVertices count: %d\n", vertices_count;
-			cout << "\t%s\n", directed ? "Directed" : "Un-directed";
-			cout << "\tMax Vertices count: %u\n", max_vertices;
-			cout << "\tEdge density: %u\n", edge_density;
-			cout << "\tWeight range: %u\n", weight_range;
-			cout << "\tGraph File: %s\n", graph_file;
+			cout << "\tVertices count: " << vertices_count << endl;
+			cout << "\t" << (directed ? "Directed" : "Un-directed") << endl;
+			cout << "\tMax Vertices count: " << max_vertices << endl;
+			cout << "\tEdge density: " << edge_density << endl;
+			cout << "\tWeight range: " << weight_range << endl;
+			cout << "\tGraph File: " << (graph_file ? graph_file : "Null") << endl;
 
 			cout << "Vertices and Edges:\n";
 
@@ -455,7 +455,7 @@ class graph {
 				cout << "[" << tempv->node << "]: ";
 				while (tempe != NULL) {
 					cout << "--{" << tempe->weight << "}-> ("
-						 << tempe->vertice->node << ") \n";
+						 << tempe->vertice->node << ") ";
 					// next edge
 					tempe = tempe->next;
 				}
