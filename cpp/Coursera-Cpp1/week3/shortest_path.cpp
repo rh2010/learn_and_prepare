@@ -168,12 +168,6 @@ class graph {
 	void
 	create_graph_randomly(void);
 
-	void
-	build_graph_from_file(void)
-	{
-		cout << "Empty" << endl;
-	}
-
 	inline bool
 	vertex_visited(vertice *v)
 	{
@@ -263,7 +257,6 @@ class graph {
 			edge *tempe;
 			edge *prev_e;
 
-			cout << "Destructor Start" << endl;
 			tempv = vertices;
 
 			while (tempv != NULL) {
@@ -282,8 +275,6 @@ class graph {
 				delete prev_v;
 			}
 			vertices = NULL;
-
-			cout << "Destructor End" << endl;
 		}
 
 		vertice* add_vertice(int data);
@@ -351,9 +342,6 @@ class graph {
 				// get to the last edge.
 				while(temp->next != NULL) {
 					if (temp->vertice == to_vertice) {
-						//cout << "Edge " << from << " -> " << to << " already "
-						//		"present : " << weight << " (w)" << endl;
-
 						// free up the new edge.
 						delete(new_edge);
 						return false;
@@ -433,7 +421,11 @@ class graph {
 			}
 		}
 
-		void
+		/*
+		 * Return the path length for the shortest path found.
+		 * Else, return -1 for no path found to the destination node.
+		 */
+		int
 		dijkistra(int from, int to)
 		{
 			vertice *v_from, *v_temp;
@@ -441,10 +433,6 @@ class graph {
 			vertice *v; // temp vertice pointer
 			edge *e; // temp edge pointer
 			int distance;
-
-			cout << "dijkistra: Start" << endl;
-			cout << "Finding shortest path from [" << from <<
-					"] to [" << to << "]" << endl;
 
 			// init all the vertices for dijkistra shortest path.
 			init_for_dijkistra();
@@ -505,6 +493,7 @@ class graph {
 
 			// print the path.
 			v_temp = v_to;
+			int path_length = 0;
 
 			cout << "Shortest Path" << endl;
 			while (v_temp != NULL) {
@@ -513,8 +502,12 @@ class graph {
 				// follow the parent
 				v_temp = v_temp->sp.p;
 
+				// increment for each hop made.
+				path_length++;
+
 				if (v_temp == NULL) {
 					cout << endl << "No shortest path found." << endl;
+					return (-1);
 				}
 				if (v_temp == v_from) {
 					cout << v_temp->node << endl;
@@ -522,7 +515,13 @@ class graph {
 				}
 			}
 
-			cout << "dijkistra: End" << endl;
+			return path_length;
+		}
+
+		int
+		get_vertice_count(void)
+		{
+			return vertices_count;
 		}
 };
 
@@ -565,7 +564,6 @@ graph::add_vertice(int data)
 	// done
 done:
 	vertices_count++;
-	//cout << "[" << vertices_count <<"] Added vertex [" << data << "] " << endl;
 	return new_vertice;
 }
 
@@ -603,7 +601,6 @@ graph::create_graph_randomly(void)
 			continue;
 		}
 
-		//cout << "Adding vertex: " << v << endl;
 		vertex = add_vertice(v);
 		assert(vertex != NULL);
 	}
@@ -644,8 +641,7 @@ graph::create_graph_randomly(void)
 
 			// get a weight to attach to the edge
 			w = get_weight();
-			//cout << "[" << vertex->edge_count << ": ] " << v <<
-			//	 " -> " << t << w << "(w)" << endl;
+
 			// add the edge
 			add_edge(v, t, w);
 		}
@@ -732,13 +728,35 @@ main(int argc, char **argv)
 			case 4:
 				cout << "Shortest path between (from, to): ";
 				cin >> from >> to;
+				cout << "( " << from << ", " << to << ")" << endl;
 				g.dijkistra(from, to);
 				break;
 
 			case 5:
 				cout << "Homework Week 3";
-				cin >> from >> to;
-				g.dijkistra(from, to);
+				int idx;
+				int path_length;
+				int sum;
+				int count;
+
+				from = 1; // starting node.
+				count = 0; // to count how many nodes we can reach
+				sum = 0;
+				for (idx = from+1; idx <= g.get_vertice_count(); idx++) {
+					// idx is the to node.
+					path_length = g.dijkistra(from, idx);
+					// path_length -1 means there is not path from 'from' to
+					// 'idx'
+					if (path_length != -1) {
+						cout << "Shortest path length from " << from <<
+							 " to " << idx << ": " << path_length << endl;
+						sum += path_length;
+						count++;
+					}
+
+				}
+				cout << "Average path length: " << (static_cast<double>(sum))/count << endl;
+
 				break;
 
 			case 0:
