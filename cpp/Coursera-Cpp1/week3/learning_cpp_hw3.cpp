@@ -22,7 +22,7 @@ class graph {
 
 	// init params for the graph
 	const int max_vertices; // The number of vertices to which the graph should goto.
-	int vertices_count; // the current vertex count in the graph 
+	int vertices_count; // the current vertex count in the graph
 
 	const unsigned int edge_density; // Edge density: ranges between 1 - 100.
 							   // 11 -> .11 probability of an edge to exist in the graph.
@@ -147,11 +147,11 @@ class graph {
 		vertice *temp = vertices;
 
 		if (vertices == NULL) {
-			return NULL;	
+			return NULL;
 		}
 
 		if (vertices_count == 0) {
-			return NULL;	
+			return NULL;
 		}
 
 		while (temp != NULL) {
@@ -167,12 +167,6 @@ class graph {
 
 	void
 	create_graph_randomly(void);
-
-	void
-	build_graph_from_file(void)
-	{
-		cout << "Empty" << endl;
-	}
 
 	inline bool
 	vertex_visited(vertice *v)
@@ -241,7 +235,7 @@ class graph {
 			cout << "Maximum vertices: " << max_vertices << endl;
 			cout << "Edge density: " << this->edge_density << endl;
 			cout << "Weight Range: " << this->weight_range << endl << endl;
-			
+
 			create_graph_randomly();
 		}
 
@@ -255,7 +249,7 @@ class graph {
 		{
 			vertices = NULL;
 		}
-	
+
 		~graph()
 		{
 			vertice *tempv;
@@ -329,7 +323,7 @@ class graph {
 				// get the new edge.
 				new_edge = get_new_edge(to_vertice, weight);
 				if (new_edge == NULL) {
-					cout << "Error: Unable to get a new edge(" << from << 
+					cout << "Error: Unable to get a new edge(" << from <<
 							" -> " << to << " :  (" << weight << ")" << endl;
 					return false;
 				}
@@ -396,40 +390,6 @@ class graph {
 			return false;
 		}
 
-		// print the graph
-		void
-		show()
-		{
-			vertice *tempv;
-			edge *tempe;
-
-			cout << "Graph:\n";
-			cout << "\tVertices count: " << vertices_count << endl;
-			cout << "\t" << (directed ? "Directed" : "Un-directed") << endl;
-			cout << "\tMax Vertices count: " << max_vertices << endl;
-			cout << "\tEdge density: " << edge_density << endl;
-			cout << "\tWeight range: " << weight_range << endl;
-
-			cout << "Vertices and Edges:" << endl;
-
-			tempv = vertices;
-			while (tempv != NULL) {
-				tempe = tempv->edges;
-
-				cout << "["<< tempv->node <<"]: ";
-				while (tempe != NULL) {
-					cout << "--{"<< tempe->weight <<"}-> ("<<
-						 tempe->vertice->node << ") ";
-					// next edge
-					tempe = tempe->next;
-				}
-				cout << endl;
-
-				// next vertice
-				tempv = tempv->next;
-			}
-		}
-
 		/*
 		 * Return the path length for the shortest path found.
 		 * Else, return -1 for no path found to the destination node.
@@ -442,10 +402,6 @@ class graph {
 			vertice *v; // temp vertice pointer
 			edge *e; // temp edge pointer
 			int distance;
-
-			//cout << "dijkistra: Start" << endl;
-			//cout << "Finding shortest path from [" << from <<
-			//		"] to [" << to << "]" << endl;
 
 			// init all the vertices for dijkistra shortest path.
 			init_for_dijkistra();
@@ -470,7 +426,7 @@ class graph {
 				if (v == v_to) {
 					break; // break the main while loop, the algo is done.
 				}
-				
+
 				e = v->edges;
 
 				while (e != NULL) {
@@ -481,7 +437,7 @@ class graph {
 					}
 					e = e->next;
 				} // end of while - edges
-				
+
 				// find the next vertex whose distance is minimum and who is not already visited.
 				distance = INT_MAX;
 				v_temp = vertices;
@@ -497,7 +453,6 @@ class graph {
 
 						distance = vertex_distance(v_temp);
 						v = v_temp;
-		
 					}
 					v_temp = v_temp->next;
 				}
@@ -521,12 +476,10 @@ class graph {
 					return (-1);
 				}
 				if (v_temp == v_from) {
-					//cout << v_temp->node << endl;
 					break;
 				}
 			}
 
-			//cout << "dijkistra: End" << endl;
 			return path_length;
 		}
 
@@ -576,7 +529,6 @@ graph::add_vertice(int data)
 	// done
 done:
 	vertices_count++;
-	//cout << "[" << vertices_count <<"] Added vertex [" << data << "] " << endl;
 	return new_vertice;
 }
 
@@ -605,7 +557,7 @@ graph::create_graph_randomly(void)
 	int idx;
 	// Add all the vertices.
 	for (idx = 1; idx <= max_vertices; idx++) {
-	
+
 		// get a new vertex to add to the graph
 		v = idx;
 
@@ -614,7 +566,6 @@ graph::create_graph_randomly(void)
 			continue;
 		}
 
-		//cout << "Adding vertex: " << v << endl;
 		vertex = add_vertice(v);
 		assert(vertex != NULL);
 	}
@@ -655,8 +606,7 @@ graph::create_graph_randomly(void)
 
 			// get a weight to attach to the edge
 			w = get_weight();
-			//cout << "[" << vertex->edge_count << ": ] " << v <<
-			//	 " -> " << t << w << "(w)" << endl;
+
 			// add the edge
 			add_edge(v, t, w);
 		}
@@ -668,7 +618,6 @@ graph::create_graph_randomly(void)
 		edges += tempv->edge_count;
 		tempv = tempv->next;
 	}
-
 	cout << "Exit : create_graph_randomly with " << edges << " edges." << endl;
 }
 
@@ -704,7 +653,6 @@ main(int argc, char **argv)
 
 	graph g(is_directed, num_vertices, e_density, w_range);
 
-	cout << "Homework Week 3" << endl;
 	int idx;
 	int path_length;
 	int sum;
@@ -716,11 +664,9 @@ main(int argc, char **argv)
 	for (idx = from+1; idx <= g.get_vertice_count(); idx++) {
 		// idx is the to node.
 		path_length = g.dijkistra(from, idx);
-		// path_length -1 means there is not path from 'from' to 
+		// path_length -1 means there is not path from 'from' to
 		// 'idx'
 		if (path_length != -1) {
-			//cout << "Shortest path length from " << from << 
-			//	 " to " << idx << ": " << path_length << endl;
 			sum += path_length;
 			count++;
 		}
