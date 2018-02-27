@@ -13,7 +13,6 @@ prob()
 {
 	double p;
 	p = (static_cast<double>(rand()) / RAND_MAX);
-	cout << "Prob: " << p << endl;
 
 	return p;
 }
