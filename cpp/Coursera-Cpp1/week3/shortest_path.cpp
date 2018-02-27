@@ -11,7 +11,11 @@ using namespace std;
 static inline double
 prob()
 {
-	return (static_cast<double>(rand()) / RAND_MAX);
+	double p;
+	p = (static_cast<double>(rand()) / RAND_MAX);
+	cout << "Prob: " << p << endl;
+
+	return p;
 }
 
 // Class for representing a graph using adjacency list.
@@ -46,8 +50,7 @@ class graph {
 
 	// A vertice in the graph.
 	struct vertice {
-		char node; // either use val or node
-		//int degree;
+		int node; // for storing data.
 		int edge_count;
 		bool is_visited;
 		struct vertice *next;
@@ -87,26 +90,13 @@ class graph {
 		return ((rand() % weight_range) + 1);
 	}
 
-	char
+	int
 	get_new_vertex_value(void)
 	{
-		int rand_val = rand() % get_max_vertex_count();
-		char val;
-
-		if (rand_val < 26) {
-			// 0 - 25
-			// A - Z
-			val = static_cast<char>('A' + rand_val);
-		} else {
-			// 26 - 51
-			// a  - z
-			val = static_cast<char>('a' + (rand_val - 26));
-		}
-
-		return val;
+		return (rand() % get_max_vertex_count());
 	}
 
-	char
+	int
 	get_vertex_value(vertice *v)
 	{
 		assert(v != NULL);
@@ -115,7 +105,7 @@ class graph {
 	}
 
 	vertice*
-	get_new_vertice(char value)
+	get_new_vertice(int value)
 	{
 		vertice *v = new vertice;
 		if (v == NULL) {
@@ -153,7 +143,7 @@ class graph {
 	}
 
 	vertice*
-	find_vertice(char  value)
+	find_vertice(int value)
 	{
 		vertice *temp = vertices;
 
@@ -297,16 +287,16 @@ class graph {
 			cout << "Destructor End" << endl;
 		}
 
-		vertice* add_vertice(char data);
+		vertice* add_vertice(int data);
 
 		bool
-		add_edge(char from, char to)
+		add_edge(int from, int to)
 		{
 			return add_edge(from, to, 0);
 		}
 
 		bool
-		add_edge(char from, char to, int weight)
+		add_edge(int from, int to, int weight)
 		{
 			vertice *from_vertice;
 			vertice *to_vertice;
@@ -389,7 +379,7 @@ class graph {
 		}
 
 		bool
-		edge_present_in_vertice(vertice *v, char edge_val)
+		edge_present_in_vertice(vertice *v, int edge_val)
 		{
 			edge *e;
 
@@ -445,7 +435,7 @@ class graph {
 		}
 
 		void
-		dijkistra(char from, char to)
+		dijkistra(int from, int to)
 		{
 			vertice *v_from, *v_temp;
 			vertice *v_to;
@@ -541,7 +531,7 @@ class graph {
  * Add a vertice in the graph.
  */
 graph::vertice*
-graph::add_vertice(char data)
+graph::add_vertice(int data)
 {
 	vertice *temp;
 	vertice *head = vertices;
@@ -586,8 +576,8 @@ done:
 void
 graph::create_graph_randomly(void)
 {
-	char v;
-	char t; // target vertex for a new edge.
+	int v;
+	int t; // target vertex for a new edge.
 	vertice *vertex;
 	int w;
 	double ed = (static_cast<double>(edge_density) / 100);
@@ -602,21 +592,24 @@ graph::create_graph_randomly(void)
 	// set the seed for rand()
 	srand(time(0));
 
+	int idx;
 	// Add all the vertices.
-	while (vertices_count != max_vertices) {
+	for (idx = 1; idx <= max_vertices; idx++) {
 	
 		// get a new vertex to add to the graph
-		v = get_new_vertex_value();
-		//printf("[%d: %d] New Vertex: %c\n\n", vertices_count, max_vertices, v);
+		v = idx;
 
 		if (find_vertice(v)) {
 			// if the vertex is already present in the graph, continue.
 			continue;
 		}
+
 		//cout << "Adding vertex: " << v << endl;
 		vertex = add_vertice(v);
 		assert(vertex != NULL);
 	}
+
+	assert (vertices_count == max_vertices);
 
 	vertice *tempv;
 	int edges;
@@ -631,25 +624,11 @@ graph::create_graph_randomly(void)
 		// re-set the seed for rand() for each vertex.
 		srand(time(0));
 
-		int idx;
-		for (idx = 0; idx < 52; idx++) {
+		for (idx = 1; idx <= vertices_count; idx++) {
 
-			if (idx < 26) {
-				// 0 - 25
-				// A - Z
-				t = static_cast<char>('A' + idx);
-			} else {
-				// 26 - 51
-				// a  - z
-				t = static_cast<char>('a' + (idx - 26));
-			}
+			t = idx;
 
 			if (v == t) {
-				continue;
-			}
-
-			if (!find_vertice(t)) {
-				// if some vertice in the range is not added, move to the next.
 				continue;
 			}
 
@@ -690,6 +669,7 @@ show_menu()
 	cout << "2. Add Edge\n";
 	cout << "3. Display graph\n";
 	cout << "4. Shortest path\n";
+	cout << "5. Homework Week3\n";
 	cout << "0. Exit\n";
 	cout << "Enter choice: ";
 }
@@ -702,8 +682,8 @@ main(int argc, char **argv)
 	unsigned int e_density;
 	unsigned int w_range;
 	bool done = false;
-	char value;
-	char to, from;
+	int value;
+	int to, from;
 	int w;
 
 	// initialze the graph
@@ -752,6 +732,12 @@ main(int argc, char **argv)
 
 			case 4:
 				cout << "Shortest path between (from, to): ";
+				cin >> from >> to;
+				g.dijkistra(from, to);
+				break;
+
+			case 5:
+				cout << "Homework Week 3";
 				cin >> from >> to;
 				g.dijkistra(from, to);
 				break;
