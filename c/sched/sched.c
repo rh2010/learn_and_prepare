@@ -59,8 +59,17 @@ int solve(int uplen, int downlen, int totalcost, int wherehead, int bestsofar, i
         sol_so_far[sol_len++] = curmove;
     }
 
+    // if no elements present in UP
+    // (OR)
+    // there are elements in both up and down AND cost of going down is cheaper
+    //  Then, go DOWN
+    //
+    //  In the cost calculation we are adding total number of requests that are
+    //  waiting, this is because, what were step we take - the cost of that is
+    //  felt by all the waiting requests.
     if (uplen == 0 || (downlen > 0 && uplen > 0 && 
       	     wherehead - downlist[downlen-1] < uplist[uplen-1] - wherehead )) {
+        // picking a request from down queue.
         sol1 = solve(uplen, downlen-1, 
       	             totalcost + (wherehead - downlist[downlen-1]) * (uplen+downlen), 
       	             downlist[downlen-1], bestsofar, DOWN);
@@ -74,6 +83,9 @@ int solve(int uplen, int downlen, int totalcost, int wherehead, int bestsofar, i
             bestsofar = MIN(bestsofar, sol2);
         }
     } else {
+        // if there is some request in up queue
+        // (OR)
+        // going up is cheaper, then, go UP.
         sol1 = solve(uplen-1, downlen, 
                      totalcost + (uplist[uplen-1] - wherehead) * (uplen+downlen), 
                      uplist[uplen-1], bestsofar, UP);
