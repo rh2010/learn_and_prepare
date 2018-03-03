@@ -17,6 +17,39 @@ prob()
 	return p;
 }
 
+struct vertice;
+
+// An edge in the graph.
+struct edge {
+	int weight; // an edge might or might not have a weight associated with it.
+
+	// pointer to the next edge from the same vertice.
+	struct edge *next;
+
+	// pointer to the other vertice which this edge consists of.
+	struct vertice *vertice;
+};
+
+// An vertice
+//
+// A vertice in the graph.
+struct vertice {
+	int node; // for storing data.
+	int edge_count;
+	bool is_visited;
+	struct vertice *next;
+
+	// edges can also be a hash-map for faster lookups.
+	struct edge *edges;
+
+	// book keeping data for shortest path
+	struct sp {
+		int distance;
+		struct vertice *p;
+	} sp;
+};
+
+//
 // Class for representing a graph using adjacency list.
 class graph {
 
@@ -33,40 +66,10 @@ class graph {
 	const unsigned int weight_range;
 	const bool directed; // used when inserting edge.
 
-	struct vertice;
-	//int nedges; // not really needed
-
-	// An edge in the graph.
-	struct edge {
-		int weight; // an edge might or might not have a weight associated with it.
-
-		// pointer to the next edge from the same vertice.
-		struct edge *next;
-
-		// pointer to the other vertice which this edge consists of.
-		struct vertice *vertice;
-	};
-
-	// A vertice in the graph.
-	struct vertice {
-		int node; // for storing data.
-		int edge_count;
-		bool is_visited;
-		struct vertice *next;
-
-		// edges can also be a hash-map for faster lookups.
-		struct edge *edges;
-
-		// book keeping data for shortest path
-		struct sp {
-			int distance;
-			struct vertice *p;
-		} sp;
-	} *vertices;
-
 	// TODO: vertices should ideally be a hash-map
 	// so, looking up a vertice is quick.
 	//
+	vertice *vertices;
 
 	int
 	get_max_vertex_count(void)
@@ -493,7 +496,7 @@ class graph {
 /*
  * Add a vertice in the graph.
  */
-graph::vertice*
+vertice*
 graph::add_vertice(int data)
 {
 	vertice *temp;
