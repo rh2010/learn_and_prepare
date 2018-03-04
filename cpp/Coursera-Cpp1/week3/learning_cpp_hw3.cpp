@@ -5,6 +5,8 @@
 #include <ctime>
 #include <cstdlib>
 #include <climits>
+#include <queue>
+#include <unordered_map>
 
 using namespace std;
 
@@ -23,11 +25,18 @@ struct vertice;
 struct edge {
 	int weight; // an edge might or might not have a weight associated with it.
 
-	// pointer to the next edge from the same vertice.
-	struct edge *next;
-
 	// pointer to the other vertice which this edge consists of.
 	struct vertice *vertice;
+};
+
+// A comparator class for edge.
+class edge_comparator {
+	public:
+	// overload ()
+	bool operator()(const edge* e1, const edge* e2)
+	{
+		return (e1->weight > e2->weight);
+	}
 };
 
 // An vertice
@@ -39,8 +48,10 @@ struct vertice {
 	bool is_visited;
 	struct vertice *next;
 
-	// edges can also be a hash-map for faster lookups.
-	struct edge *edges;
+	priority_queue<edge*, vector<edge*>, edge_comparator> edges;
+
+	// lookup key is the target vertice value
+	unordered_map<int, edge*> edges_map;
 
 	// book keeping data for shortest path
 	struct sp {
@@ -66,10 +77,7 @@ class graph {
 	const unsigned int weight_range;
 	const bool directed; // used when inserting edge.
 
-	// TODO: vertices should ideally be a hash-map
-	// so, looking up a vertice is quick.
-	//
-	vertice *vertices;
+	unordered_map<int, vertice*> vertices;
 
 	int
 	get_max_vertex_count(void)
@@ -119,11 +127,12 @@ class graph {
 		v->node = value;
 		v->edge_count = 0;
 		v->next = NULL;
-		v->edges = NULL;
 		v->is_visited = false;
 		v->sp.distance = INT_MAX; // INFINITY
 		v->sp.p = NULL; // parent is NULL
 
+		// edges : a Priority Queue for lookup by smallest edge-weight.
+		// edges_map : A hash for quick lookup of edges by destination vertex.
 		return v;
 	}
 
@@ -139,7 +148,6 @@ class graph {
 
 		e->vertice = vertice;
 		e->weight = weight;
-		e->next = NULL;
 
 		return e;
 	}
@@ -147,25 +155,12 @@ class graph {
 	vertice*
 	find_vertice(int value)
 	{
-		vertice *temp = vertices;
+		vertice *temp = NULL;
 
-		if (vertices == NULL) {
-			return NULL;
+		if (vertices.count(value) > 0) {
+			temp = vertices[value];
 		}
-
-		if (vertices_count == 0) {
-			return NULL;
-		}
-
-		while (temp != NULL) {
-			if (temp->node == value) {
-				return temp;
-			}
-			temp = temp->next;
-		}
-		assert(temp == NULL);
-
-		return NULL;
+		return temp;
 	}
 
 	void
@@ -205,16 +200,14 @@ class graph {
 	{
 		vertice *temp;
 
-		assert(vertices);
-		temp = vertices;
+		assert(vertices.size() > 0);
 
-		while (temp != NULL) {
+		for (auto it = vertices.begin(); it != vertices.end(); it++) {
+		    temp = it->second;
+
 			temp->is_visited = false;
 			temp->sp.distance = INT_MAX;
 			temp->sp.p = NULL;
-
-			// next
-			temp = temp->next;
 		}
 	}
 
@@ -230,7 +223,6 @@ class graph {
 			  weight_range(weight_range)
 		{
 			vertices_count = 0;
-			vertices = NULL;
 
 			// Create the graph randomly from input parameters.
 			cout << "Creating graph with params" << endl;
@@ -238,6 +230,8 @@ class graph {
 			cout << "Maximum vertices: " << max_vertices << endl;
 			cout << "Edge density: " << this->edge_density << endl;
 			cout << "Weight Range: " << this->weight_range << endl << endl;
+
+			vertices.reserve(max_vertices);
 
 			create_graph_randomly();
 		}
@@ -250,7 +244,6 @@ class graph {
 		edge_density(2), // default edge density : 20%
 		weight_range(10) // default range is 1 - 10
 		{
-			vertices = NULL;
 		}
 
 		~graph()
@@ -260,27 +253,33 @@ class graph {
 			edge *tempe;
 			edge *prev_e;
 
-			tempv = vertices;
+			for (auto it = vertices.begin(); it != vertices.end(); it++) {
+				tempv = it->second;
 
-			while (tempv != NULL) {
-				tempe = tempv->edges;
-
-				while (tempe != NULL) {
-					prev_e = tempe;
-					// next edge
-					tempe = tempe->next;
-					delete prev_e;
+				while (!tempv->edges.empty()) {
+					tempe = tempv->edges.top();
+					tempv->edges.pop();
+					delete tempe;
 				}
-
-				prev_v = tempv;
-				// next vertice
-				tempv = tempv->next;
-				delete prev_v;
+				tempv->edges_map.clear();
 			}
-			vertices = NULL;
+			vertices.clear();
 		}
 
+		// forward declaration of add_vertice method
 		vertice* add_vertice(int data);
+
+		bool
+		edge_present_in_vertice(vertice *v, int to_vertex_val)
+		{
+			bool ret = false;
+
+			if (v->edges_map.count(to_vertex_val) > 0) {
+				assert(v->edges_map.count(to_vertex_val) == 1);
+				ret = true;
+			}
+			return ret;
+		}
 
 		bool
 		add_edge(int from, int to)
@@ -295,7 +294,6 @@ class graph {
 			vertice *to_vertice;
 			vertice *temp_vertice;
 			edge *new_edge;
-			edge *temp;
 			unsigned int add_new_edge = (directed ? 1 : 2);
 
 			from_vertice = find_vertice(from);
@@ -318,7 +316,6 @@ class graph {
 				}
 			}
 
-
 			while (add_new_edge > 0) {
 				// No loops in the graph.
 				assert(to_vertice != from_vertice);
@@ -334,29 +331,19 @@ class graph {
 				// No loops in the graph.
 				assert(new_edge->vertice != from_vertice);
 
-				temp = from_vertice->edges;
+				// check, if the edge is already present.
+				if (edge_present_in_vertice(from_vertice, to)) {
+					//cout << "Edge " << from << " -> " << to << " already "
+					//		"present : " << weight << " (w)" << endl;
 
-				// first edge
-				if (from_vertice->edges == NULL) {
-					from_vertice->edges = new_edge;
-					goto next;
-				}
-
-				// get to the last edge.
-				while(temp->next != NULL) {
-					if (temp->vertice == to_vertice) {
-						//cout << "Edge " << from << " -> " << to << " already "
-						//		"present : " << weight << " (w)" << endl;
-
-						// free up the new edge.
-						delete(new_edge);
-						return false;
-					}
-					temp = temp->next;
+					// free up the new edge.
+					delete(new_edge);
+					return false;
 				}
 
 				// add the new edge to the list
-				temp->next = new_edge;
+				from_vertice->edges.push(new_edge);
+				from_vertice->edges_map.insert({to, new_edge});
 
 			next:
 				from_vertice->edge_count++;
@@ -371,32 +358,12 @@ class graph {
 			return true;
 		}
 
-		bool
-		edge_present_in_vertice(vertice *v, int edge_val)
-		{
-			edge *e;
-
-			assert(v);
-
-			if (v->edge_count == 0) {
-				return false;
-			}
-
-			e = v->edges;
-
-			while(e != NULL) {
-				if (e->vertice->node == edge_val) {
-					return  true;
-				}
-				e = e->next;
-			}
-			return false;
-		}
 
 		/*
 		 * Return the path length for the shortest path found.
 		 * Else, return -1 for no path found to the destination node.
 		 */
+		/*
 		int
 		dijkistra(int from, int to)
 		{
@@ -406,6 +373,7 @@ class graph {
 			edge *e; // temp edge pointer
 			int distance;
 
+			// TODO:
 			// init all the vertices for dijkistra shortest path.
 			init_for_dijkistra();
 
@@ -485,11 +453,12 @@ class graph {
 
 			return path_length;
 		}
+		*/
 
 		int
 		get_vertice_count(void)
 		{
-			return vertices_count;
+			return vertices.size();
 		}
 };
 
@@ -500,8 +469,6 @@ vertice*
 graph::add_vertice(int data)
 {
 	vertice *temp;
-	vertice *head = vertices;
-
 
 	if (find_vertice(data)) {
 		cout << "Error: vertice " << data << " already present\n";
@@ -514,20 +481,8 @@ graph::add_vertice(int data)
 		exit(-1);
 	}
 
-	// first vertice.
-	if (head == NULL) {
-		vertices = new_vertice;
-		goto done;
-	}
-
-	// goto the last vertice and add after that.
-	temp = head;
-	while(temp->next != NULL) {
-		temp = temp->next;
-	}
-
 	// add the new_vertice in the list
-	temp->next = new_vertice;
+	vertices.insert({data, new_vertice});
 
 	// done
 done:
@@ -573,22 +528,22 @@ graph::create_graph_randomly(void)
 		assert(vertex != NULL);
 	}
 
-	assert (vertices_count == max_vertices);
+	assert (vertices.size() == max_vertices);
+	assert (vertices.size() == vertices_count);
 
 	vertice *tempv;
 	int edges;
 
-	tempv = vertices;
-	while (tempv != NULL) {
-		edges = 0;
+	// Add edges, for every vertex added.
+	for (auto it = vertices.begin(); it != vertices.end(); it++) {
+		tempv = it->second;
 
 		v = tempv->node;
-		tempv = tempv->next;
 
 		// re-set the seed for rand() for each vertex.
 		srand(time(0));
 
-		for (idx = 1; idx <= vertices_count; idx++) {
+		for (idx = 1; idx <= vertices.size(); idx++) {
 
 			t = idx;
 
@@ -616,11 +571,12 @@ graph::create_graph_randomly(void)
 	}
 
 	edges = 0;
-	tempv = vertices;
-	while (tempv != NULL) {
+
+	for (auto it = vertices.begin(); it != vertices.end(); it++) {
+		tempv = it->second;
 		edges += tempv->edge_count;
-		tempv = tempv->next;
 	}
+
 	cout << "Exit : create_graph_randomly with " << edges << " edges." << endl;
 }
 
@@ -655,7 +611,7 @@ main(int argc, char **argv)
 	}
 
 	graph g(is_directed, num_vertices, e_density, w_range);
-
+/*
 	int idx;
 	int path_length;
 	int sum;
@@ -676,6 +632,6 @@ main(int argc, char **argv)
 
 	}
 	cout << "Average path length: " << (static_cast<double>(sum))/count << endl;
-
+*/
 	return (0);
 }
