@@ -21,8 +21,13 @@ hw:
 sp:
 	g++ -std=c++11 -ggdb3 -o shortest_path  shortest_path.cpp
 
+test: clean
+	rm -f test
+	g++ -std=c++11 -ggdb3 -o test  test.cpp
+
 clean:
 	rm -f graph
 	rm -f a.out
 	rm -f hw3
 	rm -f shortest_path
+	rm -f test
