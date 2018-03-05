@@ -83,8 +83,6 @@ class graph {
 	int
 	get_max_vertex_count(void)
 	{
-		// return a random number from 50 - 52.
-		// for now keep it fixed at 50.
 		return (max_vertices);
 	}
 
@@ -126,7 +124,7 @@ class graph {
 
 		// set the value of the vertice.
 		v->node = value;
-		v->edge_count = 0;
+		v->edge_count = 0; // this can come from edges_map.size()
 		v->next = NULL;
 		v->is_visited = false;
 		v->sp.distance = INT_MAX; // INFINITY
@@ -666,6 +664,10 @@ class shortest_path : public graph {
 			int length;
 
 			s = dijkistra(from, to);
+			if (s == NULL) {
+				return (-1); // no path found.
+			}
+
 			length = s->size() - 1;
 
 			// free the stack.
@@ -686,6 +688,9 @@ class shortest_path : public graph {
 			int cost;
 
 			s = dijkistra(from, to);
+			if (s == NULL) {
+				return (-1); // no path found.
+			}
 
 			cost = 0;
 
@@ -718,6 +723,10 @@ class shortest_path : public graph {
 			vertice* v = NULL;
 
 			s = dijkistra(from, to);
+
+			if (s == NULL) {
+				return s; // no path found.
+			}
 
 			// print the path.
 			while (!s->empty()) {
@@ -770,6 +779,7 @@ main(int argc, char **argv)
 
 	shortest_path g(is_directed, num_vertices, e_density, w_range, in_file);
 
+	/* Leaving this code commented out.
 	char choice = 'y';
 
 	do {
@@ -783,8 +793,8 @@ main(int argc, char **argv)
 		cin >> choice;
 	} while(choice =='y');
 	cout << "Done ..." << endl;
+	*/
 
-	/*
 	int idx;
 	int path_length;
 	int sum;
@@ -795,7 +805,7 @@ main(int argc, char **argv)
 	sum = 0;
 	for (idx = from+1; idx <= g.get_vertice_count(); idx++) {
 		// idx is the to node.
-		path_length = g.dijkistra(from, idx);
+		path_length = g.path_length(from, idx);
 		// path_length -1 means there is not path from 'from' to
 		// 'idx'
 		if (path_length != -1) {
@@ -805,6 +815,5 @@ main(int argc, char **argv)
 
 	}
 	cout << "Average path length: " << (static_cast<double>(sum))/count << endl;
-	*/
 	return (0);
 }
