@@ -1,6 +1,7 @@
 #include <iostream>
 #include <queue>
 #include <unordered_map>
+#include <stack>
 
 using namespace std;
 
@@ -92,4 +93,24 @@ main(void)
 		cout << t->data << endl;
 	}
 	cout << "map iterator end" << endl;
+
+	cout << "Stack ... start\n";
+
+	stack<int>* s;
+
+	s = new stack<int>;
+
+	s->push(1);
+	s->push(2);
+	s->push(3);
+
+	cout << "Stack size: " << s->size() << endl;
+
+	while (!s->empty()) {
+		cout << s->top() << endl;
+		s->pop();
+	}
+
+	delete s;
+	cout << "Stack ... end\n";
 }
