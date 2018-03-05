@@ -61,6 +61,16 @@ struct vertice {
 	} sp;
 };
 
+// A comparator class for vertice distance.
+class vertice_distance {
+	public:
+	// overload ()
+	bool operator()(const vertice* v1, const vertice* v2)
+	{
+		return (v1->sp.distance > v2->sp.distance);
+	}
+};
+
 //
 // Class for representing a graph using adjacency list.
 class graph {
@@ -154,48 +164,8 @@ class graph {
 		return e;
 	}
 
-	vertice*
-	find_vertice(int value)
-	{
-		vertice *temp = NULL;
-
-		if (vertices.count(value) > 0) {
-			temp = vertices[value];
-		}
-		return temp;
-	}
-
 	void
 	create_graph_randomly(void);
-
-	inline bool
-	vertex_visited(vertice *v)
-	{
-		assert(v);
-
-		return v->is_visited;
-	}
-
-	inline void
-	vertex_mark_visited(vertice *v)
-	{
-		assert(v);
-		v->is_visited = true;
-	}
-
-	int
-	vertex_distance(vertice *v)
-	{
-		assert(v);
-		return v->sp.distance;
-	}
-
-	int
-	edge_weight(edge *e)
-	{
-		assert(e);
-		return e->weight;
-	}
 
 	void
 	add_edge_to_vertice(vertice *v, edge* e)
@@ -206,22 +176,6 @@ class graph {
 		v->edges.push(e);
 		v->edges_map.insert({e->vertice->node, e});
 
-	}
-
-	void
-	init_for_dijkistra(void)
-	{
-		vertice *temp;
-
-		assert(vertices.size() > 0);
-
-		for (auto it = vertices.begin(); it != vertices.end(); it++) {
-		    temp = it->second;
-
-			temp->is_visited = false;
-			temp->sp.distance = INT_MAX;
-			temp->sp.p = NULL;
-		}
 	}
 
 	void
@@ -409,6 +363,63 @@ class graph {
 		{
 			return vertices.size();
 		}
+
+		inline void
+		vertex_mark_visited(vertice *v)
+		{
+			assert(v);
+			v->is_visited = true;
+		}
+
+		int
+		vertex_distance(vertice *v)
+		{
+			assert(v);
+			return v->sp.distance;
+		}
+
+		int
+		edge_weight(edge *e)
+		{
+			assert(e);
+			return e->weight;
+		}
+
+		inline bool
+		vertex_visited(vertice *v)
+		{
+			assert(v);
+
+			return v->is_visited;
+		}
+
+		void
+		init_for_dijkistra(void)
+		{
+			vertice *temp;
+
+			assert(vertices.size() > 0);
+
+			for (auto it = vertices.begin(); it != vertices.end(); it++) {
+			    temp = it->second;
+
+				temp->is_visited = false;
+				temp->sp.distance = INT_MAX;
+				temp->sp.p = NULL;
+			}
+		}
+
+		vertice*
+		find_vertice(int value)
+		{
+			vertice *temp = NULL;
+
+			if (vertices.count(value) > 0) {
+				temp = vertices[value];
+			}
+			return temp;
+		}
+
 };
 
 /*
@@ -580,7 +591,6 @@ class shortest_path : public graph {
 		 * Return the path length for the shortest path found.
 		 * Else, return -1 for no path found to the destination node.
 		 */
-		/*
 		int
 		dijkistra(int from, int to)
 		{
@@ -590,7 +600,6 @@ class shortest_path : public graph {
 			edge *e; // temp edge pointer
 			int distance;
 
-			// TODO:
 			// init all the vertices for dijkistra shortest path.
 			init_for_dijkistra();
 
@@ -607,6 +616,8 @@ class shortest_path : public graph {
 			// starting vertex.
 			v = v_from;
 
+			priority_queue<vertice*, vector<vertice*>, vertice_distance> distance_min_heap;
+
 			while (!vertex_visited(v)) {
 				vertex_mark_visited(v);
 
@@ -615,36 +626,40 @@ class shortest_path : public graph {
 					break; // break the main while loop, the algo is done.
 				}
 
-				//e = v->edges;
-				e = v->edges.top();
+				for (auto it = v->edges_map.begin(); it != v->edges_map.end(); it++) {
+					e = it->second;
 
-				while (e != NULL) {
-					if (vertex_distance(e->vertice) >
-						(vertex_distance(v) + edge_weight(e)) ) {
+					// don't process if the vertex is already visited.
+					if (vertex_visited(e->vertice)) {
+						continue;
+					}
+
+					if (vertex_distance(e->vertice) > vertex_distance(v) + edge_weight(e)) {
 						e->vertice->sp.distance = vertex_distance(v) + edge_weight(e);
 						e->vertice->sp.p = v;
+
+						// if not in PQ, add to it
+						//
+						// if already present, adjust the distance.
+						//
+						// Just add the vertice with the updated distance.
+						// The entry with the shorter distance will get picked (pop'ed) first
+						// By the time the older entry gets picked, it will already be
+						// marked as visited.
+						distance_min_heap.push(e->vertice);
 					}
-					e = e->next;
-				} // end of while - edges
-
-				// find the next vertex whose distance is minimum and who is not already visited.
-				distance = INT_MAX;
-				v_temp = vertices;
-				v = v_from; // some sane initial value - if no new vertex is slected, this
-							// will help break the while loop.
-
-				while (v_temp != NULL) {
-					// if the vertex is not already visited and the distance is more than
-					// the distance of the current 'v_temp' vertex from the starting vertex
-					// then select this vertex.
-					if (!vertex_visited(v_temp) &&
-						(distance > vertex_distance(v_temp))) {
-
-						distance = vertex_distance(v_temp);
-						v = v_temp;
-					}
-					v_temp = v_temp->next;
 				}
+
+				if (distance_min_heap.empty()) {
+					cout << "Min heap is empty." << endl;
+					break;
+				}
+
+				// select the vertex with minimum distance and which is not already visited.
+				do {
+					v = distance_min_heap.top();
+					distance_min_heap.pop();
+				} while(!distance_min_heap.empty() && vertex_visited(v));
 
 			} // end of while.
 
@@ -653,6 +668,7 @@ class shortest_path : public graph {
 			int path_length = 0;
 
 			while (v_temp != NULL) {
+				cout << v_temp->node << " <- ";
 
 				// follow the parent
 				v_temp = v_temp->sp.p;
@@ -665,12 +681,12 @@ class shortest_path : public graph {
 					return (-1);
 				}
 				if (v_temp == v_from) {
+					cout << v_temp->node << endl;
 					break;
 				}
 			}
 			return path_length;
 		}
-		*/
 };
 
 int
@@ -707,7 +723,20 @@ main(int argc, char **argv)
 	}
 
 	shortest_path g(is_directed, num_vertices, e_density, w_range, in_file);
-/*
+
+	char choice = 'y';
+
+	do {
+		cout << "Shortest path between (from, to): ";
+		cin >> from >> to;
+		cout << "( " << from << ", " << to << ")" << endl;
+		g.dijkistra(from, to);
+		cout << "Continue: ";
+		cin >> choice;
+	} while(choice =='y');
+	cout << "Done ..." << endl;
+
+	/*
 	int idx;
 	int path_length;
 	int sum;
@@ -728,6 +757,6 @@ main(int argc, char **argv)
 
 	}
 	cout << "Average path length: " << (static_cast<double>(sum))/count << endl;
-*/
+	*/
 	return (0);
 }
