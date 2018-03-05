@@ -157,6 +157,7 @@ class graph {
 		int num_vertices;
 
 		assert(file_name != NULL);
+		cout << "Creating graph from file: " << file_name << endl;
 
 		// open the file to read the i/p graph
 		ifstream graph_file(file_name);
@@ -172,7 +173,7 @@ class graph {
 		}
 		assert(num_vertices == vertices_count);
 
-		cout << "Max vertices: " << num_vertices << ", vertices added: " <<
+		cout << "Vertices added: " <<
 			 vertices_count << endl;
 	}
 
@@ -190,13 +191,6 @@ class graph {
 			  graph_file(graph_file)
 		{
 			vertices_count = 0;
-
-			// Create the graph randomly from input parameters.
-			cout << "Creating graph with params" << endl;
-			cout << "is_directed: " << directed << endl;
-			cout << "Maximum vertices: " << max_vertices << endl;
-			cout << "Edge density: " << this->edge_density << endl;
-			cout << "Weight Range: " << this->weight_range << endl << endl;
 
 			if (graph_file) { 
 				build_graph_from_file(this->graph_file);
@@ -619,10 +613,8 @@ class mst : public graph {
 
 			priority_queue<edge*, vector<edge*>, edge_cost> cost_min_heap;
 
-			int cost = 0;
 			while (!vertex_visited(v)) {
 				vertex_mark_visited(v);
-				cout << "\nProcessing [" << v->node << "] \n------------------\n\n";
 
 				for (auto it = v->edges_map.begin(); it != v->edges_map.end(); it++) {
 					e = it->second;
@@ -633,13 +625,10 @@ class mst : public graph {
 					}
 
 					// add to PQ
-					cout << "Push: " << e->from << " -> " << e->to << " ["
-						 << edge_weight(e) << "]" << endl;
 					cost_min_heap.push(e);
 				}
 
 				if (cost_min_heap.empty()) {
-					cout << "Min heap is empty." << endl;
 					break;
 				}
 
@@ -648,19 +637,15 @@ class mst : public graph {
 				do {
 					e = cost_min_heap.top();
 					cost_min_heap.pop();
-					cout << "Removed: " << e->from << " -> " << e->to << " ["
-						 << edge_weight(e) << "]" << endl;
 				} while(!cost_min_heap.empty() && vertex_visited(e->vertice));
-				cout << "Next: " << e->from << " -> " << e->to << " ["
-					 << edge_weight(e) << "]" << endl;
-				v = e->vertice;
 
 				// add the edge to the queue.
 				if (!vertex_visited(e->vertice)) {
-					cout << "Sol Add: " << e->from << " -> " << e->to << " ["
-						 << edge_weight(e) << "]" << endl;
 					q->push(e);
 				}
+
+				// next vertice to process.
+				v = e->vertice;
 
 			} // end of while.
 
@@ -670,7 +655,6 @@ class mst : public graph {
 				q = NULL;
 			}
 
-			cout << "Cost: " << cost << endl << endl;
 			return q; // return the path as a queue.
 		}
 };
@@ -718,8 +702,8 @@ main(int argc, char **argv)
 		cin >> from;
 		mst_tree = g.prim(from);
 		g.show(mst_tree);
-		//cout << "Continue: ";
-		//cin >> choice;
+		cout << "Continue: ";
+		cin >> choice;
 	} while(choice =='y');
 	cout << "Done ..." << endl;
 
