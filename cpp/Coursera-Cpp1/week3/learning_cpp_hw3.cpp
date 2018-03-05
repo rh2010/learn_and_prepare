@@ -8,6 +8,7 @@
 #include <queue>
 #include <unordered_map>
 #include <fstream>
+#include <stack>
 
 using namespace std;
 
@@ -169,8 +170,6 @@ class graph {
 		int s, t, w;
 		int num_vertices;
 
-		cout << "build_graph_from_file : Start" << endl;
-		
 		assert(file_name != NULL);
 
 		// open the file to read the i/p graph
@@ -185,7 +184,6 @@ class graph {
 		while (graph_file >> s >> t >> w) {
 			add_edge(s, t, w);
 		}
-		cout << "build_graph_from_file : End" << endl;
 		assert(num_vertices == vertices_count);
 
 		cout << "Max vertices: " << num_vertices << ", vertices added: " <<
@@ -557,7 +555,7 @@ class shortest_path : public graph {
 		 * Return the path length for the shortest path found.
 		 * Else, return -1 for no path found to the destination node.
 		 */
-		int
+		stack<vertice*>*
 		dijkistra(int from, int to)
 		{
 			vertice *v_from, *v_temp;
@@ -629,29 +627,51 @@ class shortest_path : public graph {
 
 			} // end of while.
 
-			// print the path.
+			// Build and print the path.
 			v_temp = v_to;
-			int path_length = 0;
+
+			stack<vertice*>* s;
+			s = new stack<vertice*>;
 
 			while (v_temp != NULL) {
-				cout << v_temp->node << " <- ";
+				// add the node to the stack.
+				s->push(v_temp);
 
 				// follow the parent
 				v_temp = v_temp->sp.p;
 
-				// increment for each hop made.
-				path_length++;
-
 				if (v_temp == NULL) {
 					cout << endl << "No shortest path found." << endl;
-					return (-1);
+					delete s;
+					return NULL;
 				}
+
 				if (v_temp == v_from) {
-					cout << v_temp->node << endl;
+					// Also, add the starting node to the stack.
+					s->push(v_temp);
 					break;
 				}
 			}
-			return path_length;
+
+			return s; // return the path as a stack.
+		}
+
+		//
+		// Returns the lenght of the shortest path.
+		//
+		int
+		path_length(int from, int to)
+		{
+			stack<vertice*>* s;
+			int length;
+
+			s = dijkistra(from, to);
+			length = s->size() - 1;
+
+			// free the stack.
+			delete s;
+
+			return length;
 		}
 
 		//
@@ -661,17 +681,57 @@ class shortest_path : public graph {
 		int
 		path_cost(int from, int to)
 		{
+			stack<vertice*>* s;
+			vertice* f, *t;
+			int cost;
 
+			s = dijkistra(from, to);
+
+			cost = 0;
+
+			f = NULL;
+			t = NULL;
+
+			while (!s->empty()) {
+				t = s->top();
+
+				if (f != NULL) {
+					cost += (f->edges_map[t->node])->weight;
+				}
+				f = t;
+				s->pop();
+			}
+
+			// free the stack.
+			delete s;
+			return cost;
 		}
 
 		//
 		// Returns the shortest path to go from 'from' to 'to'.
 		//
 		// the void should change to a vector.
-		void
+		stack<vertice*>*
 		path(int from, int to)
 		{
+			stack<vertice*>* s;
+			vertice* v = NULL;
 
+			s = dijkistra(from, to);
+
+			// print the path.
+			while (!s->empty()) {
+				if (v != NULL) {
+					cout << " -> ";
+				}
+				v = s->top();
+				cout << v->node;
+
+				s->pop();
+			}
+			cout << endl;
+
+			return s;
 		}
 };
 
@@ -715,8 +775,10 @@ main(int argc, char **argv)
 	do {
 		cout << "Shortest path between (from, to): ";
 		cin >> from >> to;
-		cout << "( " << from << ", " << to << ")" << endl;
-		g.dijkistra(from, to);
+		cout << "( " << from << ", " << to << " )" << endl;
+		cout << "Path Cost: " << g.path_cost(from, to) << endl;
+		cout << "Path Length: " << g.path_length(from, to) << endl;
+		g.path(from, to);
 		cout << "Continue: ";
 		cin >> choice;
 	} while(choice =='y');
