@@ -44,12 +44,6 @@ struct vertice {
 
 	// lookup key is the target vertice value
 	unordered_map<int, edge*> edges_map;
-
-	// book keeping data for shortest path
-	struct sp {
-		int distance;
-		struct vertice *p;
-	} sp;
 };
 
 // A comparator class for vertice distance.
@@ -58,11 +52,7 @@ class edge_cost {
 	// overload ()
 	bool operator()(const edge* e1, const edge* e2)
 	{
-		//printf("e1->vertice->sp.distance: %d, e2->vertice->sp.distance: %d\n",
-		//		e1->vertice->sp.distance, e2->vertice->sp.distance);
-		//printf("e1->weight: %d, e2->weight: %d\n", e1->weight, e2->weight);
 		return (e1->weight > e2->weight);
-		//return (e1->vertice->sp.distance > e2->vertice->sp.distance);
 	}
 };
 
@@ -125,8 +115,6 @@ class graph {
 		v->edge_count = 0; // this can come from edges_map.size()
 		v->next = NULL;
 		v->is_visited = false;
-		v->sp.distance = INT_MAX; // INFINITY
-		v->sp.p = NULL; // parent is NULL
 
 		// edges_map : A hash for quick lookup of edges by destination vertex.
 		return v;
@@ -362,13 +350,6 @@ class graph {
 		}
 
 		int
-		vertex_distance(vertice *v)
-		{
-			assert(v);
-			return v->sp.distance;
-		}
-
-		int
 		edge_weight(edge *e)
 		{
 			assert(e);
@@ -384,7 +365,7 @@ class graph {
 		}
 
 		void
-		init_for_dijkistra(void)
+		init_for_prim(void)
 		{
 			vertice *temp;
 
@@ -392,10 +373,7 @@ class graph {
 
 			for (auto it = vertices.begin(); it != vertices.end(); it++) {
 			    temp = it->second;
-
 				temp->is_visited = false;
-				temp->sp.distance = INT_MAX;
-				temp->sp.p = NULL;
 			}
 		}
 
@@ -630,14 +608,11 @@ class mst : public graph {
 			q = new queue<edge*>;
 
 			// init all the vertices for dijkistra shortest path.
-			init_for_dijkistra();
+			init_for_prim();
 
 			// get start and end vertices.
 			v_from = find_vertice(from);
 			assert(v_from);
-
-			// starting vertex - distance is 'zero'.
-			v_from->sp.distance = 0;
 
 			// starting vertex.
 			v = v_from;
@@ -649,12 +624,6 @@ class mst : public graph {
 				vertex_mark_visited(v);
 				cout << "\nProcessing [" << v->node << "] \n------------------\n\n";
 
-				//if (v != v_from) {
-				//	cout << get_vertex_value(v->sp.p) << " -> " <<
-				//		 get_vertex_value(v) << " [" << get_edge_cost(v->sp.p, v) << "]" << endl;
-				//	cost += get_edge_cost(v->sp.p, v);
-				//}
-
 				for (auto it = v->edges_map.begin(); it != v->edges_map.end(); it++) {
 					e = it->second;
 
@@ -665,18 +634,8 @@ class mst : public graph {
 
 					// add to PQ
 					cout << "Push: " << e->from << " -> " << e->to << " ["
-						 << edge_weight(e) << "]" << " :: " << e->vertice->sp.distance << endl;
+						 << edge_weight(e) << "]" << endl;
 					cost_min_heap.push(e);
-
-					//if (vertex_distance(e->vertice) > edge_weight(e)) {
-					//	e->vertice->sp.distance = edge_weight(e);
-					//	//e->vertice->sp.p = v;
-
-					//	// add to PQ
-					//	cout << "Push: " << e->from << " -> " << e->to << " ["
-					//		 << edge_weight(e) << "]" << " :: " << e->vertice->sp.distance << endl;
-					//	cost_min_heap.push(e);
-					//}
 				}
 
 				if (cost_min_heap.empty()) {
