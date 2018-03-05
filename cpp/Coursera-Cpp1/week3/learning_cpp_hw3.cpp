@@ -95,7 +95,7 @@ class graph {
 	unsigned int
 	get_weight(void)
 	{
-		// return a random value between 1 - 11.
+		// return a random value between 1 - 10.
 		return ((rand() % weight_range) + 1);
 	}
 
@@ -805,7 +805,7 @@ main(int argc, char **argv)
 	sum = 0;
 	for (idx = from+1; idx <= g.get_vertice_count(); idx++) {
 		// idx is the to node.
-		path_length = g.path_length(from, idx);
+		path_length = g.path_cost(from, idx);
 		// path_length -1 means there is not path from 'from' to
 		// 'idx'
 		if (path_length != -1) {
@@ -814,6 +814,6 @@ main(int argc, char **argv)
 		}
 
 	}
-	cout << "Average path length: " << (static_cast<double>(sum))/count << endl;
+	cout << "Average path cost: " << (static_cast<double>(sum))/count << endl;
 	return (0);
 }
