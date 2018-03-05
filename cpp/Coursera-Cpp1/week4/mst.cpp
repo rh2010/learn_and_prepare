@@ -466,6 +466,25 @@ class graph {
 			}
 		}
 
+		int
+		get_edge_cost(vertice* f, vertice* t)
+		{
+			int to;
+			edge* e;
+
+			assert(f);
+			assert(t);
+
+			e = f->edges;
+			while (e != NULL) {
+				if (e->vertice->node == t->node) {
+					return e->weight;
+				}
+				e = e->next;
+			}
+			return -1;
+		}
+
 		void
 		mst_prim(int from)
 		{
@@ -495,12 +514,15 @@ class graph {
 
 			cout << "MST:" << endl;
 
+			int cost = 0;
+
 			while (!vertex_visited(v)) {
 				vertex_mark_visited(v);
 
 				if (v != v_from) {
 					cout << get_vertex_value(v->sp.p) << " -> " <<
-						 get_vertex_value(v) << endl;
+						 get_vertex_value(v) << " [" << get_edge_cost(v->sp.p, v) << "]" << endl;
+					cost += get_edge_cost(v->sp.p, v);
 				}
 
 				e = v->edges;
@@ -536,6 +558,7 @@ class graph {
 			cout << endl;
 
 			cout << "MST: End" << endl;
+			cout << "Cost: " << cost << endl;
 
 		}
 
