@@ -5,6 +5,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <climits>
+#include <fstream>
 
 using namespace std;
 
@@ -21,6 +22,7 @@ prob()
 class graph {
 
 	// init params for the graph
+	const char *graph_file;
 	const int max_vertices; // The number of vertices to which the graph should goto.
 	int vertices_count; // the current vertex count in the graph 
 
@@ -168,6 +170,33 @@ class graph {
 	void
 	create_graph_randomly(void);
 
+	void
+	build_graph_from_file(const char *file_name)
+	{
+		int s, t, w;
+		int num_vertices;
+
+		cout << "build_graph_from_file : Start" << endl;
+
+		assert(file_name != NULL);
+
+		// open the file to read the i/p graph
+		ifstream graph_file(file_name);
+
+		// get the vertex count
+		graph_file >> num_vertices;
+
+		// add the edges
+		while (graph_file >> s >> t >> w) {
+			add_edge(s, t, w);
+		}
+		cout << "build_graph_from_file : End" << endl;
+		assert(num_vertices == vertices_count);
+
+		cout << "Max vertices: " << num_vertices << ", vertices added: " <<
+			 vertices_count << endl;
+	}
+
 	inline bool
 	vertex_visited(vertice *v)
 	{
@@ -220,11 +249,13 @@ class graph {
 		graph(bool is_directed,
 			  int num_vertices,
 			  unsigned int edge_density,
-			  unsigned int weight_range)
+			  unsigned int weight_range,
+			  char *graph_file)
 			  :max_vertices(num_vertices),
 			  directed(is_directed),
 			  edge_density(edge_density),
-			  weight_range(weight_range)
+			  weight_range(weight_range),
+			  graph_file(graph_file)
 		{
 			vertices_count = 0;
 			vertices = NULL;
@@ -235,8 +266,14 @@ class graph {
 			cout << "Maximum vertices: " << max_vertices << endl;
 			cout << "Edge density: " << this->edge_density << endl;
 			cout << "Weight Range: " << this->weight_range << endl << endl;
+			cout << "Graph File: " << (this->graph_file?this->graph_file:"NULL") << endl << endl;
 			
-			create_graph_randomly();
+			if (graph_file) {
+				// Build the graph from the file.
+				build_graph_from_file(this->graph_file);
+			} else {
+				create_graph_randomly();
+			}
 		}
 
 		// default constructor
@@ -245,7 +282,8 @@ class graph {
 		max_vertices(0),
 		directed(false),
 		edge_density(2), // default edge density : 20%
-		weight_range(10) // default range is 1 - 10
+		weight_range(10), // default range is 1 - 10
+		graph_file(NULL)
 		{
 			vertices = NULL;
 		}
@@ -400,6 +438,7 @@ class graph {
 			cout << "\tMax Vertices count: " << max_vertices << endl;
 			cout << "\tEdge density: " << edge_density << endl;
 			cout << "\tWeight range: " << weight_range << endl;
+			cout << "\tGraph File: " << (graph_file ? graph_file : "Null") << endl;
 
 			cout << "Vertices and Edges:" << endl;
 
@@ -680,9 +719,13 @@ main(int argc, char **argv)
 	int value;
 	int to, from;
 	int w;
+	char *in_file = NULL;
 
 	// initialze the graph
-	if (argc == 4) {
+	if (argc == 2) {
+		// a graph file name must be given
+		in_file = argv[1];
+	} else if (argc == 4) {
 		// count of vertices in the graph
 		num_vertices = atoi(argv[1]);
 
@@ -699,7 +742,7 @@ main(int argc, char **argv)
 
 	}
 
-	graph g(is_directed, num_vertices, e_density, w_range);
+	graph g(is_directed, num_vertices, e_density, w_range, in_file);
 	int choice;
 
 	while(!done) {
