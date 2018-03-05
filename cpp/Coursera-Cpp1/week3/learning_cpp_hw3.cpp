@@ -7,6 +7,7 @@
 #include <climits>
 #include <queue>
 #include <unordered_map>
+#include <fstream>
 
 using namespace std;
 
@@ -65,6 +66,7 @@ struct vertice {
 class graph {
 
 	// init params for the graph
+	const char *graph_file;
 	const int max_vertices; // The number of vertices to which the graph should goto.
 	int vertices_count; // the current vertex count in the graph
 
@@ -196,6 +198,17 @@ class graph {
 	}
 
 	void
+	add_edge_to_vertice(vertice *v, edge* e)
+	{
+		assert(e);
+		assert(v);
+
+		v->edges.push(e);
+		v->edges_map.insert({e->vertice->node, e});
+
+	}
+
+	void
 	init_for_dijkistra(void)
 	{
 		vertice *temp;
@@ -211,16 +224,47 @@ class graph {
 		}
 	}
 
+	void
+	build_graph_from_file(const char *file_name)
+	{
+		int s, t, w;
+		int num_vertices;
+
+		cout << "build_graph_from_file : Start" << endl;
+		
+		assert(file_name != NULL);
+
+		// open the file to read the i/p graph
+		ifstream graph_file(file_name);
+
+		// get the vertex count
+		graph_file >> num_vertices;
+
+		vertices.reserve(num_vertices);
+
+		// add the edges
+		while (graph_file >> s >> t >> w) {
+			add_edge(s, t, w);
+		}
+		cout << "build_graph_from_file : End" << endl;
+		assert(num_vertices == vertices_count);
+
+		cout << "Max vertices: " << num_vertices << ", vertices added: " <<
+			 vertices_count << endl;
+	}
+
 	public:
 		// constructor
 		graph(bool is_directed,
 			  int num_vertices,
 			  unsigned int edge_density,
-			  unsigned int weight_range)
+			  unsigned int weight_range,
+			  char *graph_file)
 			  :max_vertices(num_vertices),
 			  directed(is_directed),
 			  edge_density(edge_density),
-			  weight_range(weight_range)
+			  weight_range(weight_range),
+			  graph_file(graph_file)
 		{
 			vertices_count = 0;
 
@@ -231,9 +275,12 @@ class graph {
 			cout << "Edge density: " << this->edge_density << endl;
 			cout << "Weight Range: " << this->weight_range << endl << endl;
 
-			vertices.reserve(max_vertices);
-
-			create_graph_randomly();
+			if (graph_file) { 
+				build_graph_from_file(this->graph_file);
+			} else {
+				vertices.reserve(max_vertices);
+				create_graph_randomly();
+			}
 		}
 
 		// default constructor
@@ -242,7 +289,8 @@ class graph {
 		max_vertices(0),
 		directed(false),
 		edge_density(2), // default edge density : 20%
-		weight_range(10) // default range is 1 - 10
+		weight_range(10), // default range is 1 - 10
+		graph_file(NULL)
 		{
 		}
 
@@ -342,9 +390,7 @@ class graph {
 				}
 
 				// add the new edge to the list
-				from_vertice->edges.push(new_edge);
-				from_vertice->edges_map.insert({to, new_edge});
-
+				add_edge_to_vertice(from_vertice, new_edge);
 			next:
 				from_vertice->edge_count++;
 				add_new_edge--;
@@ -357,103 +403,6 @@ class graph {
 
 			return true;
 		}
-
-
-		/*
-		 * Return the path length for the shortest path found.
-		 * Else, return -1 for no path found to the destination node.
-		 */
-		/*
-		int
-		dijkistra(int from, int to)
-		{
-			vertice *v_from, *v_temp;
-			vertice *v_to;
-			vertice *v; // temp vertice pointer
-			edge *e; // temp edge pointer
-			int distance;
-
-			// TODO:
-			// init all the vertices for dijkistra shortest path.
-			init_for_dijkistra();
-
-			// get start and end vertices.
-			v_from = find_vertice(from);
-			assert(v_from);
-
-			v_to = find_vertice(to);
-			assert(v_to);
-
-			// distance of starting to starting is always 'zero'.
-			v_from->sp.distance = 0;
-
-			// starting vertex.
-			v = v_from;
-
-			while (!vertex_visited(v)) {
-				vertex_mark_visited(v);
-
-				// if destination is reached, print the path
-				if (v == v_to) {
-					break; // break the main while loop, the algo is done.
-				}
-
-				e = v->edges;
-
-				while (e != NULL) {
-					if (vertex_distance(e->vertice) >
-						(vertex_distance(v) + edge_weight(e)) ) {
-						e->vertice->sp.distance = vertex_distance(v) + edge_weight(e);
-						e->vertice->sp.p = v;
-					}
-					e = e->next;
-				} // end of while - edges
-
-				// find the next vertex whose distance is minimum and who is not already visited.
-				distance = INT_MAX;
-				v_temp = vertices;
-				v = v_from; // some sane initial value - if no new vertex is slected, this
-							// will help break the while loop.
-
-				while (v_temp != NULL) {
-					// if the vertex is not already visited and the distance is more than
-					// the distance of the current 'v_temp' vertex from the starting vertex
-					// then select this vertex.
-					if (!vertex_visited(v_temp) &&
-						(distance > vertex_distance(v_temp))) {
-
-						distance = vertex_distance(v_temp);
-						v = v_temp;
-					}
-					v_temp = v_temp->next;
-				}
-
-			} // end of while.
-
-			// print the path.
-			v_temp = v_to;
-			int path_length = 0;
-
-			while (v_temp != NULL) {
-
-				// follow the parent
-				v_temp = v_temp->sp.p;
-
-				// increment for each hop made.
-				path_length++;
-
-				if (v_temp == NULL) {
-					cout << endl << "No shortest path found." << endl;
-					return (-1);
-				}
-				if (v_temp == v_from) {
-					break;
-				}
-			}
-
-			return path_length;
-		}
-		*/
 
 		int
 		get_vertice_count(void)
@@ -580,20 +529,167 @@ graph::create_graph_randomly(void)
 	cout << "Exit : create_graph_randomly with " << edges << " edges." << endl;
 }
 
+class shortest_path : public graph {
+	public:
+		// constructor
+		// this will initialize the graph.
+		shortest_path(bool is_directed,
+			  		int num_vertices,
+			  		unsigned int edge_density,
+			  		unsigned int weight_range,
+					char *file)
+					: graph(is_directed,
+							num_vertices,
+							edge_density,
+							weight_range,
+							file)
+		{
+		}
+
+		// default constructor
+		shortest_path()
+		{
+		}
+
+		// destructor
+		~shortest_path()
+		{
+		}
+
+		//
+		// Return's the cost of the shortest path to go from
+		// 'from' to 'to'.
+		//
+		int
+		path_cost(int from, int to)
+		{
+
+		}
+
+		//
+		// Returns the shortest path to go from 'from' to 'to'.
+		//
+		// the void should change to a vector.
+		void
+		path(int from, int to)
+		{
+
+		}
+
+		/*
+		 * Return the path length for the shortest path found.
+		 * Else, return -1 for no path found to the destination node.
+		 */
+		/*
+		int
+		dijkistra(int from, int to)
+		{
+			vertice *v_from, *v_temp;
+			vertice *v_to;
+			vertice *v; // temp vertice pointer
+			edge *e; // temp edge pointer
+			int distance;
+
+			// TODO:
+			// init all the vertices for dijkistra shortest path.
+			init_for_dijkistra();
+
+			// get start and end vertices.
+			v_from = find_vertice(from);
+			assert(v_from);
+
+			v_to = find_vertice(to);
+			assert(v_to);
+
+			// distance of starting to starting is always 'zero'.
+			v_from->sp.distance = 0;
+
+			// starting vertex.
+			v = v_from;
+
+			while (!vertex_visited(v)) {
+				vertex_mark_visited(v);
+
+				// if destination is reached, print the path
+				if (v == v_to) {
+					break; // break the main while loop, the algo is done.
+				}
+
+				//e = v->edges;
+				e = v->edges.top();
+
+				while (e != NULL) {
+					if (vertex_distance(e->vertice) >
+						(vertex_distance(v) + edge_weight(e)) ) {
+						e->vertice->sp.distance = vertex_distance(v) + edge_weight(e);
+						e->vertice->sp.p = v;
+					}
+					e = e->next;
+				} // end of while - edges
+
+				// find the next vertex whose distance is minimum and who is not already visited.
+				distance = INT_MAX;
+				v_temp = vertices;
+				v = v_from; // some sane initial value - if no new vertex is slected, this
+							// will help break the while loop.
+
+				while (v_temp != NULL) {
+					// if the vertex is not already visited and the distance is more than
+					// the distance of the current 'v_temp' vertex from the starting vertex
+					// then select this vertex.
+					if (!vertex_visited(v_temp) &&
+						(distance > vertex_distance(v_temp))) {
+
+						distance = vertex_distance(v_temp);
+						v = v_temp;
+					}
+					v_temp = v_temp->next;
+				}
+
+			} // end of while.
+
+			// print the path.
+			v_temp = v_to;
+			int path_length = 0;
+
+			while (v_temp != NULL) {
+
+				// follow the parent
+				v_temp = v_temp->sp.p;
+
+				// increment for each hop made.
+				path_length++;
+
+				if (v_temp == NULL) {
+					cout << endl << "No shortest path found." << endl;
+					return (-1);
+				}
+				if (v_temp == v_from) {
+					break;
+				}
+			}
+			return path_length;
+		}
+		*/
+};
+
 int
 main(int argc, char **argv)
 {
 	bool is_directed = false;
-	int num_vertices;
-	unsigned int e_density;
-	unsigned int w_range;
+	int num_vertices = 0;
+	unsigned int e_density = 0;
+	unsigned int w_range = 0;
 	bool done = false;
 	int value;
 	int to, from;
 	int w;
+	char *in_file = NULL;
 
 	// initialze the graph
-	if (argc == 4) {
+	if (argc == 2) {
+		in_file = argv[1];
+	} else if (argc == 4) {
 		// count of vertices in the graph
 		num_vertices = atoi(argv[1]);
 
@@ -610,7 +706,7 @@ main(int argc, char **argv)
 
 	}
 
-	graph g(is_directed, num_vertices, e_density, w_range);
+	shortest_path g(is_directed, num_vertices, e_density, w_range, in_file);
 /*
 	int idx;
 	int path_length;
