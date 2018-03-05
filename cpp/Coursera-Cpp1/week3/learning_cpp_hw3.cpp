@@ -30,16 +30,6 @@ struct edge {
 	struct vertice *vertice;
 };
 
-// A comparator class for edge.
-class edge_comparator {
-	public:
-	// overload ()
-	bool operator()(const edge* e1, const edge* e2)
-	{
-		return (e1->weight > e2->weight);
-	}
-};
-
 // An vertice
 //
 // A vertice in the graph.
@@ -48,8 +38,6 @@ struct vertice {
 	int edge_count;
 	bool is_visited;
 	struct vertice *next;
-
-	priority_queue<edge*, vector<edge*>, edge_comparator> edges;
 
 	// lookup key is the target vertice value
 	unordered_map<int, edge*> edges_map;
@@ -143,7 +131,6 @@ class graph {
 		v->sp.distance = INT_MAX; // INFINITY
 		v->sp.p = NULL; // parent is NULL
 
-		// edges : a Priority Queue for lookup by smallest edge-weight.
 		// edges_map : A hash for quick lookup of edges by destination vertex.
 		return v;
 	}
@@ -173,9 +160,7 @@ class graph {
 		assert(e);
 		assert(v);
 
-		v->edges.push(e);
 		v->edges_map.insert({e->vertice->node, e});
-
 	}
 
 	void
@@ -258,9 +243,10 @@ class graph {
 			for (auto it = vertices.begin(); it != vertices.end(); it++) {
 				tempv = it->second;
 
-				while (!tempv->edges.empty()) {
-					tempe = tempv->edges.top();
-					tempv->edges.pop();
+				for (auto it_e = tempv->edges_map.begin();
+					 it_e != tempv->edges_map.end(); it_e++) {
+
+					tempe = it_e->second;
 					delete tempe;
 				}
 				tempv->edges_map.clear();
@@ -567,26 +553,6 @@ class shortest_path : public graph {
 		{
 		}
 
-		//
-		// Return's the cost of the shortest path to go from
-		// 'from' to 'to'.
-		//
-		int
-		path_cost(int from, int to)
-		{
-
-		}
-
-		//
-		// Returns the shortest path to go from 'from' to 'to'.
-		//
-		// the void should change to a vector.
-		void
-		path(int from, int to)
-		{
-
-		}
-
 		/*
 		 * Return the path length for the shortest path found.
 		 * Else, return -1 for no path found to the destination node.
@@ -686,6 +652,26 @@ class shortest_path : public graph {
 				}
 			}
 			return path_length;
+		}
+
+		//
+		// Return's the cost of the shortest path to go from
+		// 'from' to 'to'.
+		//
+		int
+		path_cost(int from, int to)
+		{
+
+		}
+
+		//
+		// Returns the shortest path to go from 'from' to 'to'.
+		//
+		// the void should change to a vector.
+		void
+		path(int from, int to)
+		{
+
 		}
 };
 
