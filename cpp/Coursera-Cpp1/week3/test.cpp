@@ -2,6 +2,7 @@
 #include <queue>
 #include <unordered_map>
 #include <stack>
+#include <queue>
 
 using namespace std;
 
@@ -113,4 +114,23 @@ main(void)
 
 	delete s;
 	cout << "Stack ... end\n";
+
+	cout << "Queue ... start\n";
+
+	queue<int>* q;
+	q = new queue<int>;
+
+	q->push(1);
+	q->push(2);
+	q->push(3);
+
+	cout << q->size() << " elements in Queue\n";
+
+	while (!q->empty()) {
+		cout << q->front() << endl;
+		q->pop();
+	}
+	delete q;
+
+	cout << "Queue ... end\n";
 }
