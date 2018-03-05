@@ -8,7 +8,7 @@
 #include <queue>
 #include <unordered_map>
 #include <fstream>
-#include <stack>
+#include <queue>
 
 using namespace std;
 
@@ -26,6 +26,8 @@ struct vertice;
 // An edge in the graph.
 struct edge {
 	int weight; // an edge might or might not have a weight associated with it.
+	int from;
+	int to;
 
 	// pointer to the other vertice which this edge consists of.
 	struct vertice *vertice;
@@ -51,12 +53,16 @@ struct vertice {
 };
 
 // A comparator class for vertice distance.
-class vertice_distance {
+class edge_cost {
 	public:
 	// overload ()
-	bool operator()(const vertice* v1, const vertice* v2)
+	bool operator()(const edge* e1, const edge* e2)
 	{
-		return (v1->sp.distance > v2->sp.distance);
+		//printf("e1->vertice->sp.distance: %d, e2->vertice->sp.distance: %d\n",
+		//		e1->vertice->sp.distance, e2->vertice->sp.distance);
+		//printf("e1->weight: %d, e2->weight: %d\n", e1->weight, e2->weight);
+		return (e1->weight > e2->weight);
+		//return (e1->vertice->sp.distance > e2->vertice->sp.distance);
 	}
 };
 
@@ -105,14 +111,6 @@ class graph {
 		return (rand() % get_max_vertex_count());
 	}
 
-	int
-	get_vertex_value(vertice *v)
-	{
-		assert(v != NULL);
-
-		return v->node;
-	}
-
 	vertice*
 	get_new_vertice(int value)
 	{
@@ -136,7 +134,7 @@ class graph {
 
 	// the vertice will be the to vertice.
 	edge*
-	get_new_edge(vertice* vertice, int weight)
+	get_new_edge(vertice* from_vertice, vertice* to_vertice, int weight)
 	{
 		edge *e = new edge;
 		if (e == NULL) {
@@ -144,7 +142,9 @@ class graph {
 			return NULL;
 		}
 
-		e->vertice = vertice;
+		e->from = from_vertice->node;
+		e->to = to_vertice->node;
+		e->vertice = to_vertice;
 		e->weight = weight;
 
 		return e;
@@ -253,6 +253,14 @@ class graph {
 		// forward declaration of add_vertice method
 		vertice* add_vertice(int data);
 
+		int
+		get_vertex_value(vertice *v)
+		{
+			assert(v != NULL);
+
+			return v->node;
+		}
+
 		bool
 		edge_present_in_vertice(vertice *v, int to_vertex_val)
 		{
@@ -305,7 +313,7 @@ class graph {
 				assert(to_vertice != from_vertice);
 
 				// get the new edge.
-				new_edge = get_new_edge(to_vertice, weight);
+				new_edge = get_new_edge(from_vertice, to_vertice, weight);
 				if (new_edge == NULL) {
 					cout << "Error: Unable to get a new edge(" << from <<
 							" -> " << to << " :  (" << weight << ")" << endl;
@@ -402,6 +410,40 @@ class graph {
 			return temp;
 		}
 
+		//
+		// Check if the resulting tree is a MST or not.
+		// Check if all the vertices are visited or not.
+		//
+		bool
+		check_mst(void)
+		{
+			vertice* v;
+
+			for (auto it = vertices.begin(); it != vertices.end(); it++) {
+				v = it->second;
+				if (!vertex_visited(v)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		int
+		get_edge_cost(vertice* f, vertice* t)
+		{
+			int to;
+			edge* e;
+
+			assert(f);
+			assert(t);
+
+			if (f->edges_map.count(t->node) > 0) {
+				assert(f->edges_map.count(t->node) == 1);
+				e = f->edges_map[t->node];
+				return e->weight;
+			}
+			return -1;
+		}
 };
 
 /*
@@ -522,11 +564,11 @@ graph::create_graph_randomly(void)
 	cout << "Exit : create_graph_randomly with " << edges << " edges." << endl;
 }
 
-class shortest_path : public graph {
+class mst : public graph {
 	public:
 		// constructor
 		// this will initialize the graph.
-		shortest_path(bool is_directed,
+		mst(bool is_directed,
 			  		int num_vertices,
 			  		unsigned int edge_density,
 			  		unsigned int weight_range,
@@ -540,27 +582,52 @@ class shortest_path : public graph {
 		}
 
 		// default constructor
-		shortest_path()
+		mst()
 		{
 		}
 
 		// destructor
-		~shortest_path()
+		~mst()
 		{
+		}
+
+		void
+		show(queue<edge*>* tree)
+		{
+			edge* e;
+			vertice* v;
+
+			if (tree == NULL) {
+				cout << "No MST\n";
+				return;
+			}
+
+			int cost = 0;
+			cout << "MST Tree: " << endl;
+
+			while (!tree->empty()) {
+				e = tree->front();
+				cost += edge_weight(e);
+				cout << e->from << " -> " << e->to << " [" << edge_weight(e) << "]" << endl;
+				tree->pop();
+			}
+			cout << "MST Cost: " << cost << endl;
 		}
 
 		/*
 		 * Return the path length for the shortest path found.
 		 * Else, return -1 for no path found to the destination node.
 		 */
-		stack<vertice*>*
-		dijkistra(int from, int to)
+		queue<edge*>*
+		prim(int from)
 		{
 			vertice *v_from, *v_temp;
-			vertice *v_to;
 			vertice *v; // temp vertice pointer
 			edge *e; // temp edge pointer
 			int distance;
+
+			queue<edge*>* q;
+			q = new queue<edge*>;
 
 			// init all the vertices for dijkistra shortest path.
 			init_for_dijkistra();
@@ -569,24 +636,24 @@ class shortest_path : public graph {
 			v_from = find_vertice(from);
 			assert(v_from);
 
-			v_to = find_vertice(to);
-			assert(v_to);
-
-			// distance of starting to starting is always 'zero'.
+			// starting vertex - distance is 'zero'.
 			v_from->sp.distance = 0;
 
 			// starting vertex.
 			v = v_from;
 
-			priority_queue<vertice*, vector<vertice*>, vertice_distance> distance_min_heap;
+			priority_queue<edge*, vector<edge*>, edge_cost> cost_min_heap;
 
+			int cost = 0;
 			while (!vertex_visited(v)) {
 				vertex_mark_visited(v);
+				cout << "\nProcessing [" << v->node << "] \n------------------\n\n";
 
-				// if destination is reached, print the path
-				if (v == v_to) {
-					break; // break the main while loop, the algo is done.
-				}
+				//if (v != v_from) {
+				//	cout << get_vertex_value(v->sp.p) << " -> " <<
+				//		 get_vertex_value(v) << " [" << get_edge_cost(v->sp.p, v) << "]" << endl;
+				//	cost += get_edge_cost(v->sp.p, v);
+				//}
 
 				for (auto it = v->edges_map.begin(); it != v->edges_map.end(); it++) {
 					e = it->second;
@@ -596,151 +663,56 @@ class shortest_path : public graph {
 						continue;
 					}
 
-					if (vertex_distance(e->vertice) > vertex_distance(v) + edge_weight(e)) {
-						e->vertice->sp.distance = vertex_distance(v) + edge_weight(e);
-						e->vertice->sp.p = v;
+					// add to PQ
+					cout << "Push: " << e->from << " -> " << e->to << " ["
+						 << edge_weight(e) << "]" << " :: " << e->vertice->sp.distance << endl;
+					cost_min_heap.push(e);
 
-						// if not in PQ, add to it
-						//
-						// if already present, adjust the distance.
-						//
-						// Just add the vertice with the updated distance.
-						// The entry with the shorter distance will get picked (pop'ed) first
-						// By the time the older entry gets picked, it will already be
-						// marked as visited.
-						distance_min_heap.push(e->vertice);
-					}
+					//if (vertex_distance(e->vertice) > edge_weight(e)) {
+					//	e->vertice->sp.distance = edge_weight(e);
+					//	//e->vertice->sp.p = v;
+
+					//	// add to PQ
+					//	cout << "Push: " << e->from << " -> " << e->to << " ["
+					//		 << edge_weight(e) << "]" << " :: " << e->vertice->sp.distance << endl;
+					//	cost_min_heap.push(e);
+					//}
 				}
 
-				if (distance_min_heap.empty()) {
+				if (cost_min_heap.empty()) {
 					cout << "Min heap is empty." << endl;
 					break;
 				}
 
-				// select the vertex with minimum distance and which is not already visited.
+				// select the edge with minimum weight and whose starting
+				// vertice is not already visited.
 				do {
-					v = distance_min_heap.top();
-					distance_min_heap.pop();
-				} while(!distance_min_heap.empty() && vertex_visited(v));
+					e = cost_min_heap.top();
+					cost_min_heap.pop();
+					cout << "Removed: " << e->from << " -> " << e->to << " ["
+						 << edge_weight(e) << "]" << endl;
+				} while(!cost_min_heap.empty() && vertex_visited(e->vertice));
+				cout << "Next: " << e->from << " -> " << e->to << " ["
+					 << edge_weight(e) << "]" << endl;
+				v = e->vertice;
+
+				// add the edge to the queue.
+				if (!vertex_visited(e->vertice)) {
+					cout << "Sol Add: " << e->from << " -> " << e->to << " ["
+						 << edge_weight(e) << "]" << endl;
+					q->push(e);
+				}
 
 			} // end of while.
 
-			// Build and print the path.
-			v_temp = v_to;
-
-			stack<vertice*>* s;
-			s = new stack<vertice*>;
-
-			while (v_temp != NULL) {
-				// add the node to the stack.
-				s->push(v_temp);
-
-				// follow the parent
-				v_temp = v_temp->sp.p;
-
-				if (v_temp == NULL) {
-					cout << endl << "No shortest path found." << endl;
-					delete s;
-					return NULL;
-				}
-
-				if (v_temp == v_from) {
-					// Also, add the starting node to the stack.
-					s->push(v_temp);
-					break;
-				}
+			if (!check_mst()) {
+				cout << "Not a connected graph, didn't produce a MST\n";
+				delete q;
+				q = NULL;
 			}
 
-			return s; // return the path as a stack.
-		}
-
-		//
-		// Returns the lenght of the shortest path.
-		//
-		int
-		path_length(int from, int to)
-		{
-			stack<vertice*>* s;
-			int length;
-
-			s = dijkistra(from, to);
-			if (s == NULL) {
-				return (-1); // no path found.
-			}
-
-			length = s->size() - 1;
-
-			// free the stack.
-			delete s;
-
-			return length;
-		}
-
-		//
-		// Return's the cost of the shortest path to go from
-		// 'from' to 'to'.
-		//
-		int
-		path_cost(int from, int to)
-		{
-			stack<vertice*>* s;
-			vertice* f, *t;
-			int cost;
-
-			s = dijkistra(from, to);
-			if (s == NULL) {
-				return (-1); // no path found.
-			}
-
-			cost = 0;
-
-			f = NULL;
-			t = NULL;
-
-			while (!s->empty()) {
-				t = s->top();
-
-				if (f != NULL) {
-					cost += (f->edges_map[t->node])->weight;
-				}
-				f = t;
-				s->pop();
-			}
-
-			// free the stack.
-			delete s;
-			return cost;
-		}
-
-		//
-		// Returns the shortest path to go from 'from' to 'to'.
-		//
-		// the void should change to a vector.
-		stack<vertice*>*
-		path(int from, int to)
-		{
-			stack<vertice*>* s;
-			vertice* v = NULL;
-
-			s = dijkistra(from, to);
-
-			if (s == NULL) {
-				return s; // no path found.
-			}
-
-			// print the path.
-			while (!s->empty()) {
-				if (v != NULL) {
-					cout << " -> ";
-				}
-				v = s->top();
-				cout << v->node;
-
-				s->pop();
-			}
-			cout << endl;
-
-			return s;
+			cout << "Cost: " << cost << endl << endl;
+			return q; // return the path as a queue.
 		}
 };
 
@@ -777,43 +749,20 @@ main(int argc, char **argv)
 
 	}
 
-	shortest_path g(is_directed, num_vertices, e_density, w_range, in_file);
+	mst g(is_directed, num_vertices, e_density, w_range, in_file);
 
-	/* Leaving this code commented out.
-	char choice = 'y';
+	char choice = 'n';
+	queue<edge*>* mst_tree;
 
 	do {
-		cout << "Shortest path between (from, to): ";
-		cin >> from >> to;
-		cout << "( " << from << ", " << to << " )" << endl;
-		cout << "Path Cost: " << g.path_cost(from, to) << endl;
-		cout << "Path Length: " << g.path_length(from, to) << endl;
-		g.path(from, to);
-		cout << "Continue: ";
-		cin >> choice;
+		cout << "MST starting from: ";
+		cin >> from;
+		mst_tree = g.prim(from);
+		g.show(mst_tree);
+		//cout << "Continue: ";
+		//cin >> choice;
 	} while(choice =='y');
 	cout << "Done ..." << endl;
-	*/
 
-	int idx;
-	int path_length;
-	int sum;
-	int count;
-
-	from = 1; // starting node.
-	count = 0; // to count how many nodes we can reach
-	sum = 0;
-	for (idx = from+1; idx <= g.get_vertice_count(); idx++) {
-		// idx is the to node.
-		path_length = g.path_cost(from, idx);
-		// path_length -1 means there is not path from 'from' to
-		// 'idx'
-		if (path_length != -1) {
-			sum += path_length;
-			count++;
-		}
-
-	}
-	cout << "Average path cost: " << (static_cast<double>(sum))/count << endl;
 	return (0);
 }
