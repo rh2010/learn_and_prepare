@@ -40,5 +40,52 @@ main(int argc, char **argv)
 		cout << str << " ";
 	}
 	cout << endl;
+
+	char ch = 'b';
+
+	ch += 2;
+	cout << ch << endl;
+
+	int a =2, b = -3, c = 2;
+
+	cout << "b + c * a = " << (b + c * a) << endl;
+	cout << "c % 5 /2 = " << (c % 5 / 2) << endl;
+	cout << "-a *c++  = " << (-a * c++) << endl;
+
+	vector<int> data(5, 1);
+	int sum{0};
+
+	cout << sum << endl;
+
+	for (auto element : data) {
+		cout << "adding " << element << endl;
+		sum += element;
+	}
+
+	cout << sum << endl;
+
+	for(auto p = ++data.begin(); p != --data.end(); ++p) {
+		cout << "adding " << *p << endl;
+		sum += *p;
+	}
+
+	cout << sum << endl;
+
+	sum = 0;
+
+	cout << "sum ... re-inited\n";
+	data.push_back(2);
+
+	data.push_back(3);
+
+	for(auto element : data) {
+		cout << "adding " << element << endl;
+		sum += element;
+	}
+
+	cout << sum << endl;
+
+	cout << accumulate(data.begin(), data.end(), data[0]) << endl;
+
 }
 
