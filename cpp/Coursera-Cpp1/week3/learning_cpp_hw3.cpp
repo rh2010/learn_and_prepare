@@ -779,7 +779,7 @@ main(int argc, char **argv)
 
 	shortest_path g(is_directed, num_vertices, e_density, w_range, in_file);
 
-	/* Leaving this code commented out.
+	/* Leaving this code commented out.*/
 	char choice = 'y';
 
 	do {
@@ -793,8 +793,7 @@ main(int argc, char **argv)
 		cin >> choice;
 	} while(choice =='y');
 	cout << "Done ..." << endl;
-	*/
-
+/*
 	int idx;
 	int path_length;
 	int sum;
@@ -815,5 +814,6 @@ main(int argc, char **argv)
 
 	}
 	cout << "Average path cost: " << (static_cast<double>(sum))/count << endl;
+	*/
 	return (0);
 }
