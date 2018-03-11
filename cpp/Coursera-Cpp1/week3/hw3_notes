@@ -1,0 +1,39 @@
+1. Code - learning_cpp_hw3.cpp
+
+2. Output:
+
+# Average path length calculations
+$ ./hw3 50 20 10
+Edge Density: 0.2, Weight Range: 1 - 10.
+Graph with 296 edges created.
+Average path length: 2.18367
+
+# 
+$ ./hw3 50 40 10
+Edge Density: 0.4, Weight Range: 1 - 10.
+Graph with 692 edges created.
+Average path length: 1.85714
+
+3. Some words on what I learnt.
+
+In implementing homework-2 I have learnt a great deal. I have not only learnt about C++ but also learnt about implementing Dijkistra's shortest path algorithm.
+
+I learnt how to write classes and instantiate objects. I learnt about various types of constructors of classes. I was able to graps the concept and usage of operator overloading along with public and private access qualifiers.
+
+To implement the shortest_path class, I used inheritance and inherited the shortest_path class from the base class graph. This taught me how the base class constructors / destructors are invoked and used.
+
+I also learnt a lot about various STL containers. To name a few I have used the following the homework assignment.
+STL
+	vectors
+	iterators
+	unordered_maps
+	priority_queue as min-heaps
+	stack.
+
+The list initializer syntax is also something new which I learnt. I wasn't aware about this concept and it's use to initialize certain member variable which are 'const' is very interesting.
+
+Last but not the least implementing the prob() routine and generating the graph randomly got me thinking in a way which I wasn't used to.
+Overall I was able to learn a great deal in this homework assignment.
+
+Thank you!
+
