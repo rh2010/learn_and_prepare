@@ -1,6 +1,6 @@
-c/cscope.files
-c/cscope.in.out
-c/cscope.out
-c/cscope.po.out
-c/tags
+**/cscope.files
+**/cscope.in.out
+**/cscope.out
+**/cscope.po.out
+**/tags
 
