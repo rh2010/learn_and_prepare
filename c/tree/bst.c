@@ -474,6 +474,88 @@ bst_select(struct bst* root, int r)
 }
 
 /*
+ * A helper routine to print a circular DLL
+ * when a BST is converted in-place to a circular DLL.
+ */
+void
+bst_show_dll(struct bst* dll)
+{
+    struct bst *head;
+
+    head = dll;
+
+    printf("Print DLL:\n");
+    do {
+        printf("%d ", dll->data);
+        dll = dll->right;
+    } while (dll != head);
+    printf("\n");
+}
+
+struct bst*
+bst_join_dll(struct bst* first, struct bst* second)
+{
+    struct bst* temp;
+
+    // both the left and right can't be NULL.
+    assert( !((first == NULL) && (second == NULL)) );
+
+    if (first == NULL) {
+        return second;
+    }
+    if (second == NULL) {
+        return first;
+    }
+
+    // right (next) of first should point to second
+    first->left->right = second;
+
+    // right (next) of second's last element should point to first.
+    second->left->right = first;
+
+    // last element of first.
+    temp = first->left;
+
+    // prev of first element of first should point to last element of second.
+    first->left = second->left;
+
+    // prev of first element of second should point to last element of first.
+    second->left = temp;
+
+    return first;
+}
+
+/*
+ * Convert a BST to a Circular DLL inplace.
+ * Use left pointer as previous pointer
+ * and
+ * use right pointer as next pointer.
+ */
+struct bst*
+bst_to_dll_inplace(struct bst *tree)
+{
+    struct bst *left;
+    struct bst *right;
+
+    if (tree == NULL) {
+        return NULL;
+    }
+
+    // convert the left of the tree to DLL.
+    left = bst_to_dll_inplace(tree->left);
+    // convert the right of the tree to DLL.
+    right = bst_to_dll_inplace(tree->right);
+
+    // process the current node to make it a signle node circular DLL node.
+    tree->left = tree;
+    tree->right = tree;
+
+    // join the left - current node - right part.
+    //
+    // join(left+current, right)
+    return bst_join_dll(bst_join_dll(left, tree), right);
+}
+/*
  * Find the rank of the element 'e'
  */
 int
@@ -611,7 +693,7 @@ main(int argc, char** argv)
 	//
 	//
 	while(TRUE) {
-		printf("\n1) Select\n2) Rank\n3) Delete\n4) Exit\nChoice: ");
+		printf("\n1) Select\n2) Rank\n3) Delete\n4) Print BST (inorder)\n5) Flatten - Doubly Linked list\n6)Exit\nChoice: ");
 		scanf("%d", &choice);
 
 		switch (choice) {
@@ -633,7 +715,6 @@ main(int argc, char** argv)
 				printf("Rank of element '%d' is '%d'\n", i, bst_rank(root, i));
 				break;
 			case 3:
-				// exit
 				printf("Value: ");
 				scanf("%d", &i);
 				root = bst_delete_node(root, i);
@@ -643,6 +724,16 @@ main(int argc, char** argv)
 				printf("\n");
 				break;
 			case 4:
+                printf("BST\n");
+                bst_walk_inorder(root);
+                break;
+			case 5:
+                printf("Converting the bst to DLL\n");
+                root = bst_to_dll_inplace(root);
+                printf("Finished Converting the bst to DLL\n");
+                bst_show_dll(root);
+                // fall-through
+			case 6:
 				// exit
 				printf("Done\n");
 				exit(0);
