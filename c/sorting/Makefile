@@ -5,6 +5,7 @@ all: clean
 	gcc -o inversions inversions.c helper.c
 	gcc -o merge merge_sort.c helper.c
 	gcc -o qsort quick_sort.c helper.c
+	gcc -o heap_sort heap_sort.c helper.c
 
 insertion:
 	rm -f insertion
@@ -22,8 +23,13 @@ inversions:
 	rm -f inversions
 	gcc -o inversions inversions.c helper.c
 
+heap_sort:
+	rm -f heap_sort
+	gcc -o heap_sort heap_sort.c helper.c
+
 clean:
 	rm -f qsort
 	rm -f merge
 	rm -f inversions
 	rm -f insertion
+	rm -f heap_sort
