@@ -237,6 +237,27 @@ heap_get_size(struct heap *h)
     return h->size;
 }
 
+/*
+ * Change the priority of the element at [index]
+ * to [value]
+ */
+void
+heap_change_priority(struct heap *h, int index, int value)
+{
+    int ele;
+    assert(h != NULL);
+    assert(index < h->size);
+
+    ele = h->arr[index];
+    h->arr[index] = value;
+
+    if (value < ele) {
+        heap_sift_down(h, index);
+    } else {
+        heap_sift_up(h, index);
+    }
+}
+
 int
 main(int argc, char** argv)
 {
@@ -265,6 +286,17 @@ main(int argc, char** argv)
         heap_insert(&h, rand()%range);
         printf("\tmax: %d\n", heap_peek_max(&h));
     }
+
+    // print the heap.
+    heap_print(&h);
+
+    // change priority
+    printf("Change priority:\n");
+    printf("\tMax: %d\n", heap_peek_max(&h));
+    heap_change_priority(&h, 0, 0);
+    printf("\tMax: %d\n", heap_peek_max(&h));
+    heap_change_priority(&h, h.size-1, heap_peek_max(&h)+range);
+    printf("\tMax: %d\n", heap_peek_max(&h));
 
     // print the heap.
     heap_print(&h);
