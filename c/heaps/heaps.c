@@ -1,4 +1,5 @@
 #include "../util.h"
+#include <time.h>
 
 /*
  * Implement a priority Queue as a Max-Heap.
@@ -27,7 +28,7 @@ void heap_sift_up(struct heap *h, int index);
 void heap_sift_down(struct heap *h, int index);
 void heap_print(struct heap *h);
 int heap_remove(struct heap *h, int index);
-
+int heap_get_size(struct heap *h);
 /*
  * Initialize the heap
  */
@@ -72,7 +73,19 @@ int
 heap_insert(struct heap *h, int data)
 {
     assert(h != NULL);
-    return -1;
+
+    if (h->max_size == h->size) {
+        printf("Error: Heap is already full\n");
+        return -1;
+    }
+
+    printf("Adding %d\n", data);
+    h->arr[h->size] = data;
+    h->size += 1;
+    assert(h->size <= h->max_size);
+    heap_sift_up(h, h->size-1);
+
+    return 0;
 }
 
 /*
@@ -84,8 +97,22 @@ heap_insert(struct heap *h, int data)
 int
 heap_get_max(struct heap *h)
 {
+    int max;
     assert(h != NULL);
-    return 0;
+
+    if (h->size == 0) {
+        printf("Error: Empty heap\n");
+        return -1;
+    }
+    max = h->arr[0]; // element at the first position is always the max.
+
+    // swap the max with the last element
+    SWAP((h->arr), (h->arr+(h->size-1)));
+
+    h->size = h->size - 1;
+    heap_sift_down(h, 0);
+
+    return max;
 }
 
 /*
@@ -118,8 +145,15 @@ heap_peek_max(struct heap *h)
 void
 heap_sift_up(struct heap *h, int index)
 {
+    int parent_index;
     assert(h != NULL);
+    assert(index < h->size);
 
+    parent_index = PARENT(index);
+    if (h->arr[parent_index] < h->arr[index]) {
+        SWAP((h->arr + index), (h->arr + parent_index));
+        heap_sift_up(h, parent_index);
+    }
 }
 
 /*
@@ -131,8 +165,26 @@ heap_sift_up(struct heap *h, int index)
 void
 heap_sift_down(struct heap *h, int index)
 {
+    int l, r, next;
     assert(h != NULL);
+    assert(index <= h->size);
 
+    next = index;
+
+    l = LEFT_CHILD(index);
+    if (l < h->size && h->arr[l] > h->arr[next]) {
+        next = l;
+    }
+
+    r = RIGHT_CHILD(index);
+    if (r < h->size && h->arr[r] > h->arr[next]) {
+        next = r;
+    }
+
+    if (next != index) {
+        SWAP((h->arr+next), (h->arr+index));
+        heap_sift_down(h, next);
+    }
 }
 
 /*
@@ -163,14 +215,34 @@ heap_print(struct heap *h)
 int
 heap_remove(struct heap *h, int index)
 {
+    int element;
     assert(h != NULL);
-    return 0;
+    assert(index < h->size);
+
+    element = h->arr[index];
+    h->arr[index] = INT_MAX;
+    heap_sift_up(h, index);
+    heap_get_max(h);
+
+    return element;
+}
+
+/*
+ * Returns the current size of the heap.
+ */
+int
+heap_get_size(struct heap *h)
+{
+    assert(h != NULL);
+    return h->size;
 }
 
 int
 main(int argc, char** argv)
 {
     int heap_size, range;
+    int i;
+
     struct heap h;
     // create a heap of size [user input]
     if (argc != 3) {
@@ -179,24 +251,47 @@ main(int argc, char** argv)
     }
     heap_size = atoi(argv[1]);
     range = atoi(argv[2]);
+
     // init the heap
     heap_init(&h, heap_size);
-    //
+
     // print the heap
     heap_print(&h);
-    //
-    // randomly fill in the heap with size elements
-    //
+
+    // randomly build the heap
+    srand(time(NULL));
+
+    for (i=0; i < heap_size; i++) {
+        heap_insert(&h, rand()%range);
+        printf("\tmax: %d\n", heap_peek_max(&h));
+    }
+
     // print the heap.
     heap_print(&h);
-    //
+
     // get the max elements
-    //
+    printf("Max: %d\n", heap_get_max(&h));
+    printf("Max: %d\n", heap_get_max(&h));
+    printf("Max: %d\n", heap_get_max(&h));
+    printf("Max: %d\n", heap_get_max(&h));
+
     // print the heap
     heap_print(&h);
 
     // remove an element from the heap.
-    heap_remove(&h, 3);
+    if (heap_get_size(&h) > 3) {
+        printf("remove: %d\n", heap_remove(&h, heap_get_size(&h)-2));
+    }
+
+    // print the heap
+    heap_print(&h);
+
+    while(heap_get_size(&h) > 0) {
+        printf("max: %d\n", heap_get_max(&h));
+    }
+
+    // print the heap
+    heap_print(&h);
 
     // destroy the heap
     heap_cleanup(&h);
