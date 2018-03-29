@@ -6,7 +6,7 @@ all: clean
 	gcc -o merge merge_sort.c helper.c
 	gcc -o qsort quick_sort.c helper.c
 	gcc -o heap_sort heap_sort.c helper.c
-	gcc -o quick quick.c helper.c
+	gcc -o quick quick.c ../helper.c
 
 insertion:
 	rm -f insertion
@@ -18,7 +18,7 @@ qsort:
 
 quick:
 	rm -f quick
-	gcc -o quick quick.c helper.c
+	gcc -o quick quick.c ../helper.c
 
 merge:
 	rm -f merge

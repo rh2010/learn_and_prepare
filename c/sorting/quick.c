@@ -19,7 +19,9 @@ partition(int *arr, int s, int e)
 
 	for (j=s+1; j<=e;j++) {
 		if (arr[j] <= p) {
-			SWAP((arr+i), (arr+j));
+			if (i != j) {
+				SWAP((arr+i), (arr+j));
+			}
 			i++;
 		}
 	}
@@ -33,13 +35,15 @@ quick(int *arr, int s, int e)
 {
 	int p_index;
 	printf("qs: s: %d, e: %d\n", s, e);
+	print_int_arr_pos(arr, s, e-s+1);
 	if  (s >= e) {
+		printf("\n");
 		return;
 	}
 	p_index = partition(arr, s, e);
 
 	printf("Partition Index: [%d] %d\n", p_index, arr[p_index]);
-	print_int_arr(arr, e-s+1);
+	print_int_arr_pos(arr, s, e-s+1);
 	printf("\n");
 
 	quick(arr, s, p_index-1);

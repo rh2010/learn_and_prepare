@@ -16,6 +16,21 @@ print_int_arr(int *arr, int size)
 }
 
 void
+print_int_arr_pos(int *arr, int start, int size)
+{
+	int i;
+
+	printf("[%d]: ", size);
+	for (i = 0; i < size; i++) {
+		printf("%d", arr[start+i]);
+		if (i < (size - 1)) {
+			printf(" - ");
+		}
+	}
+	printf("\n");
+}
+
+void
 print_int_arr_reverse(int *arr, int size)
 {
 	int i;

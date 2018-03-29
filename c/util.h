@@ -43,5 +43,6 @@ typedef enum {FALSE, TRUE} bool;
 void print_int_arr(int *arr, int size);
 void print_int_arr_reverse(int *arr, int size);
 void swap_int(int *a, int *b);
+void print_int_arr_pos(int *arr, int start_pos, int size);
 
 #endif // __UTIL_H_
