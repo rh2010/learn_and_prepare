@@ -7,7 +7,7 @@
  * Implement as a Binary Heap (i.e. a complete binary tree)
  */
 
-#define PARENT(i) ((i)/2)
+#define PARENT(i) ((i-1)/2)
 #define LEFT_CHILD(i) ((2*(i)) + 1)
 #define RIGHT_CHILD(i) ((2*(i)) + 2)
 
