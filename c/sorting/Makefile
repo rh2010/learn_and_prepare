@@ -1,4 +1,4 @@
-.PHONY: all clean insertion inversions merge qsort
+.PHONY: all clean insertion inversions merge qsort heap_sort
 
 all: clean
 	gcc -o insertion insertion_sort.c helper.c
