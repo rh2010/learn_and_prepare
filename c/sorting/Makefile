@@ -1,4 +1,4 @@
-.PHONY: all clean insertion inversions merge qsort heap_sort
+.PHONY: all clean insertion inversions merge qsort heap_sort quick
 
 all: clean
 	gcc -o insertion insertion_sort.c helper.c
@@ -6,6 +6,7 @@ all: clean
 	gcc -o merge merge_sort.c helper.c
 	gcc -o qsort quick_sort.c helper.c
 	gcc -o heap_sort heap_sort.c helper.c
+	gcc -o quick quick.c helper.c
 
 insertion:
 	rm -f insertion
@@ -14,6 +15,10 @@ insertion:
 qsort:
 	rm -f qsort
 	gcc -o qsort quick_sort.c helper.c
+
+quick:
+	rm -f quick
+	gcc -o quick quick.c helper.c
 
 merge:
 	rm -f merge
@@ -29,6 +34,7 @@ heap_sort:
 
 clean:
 	rm -f qsort
+	rm -f quick
 	rm -f merge
 	rm -f inversions
 	rm -f insertion
