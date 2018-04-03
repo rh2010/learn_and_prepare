@@ -161,6 +161,7 @@ is_same_set_pc(struct set *s, int key1, int key2)
 
 	return (find_pc(s, key1) == find_pc(s, key2));
 }
+
 /*
  * Perform a join of two sets.
  */
@@ -210,7 +211,7 @@ find_pc(struct set *s, int key)
 	assert(s != NULL);
 
 	if (key != s->parent[key]) {
-		s->parent[key] = find(s, s->parent[key]);
+		s->parent[key] = find_pc(s, s->parent[key]);
 	}
     return s->parent[key];
 }
