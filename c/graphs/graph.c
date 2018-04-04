@@ -230,15 +230,15 @@ graph_print(graph_t *g)
 
 	assert(g!= NULL);
 
-	printf("Graph:\nVertices: %d\nEdges: %d\n", g->nvertices, g->nedges);
+	printf("Graph:\n\tVertices: %d\n\tEdges: %d\n", g->nvertices, g->nedges);
 	tv = g->vertices;
 
 	while (tv != NULL) {
-		printf("%d := ", tv->val);
+		printf("\t%d ", tv->val);
 		te = tv->edges;
 
 		while (te != NULL) {
-			printf("%d -> ", te->vertice->val);
+			printf("-> %d ", te->vertice->val);
 			te = te->next;
 		}
 		printf("\n");
@@ -511,7 +511,6 @@ graph_dfs(graph_t *g, vertice_t *starting_vertex, stack_head_t *res)
 		t = pop(s);
 
 		// pre-process node v.
-		//printf("%d ", v->val);
 		e = t->edges;
 		count = 0;
 
@@ -586,6 +585,7 @@ graph_topologicalSort(graph_t *g)
 				" Directed Acyclic Graph (DAG)\n");
 		return;
 	}
+	graph_clear_visited(g);
 	r = &result;
 
 	// stack to hold the topologoical sorting order
