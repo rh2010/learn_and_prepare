@@ -51,6 +51,7 @@ typedef struct vertice {
 	char node; // use either 'val' or 'char'
 	int degree;
 	int edge_count;
+	int edge_count_orig;
 	bool isVisited;
 	bool isProcessed;
 

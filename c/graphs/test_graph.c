@@ -62,9 +62,6 @@ main(int argc, char **argv)
 				break;
 			case 7:
 				graph_get_connected_components(&graph);
-
-				printf("Dumping Graph\n");
-				graph_print(&graph);
 				break;
 			case 8:
 				graph_uninit(&graph);
