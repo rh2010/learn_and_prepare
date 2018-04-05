@@ -10,6 +10,9 @@
  *
  */
 
+#define VISITED(v) ( ((v)->isVisited == TRUE))
+#define NOT_VISITED(v) ( ((v)->isVisited == FALSE))
+#define MARK_VISITED(v) ( (v)->isVisited = TRUE )
 /*
  * Read a graph from a file and build a graph.
  */
@@ -191,8 +194,8 @@ graph_add_edge(graph_t *g, int from_vertice, int to_vertice, int weight)
 		prev = te;
 		if (te->vertice->val == to->val) {
 			assert(te->vertice == to); // double checking
-			printf("Edge (%d, %d) already present the in graph\n",
-					from_vertice, to_vertice);
+			//printf("Edge (%d, %d) already present the in graph\n",
+			//		from_vertice, to_vertice);
 			goto error;
 		}
 		te = te->next;
@@ -201,6 +204,7 @@ graph_add_edge(graph_t *g, int from_vertice, int to_vertice, int weight)
 	prev->next = new;
 
 success:
+	from->edge_count++;
 	if (!g->directed) {
 		// if graph is not directed then add the reverse edge too.
 		if (graph_add_edge(g, to_vertice, from_vertice, weight)) {
@@ -234,7 +238,7 @@ graph_print(graph_t *g)
 	tv = g->vertices;
 
 	while (tv != NULL) {
-		printf("\t%d ", tv->val);
+		printf("\t%d [%d] ", tv->val, tv->edge_count);
 		te = tv->edges;
 
 		while (te != NULL) {
@@ -434,6 +438,7 @@ dfs_recursive(graph_t *g, vertice_t *v)
 	assert(v != NULL);
 
 	v->isVisited = TRUE;
+	printf("%d ", v->val);
 
 	e = v->edges;
 	while(e != NULL) {
@@ -611,3 +616,192 @@ graph_topologicalSort(graph_t *g)
 
 	return;
 }
+
+/*
+ *
+ */
+void
+graph_undirected_connectivity(graph_t *g)
+{
+	vertice_t *v;
+
+	assert(g != NULL);
+	assert(g->directed == FALSE);
+
+	printf("Connected components for un-directed graph\n");
+	// Mark all nodes as not-visited.
+	graph_clear_visited(g);
+
+	v = g->vertices;
+	// for each vertex in the graph, get the finish processing ordering
+	while(v != NULL) {
+		if (NOT_VISITED(v)) {
+			printf("Component:\n\t");
+			graph_traverse_bfs(g, v->val);
+			printf("\n");
+		}
+		v = v->next;
+	}
+}
+
+/*
+ *
+ */
+void
+graph_vertex_reverse_edges(graph_t *g, vertice_t *v)
+{
+	int i;
+	edge_t *e;
+	edge_t *n;
+	vertice_t *t;
+
+	assert(g != NULL);
+	assert(v != NULL);
+
+	i = v->edge_count;
+	e = v->edges;
+
+	while (i > 0) {
+		t = e->vertice;
+
+		// the current edge should be the first one in the list.
+		assert(e == v->edges);
+
+		// remove old edge
+		n = e->next;
+		v->edges = n;
+		free(e);
+
+		// add the reverse edge
+		graph_add_edge(g, t->val, v->val, 0);
+		t->edge_count--;
+
+		// next item
+		i--;
+		e = n;
+	}
+}
+
+/*
+ * Reverse edges for each vertex in the graph.
+ */
+void
+graph_reverse_edges(graph_t *g)
+{
+	vertice_t *v;
+
+	assert(g != NULL);
+
+	v = g->vertices;
+	// for each vertex in the graph, reverse the edges
+	while(v != NULL) {
+		graph_vertex_reverse_edges(g, v);
+		v = v->next;
+	}
+}
+
+/*
+ * Compute the processing ordering using a recursive DFS
+ */
+void
+graph_scc_get_ordering(graph_t *g, stack_head_t *s, vertice_t *v)
+{
+	vertice_t *t;
+	edge_t *e;
+
+	assert(g != NULL);
+	assert(s != NULL);
+	assert(v != NULL);
+	assert(NOT_VISITED(v));
+
+	// mark the vertex as visited.
+	MARK_VISITED(v);
+
+	e = v->edges;
+	while (e != NULL) {
+		t = e->vertice;
+		if (NOT_VISITED(t)) {
+			printf("Calling graph_scc_get_ordering for %d\n", t->val);
+			graph_scc_get_ordering(g, s, t);
+		}
+		e = e->next;
+	}
+
+	// push the starting vertex onto the stack.
+	printf("Pusing [%d] on stack\n", v->val);
+	push(s, v);
+}
+
+/*
+ * Impmentation of Kosaraju's Algorithm.
+ */
+void
+graph_get_scc(graph_t *g)
+{
+	vertice_t *v;
+	stack_head_t f; // a stack to maintain finish ordering
+
+	assert(g != NULL);
+	assert(g->directed == TRUE);
+
+	// Mark all nodes as not-visited.
+	printf("graph_get_scc Begin\n");
+	graph_clear_visited(g);
+
+	// initialize a stack for getting the processing ordering
+	printf("Initializing stack\n");
+	stack_init(&f);
+
+	v = g->vertices;
+	// for each vertex in the graph, get the finish processing ordering
+	while(v != NULL) {
+		if (NOT_VISITED(v)) {
+			printf("Calling get ordering for %d\n", v->val);
+			graph_scc_get_ordering(g, &f, v);
+		}
+		v = v->next;
+	}
+
+	// Mark all nodes as not-visited.
+	graph_clear_visited(g);
+
+	// reverse the edges of the graph.
+	printf("Reversing edges for the graph\n");
+	graph_reverse_edges(g);
+
+	// print the graph - Debug
+	graph_print(g);
+
+	while (!stack_is_empty(&f)) {
+		v = pop(&f);
+
+		assert(v != NULL);
+		if (NOT_VISITED(v)) {
+			printf("SCC:\n\t");
+			dfs_recursive(g, v);
+			printf("\n");
+		}
+	}
+
+	stack_uninit(&f);
+	printf("graph_get_scc Done\n");
+}
+
+void
+graph_get_connected_components(graph_t *g)
+{
+	assert(g != NULL);
+
+	if (g->directed) {
+		graph_get_scc(g);
+
+		// reverse the edges of the graph.
+		graph_reverse_edges(g);
+	} else {
+		graph_undirected_connectivity(g);
+	}
+
+	// Mark all nodes as not-visited.
+	graph_clear_visited(g);
+}
+

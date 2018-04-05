@@ -26,7 +26,7 @@ main(int argc, char **argv)
 
 	while(TRUE) {
 		printf("\n1) Add Vertice\n2) Add Edge \n3) Display Graph\n4) BFS\n"
-			   "5) DFS \n6) Topological Sort\n7) Exit\n   Choice: ");
+			   "5) DFS \n6) Topological Sort\n7) Connected Components\n8) Exit\n   Choice: ");
 		scanf("%d", &choice);
 
 		switch (choice) {
@@ -61,6 +61,12 @@ main(int argc, char **argv)
 				graph_clear_visited(&graph);
 				break;
 			case 7:
+				graph_get_connected_components(&graph);
+
+				printf("Dumping Graph\n");
+				graph_print(&graph);
+				break;
+			case 8:
 				graph_uninit(&graph);
 				printf("Done, exiting ...\n");
 				exit(0);
