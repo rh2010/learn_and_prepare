@@ -21,7 +21,7 @@ hw:
 sp:
 	g++ -std=c++11 -ggdb3 -o shortest_path  shortest_path.cpp
 
-test: clean
+test:
 	rm -f test
 	g++ -std=c++11 -ggdb3 -o test  test.cpp
 

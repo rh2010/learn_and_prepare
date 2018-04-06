@@ -29,6 +29,7 @@ main(void)
 {
 	// overload ()
 	priority_queue<int, vector<int>, edge_comparator> edges;
+	priority_queue<int> edges_2;
 
 	edges.push(3);
 	edges.push(5);
