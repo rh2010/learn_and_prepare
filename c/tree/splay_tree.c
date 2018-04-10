@@ -28,6 +28,7 @@ struct bst_node {
 };
 
 struct bst_node *splay_tree;
+struct bst_node *splay_tree2;
 
 struct bst_node* splay_tree_find(struct bst_node *root, int key);
 void splay(struct bst_node **root, struct bst_node *node);
@@ -45,7 +46,13 @@ void dump_tree();
 struct bst_node*
 bst_find_node(struct bst_node* root, int data)
 {
-	struct bst_node *res = NULL, *temp = root;
+	struct bst_node *res = NULL;
+	struct bst_node *temp = root;
+	struct bst_node *prev = NULL;
+
+	if (root == NULL) {
+		return NULL;
+	}
 
 	while (temp != NULL) {
 		if (temp->data == data) {
@@ -59,6 +66,9 @@ bst_find_node(struct bst_node* root, int data)
 			// go right
 			temp = temp->right;
 		}
+	}
+	if (temp == NULL && prev != NULL) {
+		printf("Next: %d\n", prev->data);
 	}
 
 	return res;
@@ -477,6 +487,18 @@ bst_height(struct bst_node *root)
 	return (MAX(bst_height(root->left), bst_height(root->right)) + 1);
 }
 
+struct bst_node*
+bst_find_max(struct bst_node *root)
+{
+	struct bst_node* node = root;
+
+	while(node->right != NULL) {
+		node = node->right;
+	}
+
+	return node;
+}
+
 void
 bst_walk_level_order(struct bst_node* root)
 {
@@ -499,6 +521,59 @@ dump_tree()
 	printf("\nLevel order: \n\t");
 	bst_walk_level_order(splay_tree);
 
+}
+
+void
+splay_tree_merge(struct bst_node **tree1, struct bst_node **tree2)
+{
+	struct bst_node *first_max;
+
+	if (*tree2 == NULL) {
+		printf("Second tree is empty\n");
+		return;
+	}
+	// get the max element in the first tree
+	first_max = bst_find_max(*tree1);
+
+	// get it to the top - i.e. make it the root node by splaying it.
+	splay(tree1, first_max);
+
+	// join the two trees now.
+	first_max->right = *tree2;
+	(*tree2)->parent = first_max;
+
+	//
+	*tree2 = NULL;
+
+	assert(first_max->right != NULL);
+}
+
+void
+splay_tree_split(struct bst_node **tree,
+				 int key,
+				 struct bst_node **tree2)
+{
+	struct bst_node *k;
+	struct bst_node *r;
+
+	// find the node with 'key' and bring it to the top.
+	k = splay_tree_find(*tree, key);
+
+	if (k->data < key) {
+		// cut left
+	} else {
+		// cut right
+	}
+
+	// k.data == key
+	//
+	// keep the key in the first tree.
+	r = k->right;
+	k->right = NULL;
+	r->parent = NULL;
+
+	// Second tree
+	*tree2 = r;
 }
 
 int
@@ -619,10 +694,29 @@ main(int argc, char** argv)
                 bst_walk_inorder(splay_tree);
                 break;
 			case 4: // Merge
-				printf("Not Implemented\n");
+				// only call merge after we have invoked a split
+				splay_tree_merge(&splay_tree, &splay_tree2);
+
+				printf("First Tree\n\t");
+                bst_walk_inorder(splay_tree);
+				printf("\nLevel order: \n\t");
+				bst_walk_level_order(splay_tree);
 				break;
 			case 5: // Split
-				printf("Not Implemented\n");
+				printf("Key to split On: ");
+				scanf("%d", &i);
+				printf("Key will remain in the trees: ");
+				splay_tree_split(&splay_tree, i, &splay_tree2);
+
+				printf("First Tree\n\t");
+                bst_walk_inorder(splay_tree);
+				printf("\nLevel order: \n\t");
+				bst_walk_level_order(splay_tree);
+
+				printf("\nSecond Tree\n\t");
+                bst_walk_inorder(splay_tree2);
+				printf("\nLevel order: \n\t");
+				bst_walk_level_order(splay_tree2);
 				break;
 			case 6:
 				// exit
