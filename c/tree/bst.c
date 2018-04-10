@@ -2,6 +2,10 @@
 
 /*
  * Implemenet a binary search tree.
+ * 	- Note: The bst node doesn't have a parent pointer.
+ *
+ * 	- Take a look at binary_search_tree.c
+ * 		- That file has the bst node with a parent pointer.
  *
  *
  * Add node,

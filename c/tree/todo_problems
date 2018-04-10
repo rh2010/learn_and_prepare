@@ -9,4 +9,6 @@
  - B-tree - Implement insert / delete / loopkup / range  query
  - B+ tree - Implement insert / delete / lookup 
  - Skip list - Implement insert / delete / lookup / range query
+ - Rank - Find the element in a BST with a given rank.
+ - Given a BST, find if it satisfies the BST property.
 
