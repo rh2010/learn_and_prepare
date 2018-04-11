@@ -9,13 +9,9 @@
 #   return the index in which the key can be inserted.
 #
 def binary_search_i(a, low, high, key):
-    if (high < low):
-        return low
-
     mid = -1
 
     while low <= high:
-        print("l: %d, h: %d, m: %d" % (low, high, mid))
         mid = low + (high-low)/2
         if (a[mid] == key):
             break
@@ -24,7 +20,6 @@ def binary_search_i(a, low, high, key):
         else:
             low = mid+1
 
-    print("Done- l: %d, h: %d, m: %d" % (low, high, mid))
     if (high < low):
         return low
 
