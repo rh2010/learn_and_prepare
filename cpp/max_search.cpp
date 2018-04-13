@@ -21,7 +21,7 @@ find_max(const vector<int> a, int left, int right)
 	s = left;
 	e = right;
 
-	while (left < right) {
+	while (left <= right) {
 		mid = left + (right-left)/2;
 
 		cout << "L: " << left << " R: " << right << " M: " << mid << endl;
@@ -40,12 +40,8 @@ find_max(const vector<int> a, int left, int right)
 			assert("Should not be here!");
 		}
 	}
-	if (idx_max == -1 && left == right) {
-		if (right == s) {
-			idx_max = 0;
-		} else {
-			idx_max = e;
-		}
+	if (idx_max == -1 && mid == right) {
+		idx_max = right;
 	}
 	cout << "Done L: " << left << " R: " << right << " M: " << mid << endl;
 	cout << "Index: " << idx_max << endl;;
