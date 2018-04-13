@@ -88,33 +88,52 @@ mergesort(int *arr, int left, int right)
 }
 
 int
-main(void)
+main(int argc, char **argv)
 {
 	int i = 0;
-	//int orig_arr[ARRAY_SIZE] = {31, 41, 59, 26, 41, 58};
-	int orig_arr[ARRAY_SIZE] = {8, 4, 2, 1};
-
+	int count;
 	int *arr = NULL;
+	//int orig_arr[ARRAY_SIZE] = {31, 41, 59, 26, 41, 58};
+	//int orig_arr[ARRAY_SIZE] = {8, 4, 2, 1};
+	//count = ARRAY_SIZE
 
-	arr = (int *)malloc(ARRAY_SIZE);
+	if (argc < 3) {
+		printf("usage: ./a.out <count of elements> <count number of integers>\n");
+		exit(-1);
+	}
+
+	count = atoi(argv[1]);
+
+	if (argc != count + 2) {
+		printf("Wrong number of arguments\n");
+		printf("usage: ./a.out <count of elements> <count number of integers>\n");
+		exit(-1);
+	}
+
+	arr = (int *)malloc(sizeof (int) * count);
 	if (arr == NULL) {
 		printf("Unable to allocate memory for the array\n");
 		return (-1);
 	}
 
-	// init the array
-	for (i = 0; i < ARRAY_SIZE; i++) {
-		arr[i] = orig_arr[i];
+	// fill the array
+	for (i = 0; i < count; i++) {
+		arr[i] = atoi(argv[i+2]);
 	}
 
+	// init the array
+	//for (i = 0; i < ARRAY_SIZE; i++) {
+	//	arr[i] = orig_arr[i];
+	//}
+
 	printf("Original array\n");
-	print_int_arr(orig_arr, ARRAY_SIZE);
+	print_int_arr(arr, count);
 
 //	insertion_sort_increasing(arr, ARRAY_SIZE);
-	printf("Inversions are %d\n", mergesort(arr, 0, (ARRAY_SIZE - 1)));
+	printf("Inversions are %d\n", mergesort(arr, 0, (count - 1)));
 
 	printf("Sorted array\n");
-	print_int_arr(arr, ARRAY_SIZE);
+	print_int_arr(arr, count);
 
 	// all done, free the memory
 	free(arr);
