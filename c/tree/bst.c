@@ -165,6 +165,80 @@ bst_get_max(struct bst* root)
 	return node;
 }
 
+struct bst*
+bst_delete_node_iter(struct bst* root, int data)
+{
+    struct bst* temp;
+    struct bst* orig;
+    struct bst* parent;
+
+    if (root == NULL) {
+        return NULL;
+    }
+    orig = root;
+    parent = NULL;
+
+    while (root != NULL) {
+        if (root->data == data) {
+            printf("Found [%d]\n", root->data);
+
+            // perform deletion
+            if (root->left == NULL || root->right == NULL) {
+                temp = (root->left == NULL) ? root->right : root->left;
+
+                if (temp == NULL) {
+                    // zero child case
+                    printf("0 child case\n");
+                    temp = root;
+                    if (parent == NULL) {
+                        assert(orig == root);
+                        orig = NULL;
+                    }
+
+                    // adjust the parent pointer
+                    if ( parent->left != NULL && parent->left == root) {
+                        parent->left = NULL;
+                    } else if (parent->right != NULL && parent->right == root) {
+                        parent->right = NULL;
+                    }
+                    //root = NULL;
+                } else {
+                    printf("1 child case\n");
+                    // one child case
+                    root->data = temp->data;
+                    root->left = temp->left;
+                    root->right = temp->right;
+                }
+                free(temp);
+                goto done;
+            }
+            // 2 children case
+            printf("2 children case\n");
+
+            // find successor
+            temp = bst_get_min(root->right);
+            printf("Selected [%d]\n", temp->data);
+            root->data = temp->data;
+            temp->data = data;
+            printf("Going right from [%d] \n", root->data);
+            root = root->right;
+        }
+
+        parent = root;
+        if (data < root->data) {
+            // go left
+            printf("At [%d] going Left\n", root->data);
+            root = root->left;
+        } else {
+            // go right
+            printf("At [%d] going Right\n", root->data);
+            root = root->right;
+        }
+    }
+
+done:
+    return orig;
+}
 
 /*
  * Delete the node with value data.
@@ -317,6 +391,7 @@ bst_walk_level_order(struct bst* root)
 
 	for (i = 1; i <= height; i++) {
 		bst_print_current_level(root, i);
+		printf("\n");
 	}
 }
 
@@ -721,11 +796,15 @@ main(int argc, char** argv)
 			case 3:
 				printf("Value: ");
 				scanf("%d", &i);
-				root = bst_delete_node(root, i);
+				//root = bst_delete_node(root, i);
+				root = bst_delete_node_iter(root, i);
 
 				printf("Inorder Traversal: \n");
 				bst_walk_inorder(root);
 				printf("\n");
+	            printf("Level-Order Traversal: \n");
+	            bst_walk_level_order(root);
+	            printf("\n");
 				break;
 			case 4:
                 printf("BST\n");
