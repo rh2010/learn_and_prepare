@@ -10,3 +10,28 @@
 
  - lpalin_substring.c
  	Longest palindromic substring
+
+ - edit_distance.c
+	Edit Distance of two strings
+
+ - lcs (longest common sub-sequence) and edit-distance have a lot of similarity
+   in between them. The exact same steps have to be followed by the reverse logic
+	lcs
+		- initialize the '0'the row and column with '0'
+		- the char in i and j position are same
+			- take from prev diagonal and add 1
+
+		- if i and j are not same
+			- take the max from upper and left element
+
+	edit_distance
+		initialization
+		- in the '0' column the value will be the row index
+		and
+		- in the '0' rwo the value will be the column index.
+
+		- if the char in i and j position are same
+			- copy from prev (upper) diagonal
+
+		- if the char in i and j position are not same
+			- take the max of diagonal, upper and left elements and add 1
