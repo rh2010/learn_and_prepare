@@ -3,6 +3,42 @@
 #
 # Longest Common subsequence
 #
+
+def lcs_string(a, b, l):
+    '''
+    After calculating lcs matrix 'l', we can
+    use it to print the lcs string.
+    This is a helper routine to do that.
+    '''
+    a_len = len(a)
+    b_len = len(b)
+
+    res = []
+    i = a_len
+    j = b_len
+
+    while i > 0 and j > 0:
+        if a[i-1] == b[j-1]:
+            #
+            res.append(a[i-1])
+            i = i-1
+            j = j-1
+        else:
+            # not equal case
+            upper = l[i-1][j]
+            left = l[i][j-1]
+
+            if upper == left:
+                i = i-1
+            elif upper > left:
+                i = i-1
+            else:
+                j = j-1
+
+    res.reverse()
+    print(res)
+    return res
+
 def lcs(a, b):
     a_len = len(a)
     b_len = len(b)
