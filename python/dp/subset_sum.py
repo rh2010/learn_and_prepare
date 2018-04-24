@@ -1,4 +1,9 @@
 #!/usr/bin/python3
+'''
+Note: We can also implement subset sum using knapsack.
+
+See partition3.py
+'''
 def canPartition(nums):
     """
     :type nums: List[int]
