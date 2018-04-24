@@ -8,6 +8,11 @@
 import os
 import sys
 
+'''
+Note: This solution is not optimal. This runs in O(n2).
+There is also a O(n) solution using hash-tables.
+See: ../cpp/longestConsecutivesequence.cpp
+'''
 def longest_consecutive_integer_sequence(arr):
     print("Input: %s" % (arr))
     hashmap = {}
