@@ -1,0 +1,108 @@
+Notes on CPP STL Containers:
+----------------------------
+
+For each list the following:
+    APIs
+    How they are implemented i.e. underlying data-structure and algorithm
+    Time Complexity of operations
+    When to be used
+
+# Sequence containers
+
+1. array
+
+2. vector
+    vector<int> v;
+
+    v.reserve(size); // reserve space for size number of objects
+
+    it = v.begin(), it != v.end(), it++
+    v.size() // number of element of the vector
+    v.empty() // if there are any elements in the vector
+
+    access element as v[index]
+    v.at(index)
+    v.front() // element at front
+    v.back()// element at back
+
+    v.insert(it, val) // insert before the iterator
+    v.push_back() // add at end
+    v.pop_back() // remove from end
+    v.erase() // delete all the elements
+
+
+3. deque
+    deque<int> q; // double ended queue
+
+    q.push_back()
+    q.pop_back()
+
+    q.push_front()
+    q.pop_front()
+
+    q.empty()
+    q.size()
+    q[index]
+
+
+4. forward_list
+
+5. list
+    list<int> l;
+
+    l.push_back()
+    l.remove_back()
+
+    l.push_front()
+    l.remove_front()
+
+    l.reverse()
+    l.sort()
+
+    l.front()
+    l.back()
+
+
+# Container adapters
+
+1. stack
+
+2. queue
+    q.empty()
+    q.size()
+
+    q.front() // element at the front of the queue.
+    q.pop() // remove from the front
+    q.push() // insert at the end of the queue
+3. priority_queue
+    by default implemented as a Max-Heap
+
+# Associative container
+
+1. set
+
+2. multiset
+
+3. map
+
+4. multimap
+
+# Unordered associative container
+
+1. unordered_set
+
+2. unordered_multiset
+
+3. unordered_map
+
+4. unordered_multimap
+
+# Other
+
+1. bitset
+
+Algorithm.h
+
+1. sort
+
+2. accumulate
