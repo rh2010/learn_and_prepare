@@ -1,0 +1,153 @@
+Notes on Python Data-Structures and supported operations
+
+Data-Types
+===========
+
+For each Data-Structure:
+    Time Complexity
+    How it is implemented
+    APIs
+    When to be used
+
+
+1. Dictionary
+    d = dict()
+    len(d), number of items in the dictionary with name 'd'
+    d[key] = value
+    del d[key], remove the item with key='key'
+        if key is not present then raises KeyError
+
+    items(), returns list of key/value pairs
+    keys(), returns list of keys
+    values(), returns list of values
+    get(key), gets the value for key, raises KeyError if key not present
+
+2. Set
+    Mutable
+        Since, it is mutable cannot be used as 
+    un-ordered collection of hashable objects
+    does not support indexing, slicing
+
+    x in set
+    len(set)
+    for x in set
+
+    can use:
+    add()
+    remove()
+    issubset()
+    union()
+    isdisjoint()
+    intersection()
+
+
+
+3. List
+    list, tuple and range are the three sequence types
+    s and t are lists
+    n, i, j and k -> integers
+
+    x and object in s
+
+    ...
+
+    x in s
+    x not in s
+    s + t, concatenates and t
+    list * n OR n * list, adding list to itself 'n' times
+    s[i], a -ve value of 'i', is from the end of s, think as len(s)+i
+    s[i:j], chunk of s from i to j such as s[k] in s, where i <= k < j
+    s[i:j:k], chunk of s from to j in k steps
+    len(s), length
+    min(s), minimum from s
+    max(s), maximum from s
+    s.count(x), total number of occurrences of 'x' in s
+    s.index[x], index of the first occurrence of 'x' in s, if not present then raises ValueError
+
+    List are mutable sequences
+
+    How to create lists
+    []
+    [a, b, c]
+    list comprehension: [x for x in iterable-object]
+    list()
+
+    s.append(x)
+    s.extend(list), add 'list' at the end of 's'
+    s.insert(i, x), insert x at index 'i'
+    s.pop([i]), remove item at index 'i'
+    s.remove(x), removes item x from list
+    s.reverse(), inplace reverse
+    s.sort(), stable and in-place sort
+
+
+    
+4. str
+
+5. Tuple
+    immutable sequences
+
+6. frozen sets
+    like sets but 
+        Immutable and hashable
+        can't be altered after it is created
+
+7. collections
+
+8. Range
+    range does not support concatenation
+    range(10) ==> 0 ... 9
+    range(1, 10) ==> 1 ... 9
+    range(0, 30, 5) ==> (in steps of 5), 0, 5, 10, 15, 20, 25
+
+9. heapq
+    Heap Queue Algorithm
+    implements the Min-Heap
+
+    create a empty list
+    l = []
+    heappush(l, item)
+    heappop(l)
+    heapfy(l)
+    heappushpop(l, item)
+
+
+Techniques
+==========
+1. List comprehensions
+
+2. maps
+3. filters
+4. labmda expressions
+5. lambda functions
+
+Comparisions
+============
+>
+>=
+<
+<=
+==
+!=
+is
+is not
+
+objects of different types never evaluate equal. 
+
+Boolean operators
+=================
+and
+or
+not
+
+Bitwise operators on Integer types:
+===================================
+
+| => OR
+& => AND
+^  => XOR
+<< => left shift operator
+>> => right shift operator
+~x  => bits of x are inverted
+
+
