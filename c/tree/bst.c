@@ -193,6 +193,11 @@ bst_delete_node_iter(struct bst* root, int data)
                     if (parent == NULL) {
                         assert(orig == root);
                         orig = NULL;
+
+						// if this is the root of the tree, then, can't adjust parent
+						// bail out here itself.
+						free(temp);
+						goto done;
                     }
 
                     // adjust the parent pointer
