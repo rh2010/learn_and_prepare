@@ -1,0 +1,84 @@
+# Amazon Phone screen - AWS
+
+Write a program to automate the process of adding and removing componnets.  
+To do this we will maintain a record of installed conponents and conponent dependancies.
+
+A component can be installed explicitly in response to a command (unless it's already installed), or implicitly if it's needed for some other
+component being installed.  Likewise, a component, not expicitly installed, can be explicitly removed in response to a command (if it's not needed 
+to support other components) or implicitly removed if it's no longer needed to support another component.
+
+
+table = dict()
+
+key : value
+value
+    dep_list
+    ref_count
+{component : [l, ref_count]}
+
+def add(component, dep_comp_list):
+
+    try:
+        # if the component is already present
+        data = table[component]
+        # TODO
+        ref_count = data[1]
+        ref_count = ref_count + 1
+        data[1] = ref_count
+        table[component] = data
+        return
+        
+    except KeyError:
+        # component needs to be added
+        for c in dep_comp_list:
+            try:
+                # directly dependent
+                data = table[c]
+                ref_count = data[1]
+                ref_count = ref_count + 1
+                data[1] = ref_count
+                table[c] = data
+            except KeyError:
+                c_deo_list = []
+                add(c, c_dep_list) # indirect dependency
+                
+        l = [dep_comp_list, 1]
+        table.update({component:l})
+
+def remove(component):
+    
+    try:
+        data = table[component]
+        
+        dep_list = data[0]
+        ref_count = data[1]
+        
+        ref_count = ref_count - 1
+        
+        if ref_count is 0:
+			# Remove dependencies only when deleting a comp
+            for c in dep_list:
+                remove(c) # indirect dependency
+            del table[component]
+        else:
+            data[1] = ref_count
+            table[component] = data
+        
+    except KeyError:
+        return
+    
+    
+add -> A , [B, C]
+
+A : [B, C], 1
+B : [], 1
+C : [], 1
+
+add -> D, [A, C]
+
+A : [B, C], 2
+B : [], 1
+C : [], 2
+D : [A, C], 1
+
+remove -> D
