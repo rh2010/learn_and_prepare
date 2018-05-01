@@ -33,12 +33,7 @@ def add(component, dep_comp_list):
     try:
         # if the component is already present
         data = table[component]
-        # TODO
-        ref_count = data[1]
-        ref_count = ref_count + 1
-        data[1] = ref_count
-        table[component] = data
-        return
+		# if the component is already present, do nothing!
         
     except KeyError:
         # component needs to be added
