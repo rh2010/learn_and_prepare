@@ -16,6 +16,18 @@ value
     ref_count
 {component : [l, ref_count]}
 
+def add_dependency(c):
+	try:
+		data = table[c]
+		# increase ref_count only for adding dependency
+		ref_count = data[1]
+		ref_count = ref_count + 1
+		data[1] = ref_count
+		table[c] = data
+	except KeyError:
+		c_deo_list = []
+		add(c, c_deo_list)
+
 def add(component, dep_comp_list):
 
     try:
@@ -31,19 +43,38 @@ def add(component, dep_comp_list):
     except KeyError:
         # component needs to be added
         for c in dep_comp_list:
-            try:
-                # directly dependent
-                data = table[c]
-                ref_count = data[1]
-                ref_count = ref_count + 1
-                data[1] = ref_count
-                table[c] = data
-            except KeyError:
-                c_deo_list = []
-                add(c, c_dep_list) # indirect dependency
+			add_dependency(c)
+            #try:
+            #    # directly dependent
+            #    data = table[c]
+            #    ref_count = data[1]
+            #    ref_count = ref_count + 1
+            #    data[1] = ref_count
+            #    table[c] = data
+            #except KeyError:
+            #    c_deo_list = []
+            #    add(c, c_dep_list) # indirect dependency
                 
         l = [dep_comp_list, 1]
         table.update({component:l})
+
+def remove_dependency(c):
+	try:
+		data = table[c]
+		dep_list = data[0]
+		ref_count = data[1]
+		ref_count = ref_count -1
+
+		if ref_count is 0:
+			for c in dep_list:
+				remove_dependency(c)
+			del table[c]
+		else:
+			data[1] = ref_count
+			table[c] = data
+	except:
+		# Error, should not happen!
+		pass
 
 def remove(component):
     
@@ -53,20 +84,18 @@ def remove(component):
         dep_list = data[0]
         ref_count = data[1]
         
-        ref_count = ref_count - 1
-        
-        if ref_count is 0:
+        if ref_count is 1:
 			# Remove dependencies only when deleting a comp
             for c in dep_list:
-                remove(c) # indirect dependency
+                remove_dependency(c) # indirect dependency
             del table[component]
         else:
-            data[1] = ref_count
-            table[component] = data
+			pass
+            #data[1] = ref_count
+            #table[component] = data
         
     except KeyError:
         return
-    
     
 add -> A , [B, C]
 
@@ -82,3 +111,7 @@ C : [], 2
 D : [A, C], 1
 
 remove -> D
+
+A : [B, C], 1
+B : [], 1
+C : [], 1
