@@ -5,14 +5,12 @@
  *
  *
  * TODO:
- * Add node,
- * Delete node
  * Rank
  * Select
- * Find
  * Level order traversal
  * BFS
  * DFS
+ * LCA
  *
  * Traversals.
  *  - In-order
