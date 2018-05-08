@@ -1,4 +1,4 @@
-.PHONY: all clean bst bst2 avl can_be_bst in_post_2_tree splay
+.PHONY: all clean bst bst2 avl can_be_bst in_post_2_tree splay rb_tree
 
 all: clean
 	gcc -o bst bst.c
@@ -8,6 +8,7 @@ all: clean
 	gcc -o bst2 binary_search_tree.c
 	gcc -o bst bst.c
 	gcc -o splay splay_tree.c
+	gcc -o rb_tree red_black_tree.c queue.c
 
 splay:
 	rm -f splay
@@ -33,7 +34,12 @@ in_post_2_tree:
 	rm -f in_post_2_tree
 	gcc -o in_post_2_tree in_post_2_tree.c
 
+rb_tree:
+	rm -f rb_tree
+	gcc -o rb_tree red_black_tree.c queue.c
+
 clean:
+	rm -f rb_tree
 	rm -f splay
 	rm -f bst
 	rm -f bst2
