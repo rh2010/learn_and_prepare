@@ -28,6 +28,7 @@ For each Data-Structure:
     un-ordered collection of hashable objects
     does not support indexing, slicing
 
+	s = set() # initialization
     x in set
     len(set)
     for x in set
