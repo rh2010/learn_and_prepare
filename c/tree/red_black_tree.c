@@ -226,7 +226,6 @@ rb_add_node(struct rb_node* root, int key, int value)
 	if (key == root->key) {
 		// key already present, just update the value
 		root->value = value;
-		return root;
 	} else if (key < root->key) {
 		// add in the left sub-tree
 		root->left = rb_add_node(root->left, key, value);
