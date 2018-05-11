@@ -84,6 +84,12 @@ bst_insert_node(struct bst_node* root, struct bst_node* new)
 	}
 }
 
+struct bst_node*
+bst_find_lca(struct bst_node *node1, struct bst_node *node2)
+{
+	return NULL;
+}
+
 /*
  * Returns the node is 'data' is found else,
  * returns NULL.
