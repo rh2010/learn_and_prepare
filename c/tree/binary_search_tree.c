@@ -34,6 +34,7 @@ struct bst_node {
 };
 
 struct bst_node *root;
+struct bst_node* bst_find_node(struct bst_node* root, int data);
 
 /*
  * Allocate and initialize a new node for the bst
@@ -84,10 +85,115 @@ bst_insert_node(struct bst_node* root, struct bst_node* new)
 	}
 }
 
+/*
+ * The worker function to find the LCA of two given nodes.
+ */
 struct bst_node*
-bst_find_lca(struct bst_node *node1, struct bst_node *node2)
+_bst_find_lca(struct bst_node *node1, struct bst_node *node2)
 {
+	int h1, h2;
+	struct bst_node *temp, *temp2;
+
+	assert(node1 != NULL);
+	assert(node2 != NULL);
+
+	// if any of the nodes is the root of the tree, then, that is the LCA.
+	if (node1->parent == NULL) {
+		return node1;
+	}
+	if (node2->parent == NULL) {
+		return node2;
+	}
+
+	temp = node1;
+	h1 = 0; // height / depth of node1
+	while (temp != NULL) {
+		h1++;
+		temp = temp->parent; 
+	}
+
+	temp = node2;
+	h2 = 0; // height / depth of node2
+
+	while (temp != NULL) {
+		h2++;
+		temp = temp->parent;
+	}
+
+	temp = node1;
+	temp2 = node2;
+
+	if (h1 > h2) {
+		while (h1 != h2) {
+			h1--;
+			temp = temp->parent;
+		}
+	} else if (h2 > h1) {
+		while (h1 != h2) {
+			h2--;
+			temp2 = temp2->parent;
+		}
+	}
+	assert(h1 == h2);
+	
+	while (temp != NULL && temp2 != NULL) {
+		if (temp == temp2) {
+			return temp;
+		}
+		temp = temp->parent;
+		temp2 = temp2->parent;
+	}
 	return NULL;
+}
+
+void
+bst_find_lca(int key1, int key2)
+{
+	struct bst_node *node1;
+	struct bst_node *node2;
+	struct bst_node *lca;
+
+	node1 = bst_find_node(root, key1);
+	node2 = bst_find_node(root, key2);
+
+	if ((node1 == NULL) || (node2 == NULL) ) {
+		return;
+	}
+
+	lca = _bst_find_lca(node1, node2);
+	if (lca != NULL) {
+		printf("LCA: %d\n", lca->data);
+	} else {
+		printf("LCA not found\n");
+	}
+}
+
+int
+bst_lca(struct bst_node *root, int key1, int key2)
+{
+	struct bst_node *temp;
+
+	if (root == NULL) {
+		return -1;
+	}
+	temp = root;
+	while (temp != NULL) {
+		if (temp->data > key1 && temp->data > key2) {
+			// look in left tree
+			temp = temp->left;
+		} else if (temp->data < key1 && temp->data < key2) {
+			// look in right tree
+			temp = temp->right;
+		} else if (temp->data == key1) {
+			return key1;
+		} else if (temp->data == key2) {
+			return key2;
+		} else if ((temp->data < key1 && temp->data > key2) ||
+				   (temp->data > key1 && temp->data < key2)) {
+			return temp->data;
+		}
+	}
+	return -1; // not found
 }
 
 /*
@@ -625,7 +731,7 @@ int
 main(int argc, char** argv)
 {
 	int count = 0;
-	int i;
+	int i, j;
 	struct bst_node* temp;
 	int arr[10];
 	int choice = 0;
@@ -736,7 +842,9 @@ main(int argc, char** argv)
 	//
 	//
 	while(TRUE) {
-		printf("\n1) Select\n2) Rank\n3) Delete\n4) Print BST (inorder)\n5) Flatten - Doubly Linked list\n6)Exit\nChoice: ");
+		printf("\n1) Select\n2) Rank\n3) Delete\n4) Print BST (inorder)\n"
+			   "5) Flatten - Doubly Linked list\n6)LCA\n7)LCA with root\n"
+			   "8)Exit\nChoice: ");
 		scanf("%d", &choice);
 
 		switch (choice) {
@@ -775,8 +883,23 @@ main(int argc, char** argv)
                 root = bst_to_dll_inplace(root);
                 printf("Finished Converting the bst to DLL\n");
                 bst_show_dll(root);
-                // fall-through
-			case 6:
+				printf("Done\n");
+				break;
+			case 6: // LCA
+				printf("Element1: ");
+				scanf("%d", &i);
+				printf("Element2: ");
+				scanf("%d", &j);
+				bst_find_lca(i, j);
+				break;
+			case 7: // LCA with root known
+				printf("Element1: ");
+				scanf("%d", &i);
+				printf("Element2: ");
+				scanf("%d", &j);
+				printf("LCA with root: %d\n", bst_lca(root, i, j));
+				break;
+			case 8:
 				// exit
 				printf("Done\n");
 				exit(0);
