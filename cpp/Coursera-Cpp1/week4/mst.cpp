@@ -11,23 +11,23 @@ using namespace std;
 
 // Class for representing a graph using adjacency list.
 class graph {
-
 	const char *graph_file;
+
 	// init params for the graph
 	const int max_vertices; // The number of vertices to which the graph should goto.
 	int vertices_count; // the current vertex count in the graph 
 
-	const unsigned int edge_density; // Edge density: ranges between 1 - 10.
-							   // 1 -> 10 percent
-							   // 2 -> 20 percent
-							   // 3 -> 30 percent
-							   // ...
-							   // 10 -> 100 percent i.e. A Complete Graph
+	// Edge density: ranges between 1 - 10.
+	// 1 -> 10 percent
+	// 2 -> 20 percent
+	// 3 -> 30 percent
+	// ...
+	// 10 -> 100 percent i.e. A Complete Graph
+	const unsigned int edge_density;
 	const unsigned int weight_range;
 	const bool directed; // used when inserting edge.
 
 	struct vertice;
-	//int nedges; // not really needed
 
 	// An edge in the graph.
 	struct edge {
@@ -42,8 +42,7 @@ class graph {
 
 	// A vertice in the graph.
 	struct vertice {
-		int node; // either use val or node
-		//int degree;
+		int node;
 		int edge_count;
 		bool is_visited;
 		struct vertice *next;
@@ -51,8 +50,7 @@ class graph {
 		// edges can also be a hash-map for faster lookups.
 		struct edge *edges;
 
-		// book keeping data for shortest path.
-		//
+		// book keeping data for shortest path and minimum spanning tree..
 		struct sp {
 			int distance;
 			struct vertice *p;
@@ -60,8 +58,7 @@ class graph {
 	} *vertices;
 
 	// TODO: vertices should ideally be a hash-map
-	// so, looking up a vertice is quick.
-	//
+	// Use an unordered_map
 
 	int
 	get_max_vertex_count(void)
@@ -90,7 +87,6 @@ class graph {
 	get_new_vertex_value(void)
 	{
 		int rand_val = rand() % get_max_vertex_count();
-
 		return rand_val;
 	}
 
@@ -98,7 +94,6 @@ class graph {
 	get_vertex_value(vertice *v)
 	{
 		assert(v != NULL);
-
 		return v->node;
 	}
 
@@ -110,9 +105,6 @@ class graph {
 			cout << "Error: Unable to get memory for vertice\n";
 			return NULL;
 		}
-
-		// initialize everything with zero.
-		//memset(v, 0, sizeof(*v));
 
 		// set the value of the vertice.
 		v->node = value;
@@ -199,7 +191,6 @@ class graph {
 	vertex_visited(vertice *v)
 	{
 		assert(v);
-
 		return v->is_visited;
 	}
 
@@ -237,7 +228,7 @@ class graph {
 			temp->sp.distance = INT_MAX;
 			temp->sp.p = NULL;
 
-			// next
+			// move to next
 			temp = temp->next;
 		}
 	}
@@ -280,7 +271,6 @@ class graph {
 			}
 		}
 
-		// default constructor
 		graph()
 		:vertices_count(0),
 		max_vertices(0),
@@ -312,6 +302,7 @@ class graph {
 				}
 
 				prev_v = tempv;
+
 				// next vertice
 				tempv = tempv->next;
 				delete prev_v;
@@ -363,7 +354,7 @@ class graph {
 				// No loops in the graph.
 				assert(to_vertice != from_vertice);
 
-				// get the new edge.
+				// get a new edge.
 				new_edge = get_new_edge(to_vertice, weight);
 				if (new_edge == NULL) {
 					cout << "Error: Unable to get a new edge(" << from << 
@@ -421,7 +412,6 @@ class graph {
 			}
 
 			e = v->edges;
-
 			while(e != NULL) {
 				if (e->vertice->node == edge_val) {
 					return  true;
@@ -496,7 +486,7 @@ class graph {
 			cout << "MST: Start" << endl;
 			cout << "Finding MST from [" << from << "] " << endl;
 
-			// init all the vertices for dijkistra shortest path.
+			// init all the vertices for meta-data
 			init_for_mst();
 
 			// get start and end vertices.
