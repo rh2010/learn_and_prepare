@@ -4,6 +4,59 @@
 Time Complexity: O(nlog(height))
 Space Complexity: O(n)
 '''
+def longestChain(block_list):
+    level = [-1] * len(block_list)
+
+
+    print("longestChain")
+    #print(block_list)
+    #print(level)
+
+    for idx, block in enumerate(block_list):
+        stack = []
+        p = idx
+        while p != -1:
+            if level[p] == -1:
+                stack.append(p)
+            else:
+                break
+            p = block_list[p]
+
+        l = 0
+        if p == -1:
+            l = 0
+        else:
+            l = level[p]
+
+        while len(stack) > 0:
+            p = stack.pop()
+            l += 1
+            level[p] = l
+        del stack
+        #print(level)
+
+    #print(level)
+
+    max_level = -1
+    max_level_index = -1
+
+    for i,l in enumerate(level):
+        if l > max_level:
+            max_level = l
+            max_level_index = i
+
+    #print(max_level, max_level_index)
+
+    idx = max_level_index
+    result = []
+    while idx != -1:
+        result.append(idx)
+        idx = block_list[idx]
+
+    result.reverse()
+
+    return result
+
 def find_longest_chain(block_list):
     level = [0] * len(block_list) # array to hold the level for each block
 
@@ -60,4 +113,6 @@ if __name__ == "__main__":
     block_list = [6,7,1,2,2,1,5,-1,0,5]
 
     longest_path = find_longest_chain(block_list)
+    print(longest_path)
+    longest_path = longestChain(block_list)
     print(longest_path)
