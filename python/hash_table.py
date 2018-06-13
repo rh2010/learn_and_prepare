@@ -154,7 +154,7 @@ class concurrentHashTable:
         return in index of table and lock_index as well
         '''
         table_index = h % self.capacity
-        lock_index = h / self.concurrency
+        lock_index = table_index / self.concurrency
 
         return table_index, lock_index
 
