@@ -15,6 +15,11 @@ string_cat(char *dest, char *src)
 		printf("Bad string\n");
 		return NULL;
 	}
+	if (dest == NULL) {
+		printf("NULL Destination\n");
+		return NULL;
+	}
+
 	// check if overlapping
 	if (dest > src && dest < (src+srclen)) {
 		printf("Overlapping string\n");

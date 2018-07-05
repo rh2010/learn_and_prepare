@@ -13,6 +13,10 @@ string_n_copy(char *dest, char *src, int len)
 		printf("Bad string\n");
 		return (NULL);
 	}
+	if (dest == NULL) {
+		printf("Bad destinatio string\n");
+		return (NULL);
+	}
 
 	printf("src: %s, srclen: %ld, destlen: %d\n", src, strlen(src), len);
 

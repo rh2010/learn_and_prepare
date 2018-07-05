@@ -11,6 +11,11 @@ string_copy(char *src, char *dest)
 
 	if (src == NULL) {
 		printf("Bad string\n");
+		return NULL;
+	}
+	if (dest == NULL) {
+		printf("Bad destination string\n");
+		return NULL;
 	}
 	srclen = strlen(src);
 

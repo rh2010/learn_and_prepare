@@ -1,4 +1,4 @@
-#include <../util.h>
+#include "../util.h"
 
 /*
  * Implement
@@ -6,6 +6,10 @@
  * 	2) string copy
  * 	3) string concatenate
  * 	4) strstr
+ */
+
+/*
+ * The return value of strlen doesn't include the '\0'
  */
 int
 string_length(char *str)
@@ -17,7 +21,8 @@ string_length(char *str)
 		return 0;
 	}
 
-	while(str[i++] != '\0');
+	while(str[i] != '\0')
+		i++;
 		
 	return i;
 }
@@ -25,7 +30,7 @@ string_length(char *str)
 void
 string_copy(char *src, char *dest, int length)
 {
-	printf("");
+	//printf("");
 }
 
 int
@@ -42,9 +47,10 @@ main(int argc, char** argv)
 		
 		switch(choice) {
 			case 1:
-				str1 = NULL;
+				str1 = (char *)malloc(100);;
 				printf("String: ");
 				scanf("%s", str1);
+				printf("%d\n", string_length(str1));
 				break;
 			case 2:
 				break;
@@ -53,6 +59,7 @@ main(int argc, char** argv)
 			case 4:
 				break;
 			case 5:
+				exit(0);
 				break;
 			default:
 				printf("Wrong Choice!\n");
