@@ -45,7 +45,11 @@ def findSubstring(s, words):
             table[word] += 1
         except KeyError:
             table[word] = 1
-    
+
+    '''
+    We need to run this loop for word_len times, so, as to cover each
+    character towards the end of the string.
+    '''
     for i in range(word_len):
         #print("[%d]" % (i))
         ref = dict(table)
