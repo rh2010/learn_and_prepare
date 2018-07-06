@@ -15,10 +15,10 @@ def checkBalancedParenthesis(expr):
                    }
 
     # List of open parenthesis
-    list_open = paren_pairs.values()
+    list_open = set(paren_pairs.values())
 
     # List of closed parenthesis
-    list_close = paren_pairs.keys()
+    list_close = set(paren_pairs.keys())
 
 
     # An empty list - use as a stack
@@ -60,10 +60,10 @@ def balancedParenthesis(expr):
 
     print expr
     # List of open parenthesis
-    list_open = paren_pairs.values()
+    list_open = set(paren_pairs.values())
 
     # List of closed parenthesis
-    list_close = paren_pairs.keys()
+    list_close = set(paren_pairs.keys())
 
 
     # An empty list - use as a stack
