@@ -42,7 +42,7 @@ rbins(int *arr, int start, int end, int val)
 		return -1;
 	}
 	if (val < arr[mid]) {
-		return rbins(arr, start, mid, val);
+		return rbins(arr, start, mid-1, val);
 	} 
 	if (val > arr[mid]) {
 		return rbins(arr, mid+1, end, val);
