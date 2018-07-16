@@ -51,9 +51,9 @@ If there is no such subarray, return [-1].
 def findLongestSubarrayBySum(s, arr):
     if len(arr) == 0:
         return [-1]
-    
+
     prefix_sum = [0] * len(arr)
-    
+
     prefix_sum[0] = arr[0]
     total = arr[0]
 
@@ -66,7 +66,7 @@ def findLongestSubarrayBySum(s, arr):
         prefix_sum[i] = total
         if index == -1 and total >= s:
             index = i
-            
+
     start_index = index
     start = -1
     end = -1
@@ -88,7 +88,7 @@ def findLongestSubarrayBySum(s, arr):
                 if arr[start_index] > s:
                     break
                 a = prefix_sum[start_index]-prefix_sum[i]
-            
+
             if a == s:
                 #print("F: [%d : %d]" % (i, start_index))
                 #if index == -1:
@@ -101,7 +101,7 @@ def findLongestSubarrayBySum(s, arr):
                 init = i
                 break
         start_index += 1
-        
+ 
     if start == -1:
         return [-1]
     else:
