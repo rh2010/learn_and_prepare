@@ -45,6 +45,7 @@ def do_subsets_dup(s, powerset, ss, start):
 def subsets_dup(s):
     powerset = []
     ss = []
+    s.sort()
     do_subsets_dup(s, powerset, ss, 0)
 
     return powerset
