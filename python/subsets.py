@@ -36,7 +36,7 @@ def do_subsets_dup(s, powerset, ss, start):
     powerset.append(''.join(ss))
 
     for i in range(start, len(s)):
-        if i > 1 and s[i] == s[i-1]:
+        if i > start and s[i] == s[i-1]:
             continue
         ss.append(s[i])
         do_subsets_dup(s, powerset, ss, i+1)
