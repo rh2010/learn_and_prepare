@@ -1,0 +1,58 @@
+Interview the First
+
+My first interview was in the office of a principal engineer lead. The question was to code an algorithm to draw a circle. Of course, the general equation is x2 + y2 = r2. My first attempt was to do the following: set x = -r, and then continually increment x until it was equal to r. At each step, use the equation to calculate the value of y given x, and then plot it. This gives a semi-circle. I observed that since a circle is symmetrical, I could simply draw the other half of the circle by reversing the y axis. However, this wasn’t fast enough, so I was forced to rethink my algorithm. It turns out that a circle is also symmetrical along the y axis, so I only needed to calculate a single quadrant of the circle, and could simply mirror along the x and y axes. This was still not fast enough for my interviewer.
+
+After a carefully placed hint, I realized that a quarter circle is actually symmetrical as well – so that only 1/8 of the circle needs to be calculated. The rest of the interview consisted of me refining the algorithm — namely, accounting for any gaps that might appear in my circle (which can be fixed by taking into the account the slope of the line that is being plotted and choosing to either use x or y as the given).
+
+Interview the Second
+
+My second interview was about sorting a large list of numbers in linear time. This was a fairly standard problem with the additional constraint of a very small amount of working memory: 4KB. The problem was further qualified: numbers can only be between 0 and 30,000, and no number appears more than once. Given these constraints, I was able to come up with a simple algorithm: first, allocate a large binary array where the index of the array corresponded to the existence of a number. Then, for each number in the unsorted list, I would set the corresponding array index to the ‘on’ position. Then returning the sorted results is simply a matter of traversing the array and finding the ‘on’ elements.
+
+I was tasked with implementing this solution in workable code, and told that the smallest denomination available was a byte. So I created a byte array and used bit-shifting to calculate and set the bits correctly (with each element in the array representing 8 numbers). The final solution requires O(n+m) time, where n is the size of the unsorted list and m is the size of the dictionary (in this case, 30,000).
+
+Then, in the spirit of progressively making a hard problem harder: I was told to sort the list with 2KB of memory. This means the range of all possible numbers cannot be enumerated in memory, since 30,000 bits requires just under 4KB to store. The solution to this required a bit of trickery: preprocess the unsorted list into two partitions: the first half to contain only numbers 0-14,999, and the second 15,000-30,000. This can be done in linear time (with respect to the list size) using two pointers on either end of the list: it is the same as the partition algorithm in quicksort where the pivot is the middle of the dictionary. Then process each sublist using the exact same algorithm I described above, paging in and out as needed to stay within 2KB of memory. This can be applied recursively to sort a list in 1KB of memory, etc.
+
+Interview the Third
+
+My third interview was over lunch. This one was more theoretical in nature, asking basic operating system fundamentals:
+
+Q: What is the difference between a thread and a process?
+A: A process is self-contained and gets its own virtual address space. A thread shares heap space with other threads in the same process, making communication easier and faster, and also conserving memory at the expense of isolation and stability.
+
+Q: How would you communicate between threads?
+A: One can communicate between threads using shared memory, or by using a mutex library such as pthreads that allows waiting and signaling on locks.
+
+Q: How would you communicate between processes?
+A: By opening a socket, using named pipes, or the filesystem.
+
+Back in the office, I was tasked with describing some data structures and the appropriate use of them – for example, an array vs. a linked list. This is standard fare that should elicit a response detailing the various tradeoffs in time and space complexity in Big-O terms.
+
+I was then asked to code a function to swap two nodes in a linked list. This is fairly straightforward. Then I was to expand on this to swap nodes in a doubly linked list. This actually requires modifying up to 6 different pointers. Obviously, a temp variable is needed as well. I struggled somewhat with this because it is very difficult to keep them all straight in your head.
+
+I eventually managed it, but there are also a variety of corner cases that you will be expected to account for, such as when one of the nodes is at the beginning or end of the list, or if both parameters are references to the same node.
+
+I was then asked to come up with a list of test cases for my function. This is fairly straightforward, although obviously creativity and some more bizarre edge cases would be a bonus. For example — if the two nodes being passed even belong to the same list. I think the point of this exercise, like many of the others, is to demonstrate a desire for clarity in the face of ambiguous problems. It is wise to ask clarifying questions regarding expected behavior and problem scope.
+
+Interview the Fourth
+
+This interview started with more discussion of data structures, mostly centered around trees and the complexity and usefulness of binary trees. I was asked to discuss how to calculate the height of a binary tree, test whether it was full or not, and find the depth of a given node.
+
+The height calculation was especially important, because it leads into the main problem. My initial reaction was to simply store the height in the node as it was inserted. However, without such a data field or the option to add it, the second best solution is to do a count by recursively getting the depth of the parent node. This is obviously O(logn) in time, and the best we can do.
+
+I was next asked to modify the node structure so that each node in a full binary tree would point to the node on its right. I was able to do this in linear time by using a breadth-first traversal and adding a pointer at each step of the way, except for when the height of the next node is different.
+
+We had leftover time, so he asked a brain teaser: fix existing code with a single change to make it count from 0 to 10 instead of to infinity. I needed a hint but got it after some time.
+
+Interview the Fifth
+
+The fifth interview is the championship round. I was now given the choice to either pick the standard question, or the much harder one. Unable to restrain my curiosity, I opted for the harder problem. The interviewer then asks me if I have ever heard of the trie data structure. Slightly relieved, I replied in the affirmative, although I did not remember the exact details. He went on to briefly explain it.
+
+Then, he asked me to code the class, including all the members and basic read/insert operations. I was able to do this fairly easily on the first attempt. I was then asked to discuss the various uses of the class, including its suitability for use in a dictionary spellchecker (Although I know Levenshtein, it was not until later that I realized they could be combined to also create spelling suggestions very efficiently).
+
+The final question was fairly challenging: How would one compress a trie? I answered that it depended on the characteristics of the data that it contained. While he liked this observation, it was obviously not an answer he was satisfied with. After some prodding I observed that the bottom tries were likely to be very sparse, particularly in words that did not share many common substrings. I created an adaptive algorithm that would try to store the endings of words as strings, reserving the conversion to a trie only in the case where necessary.
+
+At this point I was expecting him to unload the Final Question that would make me regret asking for the “hard” problem, but none came. That was the end of the interview.
+
+Aftermath
+
+Microsoft, not surprisingly, failed to follow up with me in the promised timeframe. A few days after the date had passed, the recruiter emailed me to set up a phone call, who informed me that I had an offer.
