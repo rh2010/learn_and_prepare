@@ -74,8 +74,14 @@ def findLongestSubarrayBySum(s, arr):
     #print(prefix_sum)
 
     while start_index < len(arr):
+        #
+        # case: if there is a zero at index 'start_index'
+        #       that's the case when prefix_sum[start_index-1] will be equal
+        #       to prefix_sum[start_index]
+        #
         if start_index > 1 and (prefix_sum[start_index-1] == prefix_sum[start_index]):
             if end != -1:
+                # extend the window by 1
                 end += 1
             start_index += 1
             continue
@@ -101,7 +107,7 @@ def findLongestSubarrayBySum(s, arr):
                 init = i
                 break
         start_index += 1
- 
+
     if start == -1:
         return [-1]
     else:
