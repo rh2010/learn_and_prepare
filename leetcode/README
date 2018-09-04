@@ -1,0 +1,10 @@
+: This directory will contain solutions of leetcode problems
+
+Format:
+ - create sub-directories based on the type of problem
+ - In each file:
+    - List the problem number
+    - List the link of the problem from leetcode
+    - List the full problem statement
+
+    - List the solution, in one or more language(s).

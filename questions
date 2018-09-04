@@ -1,0 +1,320 @@
+1. Amazon 
+    Add and Remove components
+
+2. Pinterest
+    Check for balanced parenthesis
+    Follow-up: output all combinations of balanced parenthesis from a string of unbalanced parenthesis.
+
+3. Thunder token
+    Find in O(n) time and space, the longest path in a tree (from the root).
+    The tree is represented as an array. The index is the node number, and the value at an index is the parent node.
+
+4. Pure Storage
+    - WAP to draw a circle. you are given an API put_pixel(int x, int y); which draws a pixel on the screen at the co-ordinates (x, y).
+    - Given a class worker, implement a class  MultiWorker:
+    class Worker {
+        // constructor take a function pointer to the work to be done async.
+        Worker(func_t work_fn);
+
+        // start: this starts the work_fn in the background and return immediately.
+        // callback() is invoked when work_fn finishes execution.
+        void start(func_t callback);
+    };
+
+    // TODO: Task is to implement a multiwork, which can call multiple add_work() 
+    // and then calling a single start(). callback is called a single time when all the
+    // work is finished.
+    //
+    // eg:-
+    //
+    // MultiWorker w;
+    // w.add_work(work1);
+    // w.add_work(work2);
+    // w.add_work(work3);
+    // w.add_work(work4);
+    // w.start();
+    //
+    class MultiWorker {
+        MultiWorker();
+        void add_work(func_t work_fn);
+        void start(funct_t callback);
+    };
+
+    // Follow-up
+    // start a work as soon as add_work is called.
+    // but only make the callback when start is called and final 'work_fn' is finished.
+    //
+    
+5. VMware
+    Fibonacci numbers
+    Reverse a string (use C)
+
+    Implement a FIFO using a fixed size array:
+        - extend the implementation to multiple producer and multiple consumer
+        - extend for single producer and single consumer working in parallel
+        - extend to make the implementation lockless
+
+    Find k-th node from the end of a singly linked list
+    Given a matrix of 0's and 1's, find the number of island in the matrix. An island is formed by a group of 1's which are connected.
+    Given a BST, and a 'num', find the number closest of 'num' if 'num' is not present.
+        - Implement the above if the tree is not a BST
+    How does gdb work?
+
+    Design Question:
+        Given a set of objects. We can 'tag' each object using one or more tags.
+        Implement a system to query an object using one or more tags in combination.
+
+    One Round on prev experience, resume and behaviorial questions and judging team fit culture wise.
+
+6. Coursera
+    Phone:
+        wild-card pattern matching.
+
+    On-site:
+        Text Justification
+        Design question:- Extend the coursera grading system from faculty graded to a peer-grading system.
+        Code review question
+        Group discussion:-
+            explain a fav project
+            explain design decisions taken and reasoning
+            lots of leadership question etc.
+
+7. Instacart
+   
+   Phone screen
+   One question (3 parts):
+    1. Implement a class
+        kv = KV()
+        kv.set('foo', 'bar')
+        kv.get('foo')
+            => bar
+
+        no two elements for the same key
+
+     2. Extend for duplicate elements. Also, each elements is stored with a timestamp (insert timestamp)
+        get api takes a param timestamp, and finds the value for a key at that timestamp. If no, timestamp is given
+        return the latest val inserted for this key.
+
+        kv = KV()
+        ts = kv.set('foo', 'bar')
+        kv.get('foo', ts)
+            => bar
+
+     3. Extend for returning the val with the timestamp closest to the given timestamp.
+
+8. Meraki
+
+    Screening round:
+    take home assignment
+        - Implement a grabber to collect data from nodes and dump into a data-base.
+
+
+
+    On-site round:
+        - Extend the grabber, for the case if nodes restart
+        - Debugging round: debugging some SQL query doing aggregation 
+        - Design round: Implement a system which capturing data can now, generatres and publishes events in real-time.
+        - Prev experience and behaviorial fit.
+
+
+
+    -=======--==============---
+Delete numbers greater than x in link list
+
+Prepare a string with alternative characters from two different strings
+
+
+Given a matrix of 1 and 0, find out number of island. An island has all ones surrounded by zero.
+
+ How many palindrome can be made from given string. You can delete any number of character, but can't reshuffle the location.
+
+design a system for storing and retrieving document containing certain words
+
+Deserialize and Serialize a Binary tree
+
+Find largest palindrome in given string.
+
+Insert spaces in given string. Dictionary is given.
+
+
+---------- Forwarded message ---------
+
+- Validate binary tree, no loop
+- Sentence similarity - http://bookshadow.com/weblog/2017/11/26/leetcode-sentence-similarity/
+- Implement a function which takes an input stream of 1/0 and fill it in to tic-tac-too board in first in first out basis. The function should return stream of 1/0, where 1 indicates win configuration.
+- Implement a key, value store where entries would be deleted on expiry. We can't use thread, but lazy removal is fine.
+- Given a directory structure, where each file contains list of used block range. Come-up with a scheme to quickly find out if a block is in use. We can assume files are no being changed.
+
+
+---------- Forwarded message ---------
+
+Questions from my latest interview:
+
+1. 4 numbers are given and 4 operators(*,/,+,-) check if somehow we can make a total of 24.
+
+2. Frog & pond: check if a frog can reach the end.
+ https://www.careercup.com/question?id=5715022497972224
+
+3.  1. isBuldOn() & togle(start, end) : Data structure.
+     2 Trees are identical, even if we can swap any left and right nodes.
+
+4. https://leetcode.com/problems/minimum-window-substring/description/
+5. An array of numbers is given, find a pair/pairs closest to 0.
+    Design a system where we are storing hits per IP and find the once which are sending the higher number of request.
+
+
+-----------------------------------------
+
+Round 1:
+
+   1. Intro/projects/current work
+
+    2. Delete node in bst , iterative.
+
+
+Round 2:
+
+   Design a in memory database to answer a query - if two persons are related by bloodline.
+
+   Husband and wife are not related by bloodline.
+
+
+Once you get the below node structure- rest of it boils down to coding without any bugs.  
+
+ Node structure would be as follows:  
+
+struct Person {
+
+    string name;
+
+    Person *father;
+
+    Person *mother;
+
+    vector<Person*> children
+
+}
+
+
+Answer would most probably be to do a BFS between the two nodes and check if a path exists.
+
+
+Round 3:
+
+  Assume there are n cars that are travelling from right to left with varying speeds, Cars cannot overtake one another, if a higher speed car is behind lower speed car, it will go next to it. Return list of such clusters formed. (variation of skyline problem, but much easiar, and more abstract)
+
+
+Round 4:
+
+   Given a x,y coordinate system, implement the below interface.
+
+
+Addx(int val) - draws a line parallel to y axis
+
+Int Addy(int val) - draws a line parallel to x -axis
+
+GetPartition(int x, int y) - return the partition to which point belongs.
+
+
+Easier once you get the idea !..
+
+
+Round 5:
+
+ https://www.careercup.com/question?id=14955665
+
+
+------------------------------------------
+
+Google :--
+1) Minimum splits in a string so that each split is a palindrome.
+2) Intersection of 2 arrays (more about what data structures are best etc.. and code)
+3) Max length of consecutive nodes in a path of a tree (not a binary tree, could be any
+number of children per each node) from root to leaf node, where each node’s value
+increase by 1 from its immediate parent.
+4) Given 2D matrix with each cell contains integers. Compute Sum Matrix where each
+cell should contain sum of all the elements from (0,0) to (i,j) optimally
+(like Sum[i][j] = A[i][j] + Sum[i][j-1] + Sum[i-1][j] - Sum[i-1][j-1])
+
+5) Given an array of 0’s and 1’s. Compute the longest consecutive 1’s where you are
+allowed to convert atmost one single 0 to 1.
+
+-----------------------------------------------------------------
+
+Round 1: 
+-+-----+-
+1. Given an input string like above, find all possible move in that string.
+Possible Move: Converting two simultaneous "--" signs into "++"
+2. A player wins if he cannot make a valid move. Find the move a player should make so to ascertain he would win:
+For eg. if player A takes a move and this string is left: "-+++---+-"
+PLayer B will only make this move: "-+++-+++-"
+SO player A will win.
+ If player A takes this move: "-+-++-+-"
+In this case Player B will win. so give best move for player A to take.
+
+Round 2:
+Approximately related to "Gold coins in pot". In my case, a coin will have value of different denomination, how will you make sure that player A wins.
+
+Round 3:
+Desing Maxstack data structure.
+Where you would be able to find maximum element in the stack
+Optimise on the time or space complexity.
+Friend List Suggestion:
+If you have A,B,C,D as your friends. program will give you suggestion that which 5 people in your friends' list, you should be friends with.
+I did with hash table but interviewer was expecting to be done with graph.
+
+-----------------------------------------------------------------
+
+---------------------
+
+Nesting can be represented using parentheses e.g. ( () ( () () ) ) as well as by using two kinds of quotes, in which like quotes match each other. '  " "  " ' '  ' '  " '. Develop and implement an algorithm that, given a string of parentheses and another string consisting of single and double quotes, determines if the string represents the same nesting (as the example does). If the parentheses string is not matched, it should return false or possibly an error condition.
+
+P = (  ( )  ( ( )  ( )  ) ) 
+Q = '  " "  " ' '  ' '  " '
+
+
+true
+
+P1 = (((
+false
+
+P2 = ())
+false
+
+P3 = (())
+Q3 = ''''
+false
+
+P = (  ( )  ( ( )  ( )  ) ) 
+Q = '  " "  " ' '  ' '  " '
+
+
+---------------------
+
+Given a series of tasks and dependencies,
+E.g.
+A depends on {B, C}
+B depends on {D}
+C depends on {D}
+D depends on {E, F}
+E depends on {}
+F depends on {}
+Output an order in which tasks can be carried out, such as E, F, D, B, C, A
+Report an error if there is a cyclic dependency.  
+
+----------------------------------
+
+Question: Given an array of Tuple<uint8, uint8, uint8>, write a function that returns true if any duplicate tuples exist.
+
+Write a function to remove whitespace from a given string (‘ ‘, ‘\t’, ‘\n’)
+
+2. How you would implement a stack using a linked list?
+
+3. Assume that you have some 50K HTML files in a directory hierarchy, and some
+of them contain phone numbers in the following formats: xxx-xxx-xxxx or (xxx)
+xxx-xxxx. Your team which owns all these files has decided that phone numbers
+should no longer be displayed on these pages. How will you get a list of all the
+files which contains phone numbers.
+
+----------------------------------
+
