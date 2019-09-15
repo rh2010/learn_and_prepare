@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
+#include <cstring>
 
 using namespace std;
 /*
@@ -60,16 +61,97 @@ main (void)
 	return (0);
 }*/
 
+class base {
+public:
+    base () {
+        cout << "Ctor of base" << endl;
+    }
+
+    ~base () {
+        cout << "Dtor base" << endl;
+    }
+
+    void b(int i) {
+        cout << "base::b " << i << endl;
+        e(i);
+    }
+    void SendMsg(const string& s="")
+    {
+        if (s.empty()) {
+            cout << "String is empty." << endl; 
+        } else {
+            cout << "String is: (" << s << ")." << endl;
+        }
+    }
+    virtual void get_uuid() {
+        cout << "Base get_uuid" << endl;
+    }
+private:
+    virtual void e(int i) {
+        cout << "base::e " << i << endl;
+    }
+};
+
+class derived : public base {
+public:
+    derived () {
+        cout << "Ctor of derived" << endl;
+    }
+
+    ~derived () {
+        cout << "Dtor derived" << endl;
+    }
+
+    void f(int i) {
+        cout << "derived:f " << i << endl;
+        e(i);
+    }
+    void c(int i) {
+        cout << "derived:c " << i << endl;
+    }
+    void d(int i) {
+        cout << "derived:d " << i << endl;
+    }
+    virtual void e(int i) {
+        cout << "derived::e " << i << endl;
+    }
+    void get_uuid() {
+        cout << "Derived get_uuid" << endl;
+    }
+};
+
 double
 prob(void)
 {
 	return (static_cast<double>(rand())/RAND_MAX);
 }
 
+#define TRACEFLOW "com.vmware.com.Traceflow"
+#define SB "com.vmware.com.SupportBundle"
+
+struct bsons {
+    bsons(int *h, int *w)
+    : header(h)
+    , wrapper(w)
+    {
+        cout << "bsons ctor" << endl;
+    }
+
+    ~bsons() {
+        cout << "bsons Dtor begin" << endl;
+        delete header;
+        delete wrapper;
+        cout << "bsons Dtor end" << endl;
+    }
+
+    int *header;
+    int *wrapper;
+};
+
 int
 main(void)
 {
-	int i = 9, j = 3;
+	/*int i = 9, j = 3;
 	int edge_density = 45;
 	double ed;
 	
@@ -94,6 +176,46 @@ main(void)
 	cout << "ed1: " << ed << endl;
 	ed = (static_cast<double>(edge_density) / 100);
 	cout << "ed2: " << ed << endl;
+    */
+
+    base* b = new base;
+    derived* d = new derived;
+    base* b2 = d;
+
+    cout << "Test Derived Begin" << endl;
+    d->get_uuid();
+    b2->get_uuid();
+    cout << "Test Derived End" << endl;
+    b->b(11);
+    b->SendMsg(); // Empty string
+    b->SendMsg("Test SendMsg");
+    d->b(99);
+
+    cout << "Test bsons Begin" << endl;
+
+    int *val1 = new int;
+    int *val2 = new int;
+
+    bsons *bsonsPtr = new bsons(val1, val2);
+
+    void *msgBuf = (void*)bsonsPtr;
+    //free(msgBuf);
+    delete bsonsPtr;
+    cout << "Test bsons End" << endl;
+    //b.a(1);
+    //b.b(2);
+    //b.e(9);
+
+    //d.a(3);
+    //d.b(4);
+    //d.c(5);
+    //d.d(6);
+    //d.f(7);
+    cout << "==== String ======" << endl;
+    string name("Rohit");
+    cout << "length: " << name.size() << ", " <<  name << endl;
+    name.clear();
+    cout << "length: " << name.size() << ", " << name << endl;
 	return (0);
 }
 
