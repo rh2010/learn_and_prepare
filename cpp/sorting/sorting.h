@@ -24,7 +24,7 @@ class base_sort {
 		naive_sort() {
 			auto start_time = steady_clock::now();
 			for (int i = 0; i < size_-1; ++i) {
-				for (int j = 0; j < size_-i; ++j) {
+				for (int j = 1; j < size_-i; ++j) {
 					++data_compares;
 					if (data[j] < data[j-1]) {
 						naive_swap(j, j-1);
@@ -44,14 +44,14 @@ class base_sort {
 			cout << "\tswaps: " << arr_swaps << endl;
 			cout << "\tcompares: " << arr_compares << endl;
 			cout << "\tduration: " << arr_time_ms.count() << endl;
-			print_arr();
+			//print_arr();
 		
 			cout << "Data:\n" << endl;
 			cout << "\tsize: " << data.size() << endl;
 			cout << "\tswaps: " << data_swaps << endl;
 			cout << "\tcompares: " << data_compares << endl;
 			cout << "\tduration: " << data_time_ms.count() << endl;
-			print_data();
+			//print_data();
 		}
 
 		// dump the array
@@ -103,7 +103,7 @@ class base_sort {
 				int val = rand() % PRIME_NUM;
 				arr.push_back(val);
 				data.push_back(val);
-				cout << arr[i] << " ";
+				//cout << arr[i] << " ";
 			}
 			cout << "\n" << endl;
 		}

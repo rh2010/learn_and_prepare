@@ -29,6 +29,8 @@ class merge_sort : public base_sort {
 			} else if (j > end) {
 				arr[k] = aux[i++];
 			} else if (aux[i] < aux[j]) {
+                // This is not stable, as, we will take from
+                // j even if i and j are equal.
 				arr[k] = aux[i++];
 			} else {
 				inversions += (mid+1)-i;
@@ -53,8 +55,13 @@ class merge_sort : public base_sort {
 
 	// implements merge sort
 	void sort_impl() {
-		// TBD
 		unsigned int inversions = 0;
+
+        // Use an auxiliary array of the same size as of the array
+        // to be sorted.
+        // Pass around this auxiliary array.
+        // This will prevent allocation and de-allocation of aux
+        // memory in each function call.
 		vector<int> aux;
 		aux.reserve(arr.size());
 		inversions = mergesort(aux, 0, arr.size()-1);
