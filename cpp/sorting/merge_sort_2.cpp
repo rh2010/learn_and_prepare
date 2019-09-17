@@ -44,6 +44,8 @@ class merge_sort : public base_sort {
         // keep doubling the bucket size.
         for (int bucket_size = 1; bucket_size < end; bucket_size *= 2) {
             //for (int i = 0; (i <= end) && (((i+bucket_size)-1) < end); i += (2*bucket_size)) {
+			// increment 'i' by twice the bucket size.
+			// loop breaks at :- i + bucket_size should be less than the last index in the array
             for (int i = 0; i < ((end+1)-bucket_size) ; i += (2*bucket_size)) {
                 merge(aux, i, ((i + bucket_size)-1), min(end, (i+(2*bucket_size)-1)));
             }
