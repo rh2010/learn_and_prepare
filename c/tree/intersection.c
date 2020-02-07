@@ -13,6 +13,9 @@ struct bst {
     bool visited;
 };
 
+/*
+ * We need 2 trees.
+ */
 struct bst *root;
 struct bst *root2;
 
@@ -63,36 +66,6 @@ bst_insert_node(struct bst* root, struct bst* new)
 	}
 }
 
-/*
- * Returns the node is 'data' is found else,
- * returns NULL.
- *
- */
-struct bst*
-bst_find_node(struct bst* root, int data)
-{
-	if (root == NULL) {
-		return NULL;
-	}
-
-	if (root->data == data) {
-		return root;
-	}
-
-	/*
-	 * Left sub tree contains data which is less
-	 * than or equal to the data at the root of
-	 * the tree.
-	 */
-	if (data <= root->data) {
-		// search in left sub-tree
-		return bst_find_node(root->left, data);
-	} else {
-		// search in right sub-tree
-		return bst_find_node(root->right, data);
-	}
-}
-
 bool
 visit_node(struct bst* node)
 {
@@ -112,6 +85,9 @@ bst_intersection(struct bst* root, struct bst* root2)
 {
     struct bst* temp = NULL;
     struct bst* temp2 = NULL;
+
+    bool node1_done = FALSE;
+    bool node2_done = FALSE;
 
     if (root == NULL || root2 == NULL) {
         return;
@@ -133,14 +109,18 @@ bst_intersection(struct bst* root, struct bst* root2)
 
     // iter
     while (!stack_is_empty(&s) && !stack_is_empty(&s2)) {
-        bool node1_done = FALSE;
-        bool node2_done = FALSE;
+		// start with nodes are not done.
+		node1_done = FALSE;
+		node2_done = FALSE;
 
         // pop the top
         temp = (struct bst*)pop(&s);
         temp2 = (struct bst*)pop(&s2);
 
 
+		// If the node is marked visited or it does not have any children
+		// then, this node is considered done and is a candidate to be
+		// printed (for traversal)!
         if (node_visited(temp) ||
             ((!temp->left) && (!temp->right))) {
             node1_done = TRUE;
@@ -151,10 +131,13 @@ bst_intersection(struct bst* root, struct bst* root2)
             node2_done = TRUE;
         }
 
-        // if no children, then print and continue
-        if ((!temp->left) && (!temp->right)) {
-        }
-
+		// If nodes for both the tree are done, then,
+		// 1. If they are equal - Print - Found Intersection!
+		// 2. Else, The node for which ever tree is smaller, pop that
+		//    and push back the node on the stack for the other tree.
+		//
+		//    And
+		//      continue.
         if (node1_done && node2_done) {
             if (temp->data == temp2->data) {
                 printf("%d ", temp->data);
@@ -168,7 +151,13 @@ bst_intersection(struct bst* root, struct bst* root2)
             }
             continue;
         }
-       
+
+		// Either node for neither of the tree(s) is done or one of the tree
+		// is not done.
+		//
+		// Continue traversal for the tree for whichever the node is not done.
+		//
+
         // Tree 1
         if (!node1_done) {
             // right
