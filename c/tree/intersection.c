@@ -210,7 +210,17 @@ bst_intersection(struct bst* root, struct bst* root2)
         }
     }
 
+	// Empty the stack if something is pending.
+    while (!stack_is_empty(&s)) {
+		pop(&s);
+	}
+
+    while (!stack_is_empty(&s2)) {
+		pop(&s2);
+	}
+
     stack_uninit(&s);
+    stack_uninit(&s2);
 }
 
 void
@@ -281,8 +291,6 @@ main(int argc, char** argv)
 	// Build the seconds tree.
 	num_nodes_2 = atoi(argv[pos++]);
 
-	printf("total: %d, 1: %d, 2: %d\n", total, num_nodes_1, num_nodes_2);
-
 	root2 = bst_new_node(atoi(argv[pos++]));
 	if (root2 == NULL) {
 		printf("Can't create root node\n");
@@ -303,11 +311,11 @@ main(int argc, char** argv)
 	// print the tree in in-order
 	//
 
-	printf("Inorder Traversal: 1\n");
+	printf("Inorder Traversal Tree1\n");
 	bst_walk_inorder(root);
 	printf("\n");
 
-	printf("Inorder Traversal: 2\n");
+	printf("Inorder Traversal Tree2\n");
 	bst_walk_inorder(root2);
 	printf("\n");
 	// print the common nodes in the two trees.
