@@ -350,53 +350,46 @@ bst_walk_inorder_iter2(struct bst* root)
 }
 
 void
-bst_walk_inorder_iter(struct bst* root)
+bst_walk_level_order_iter(struct bst* root)
 {
+	int size = 0;
     struct bst* temp = NULL;
     if (root == NULL) {
         return;
     }
 
     // Init the stack
-    stack_head_t s;
-    stack_init(&s);
+    queue_head_t q;
+    queue_init(&q);
 
     // Push the root to the stack
     temp = root;
-    push(&s, root);
+    push(&q, root);
 
     // iter
-    while (!stack_is_empty(&s)) {
-        // pop the top
-        temp = (struct bst*)pop(&s);
+    while (!queue_is_empty(&q)) {
+		size = queue_size(&q);
 
-        if (node_visited(temp)) {
-            printf("%d ", temp->data);
-            continue;
-        }
+		while (size > 0) {
+			// pop the top
+			temp = (struct bst*)dequeue(&q);
+			--size;
+			printf("%d ", temp->data);
 
-        // if no children, then print and continue
-        if ((!temp->left) && (!temp->right)) {
-            printf("%d ", temp->data);
-            continue;
-        }
+			// left
+			if (temp->left) {
+			    enqueue(&q, temp->left);
+			}
 
-        // right
-        if (temp->right) {
-            push(&s, temp->right);
-        }
+			// right
+			if (temp->right) {
+			    enqueue(&q, temp->right);
+			}
+		} // inner while
+		printf("\n");
+    } // outer while
 
-        // visit and push the root again.
-        visit_node(temp);
-        push(&s, temp);
-
-        // left
-        if (temp->left) {
-            push(&s, temp->left);
-        }
-    }
-
-    stack_uninit(&s);
+    queue_uninit(&q);
 }
 
 void
@@ -806,10 +799,6 @@ main(int argc, char** argv)
 	printf("Checking traversals\n");
 	// print the tree in in-order
 	//
-	printf("Inorder Traversal Iterative: \n");
-	bst_walk_inorder_iter(root);
-	printf("\n");
-
 	printf("Inorder Traversal Iterative2: \n");
 	bst_walk_inorder_iter2(root);
 	printf("\n");
@@ -839,6 +828,10 @@ main(int argc, char** argv)
 	//
 	printf("Level-Order Traversal: \n");
 	bst_walk_level_order(root);
+	printf("\n");
+
+	printf("Level-Order Traversal Iterative: \n");
+	bst_walk_level_order_iter(root);
 	printf("\n");
 
 	printf("Checking seaching in the tree\n");
