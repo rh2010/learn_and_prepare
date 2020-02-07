@@ -4,6 +4,8 @@
 /*
  * Implement intersection of binary search trees.
  * Given 2 BST(s) print out the common nodes from the two trees
+ *
+ * bst_intersection2() = The correct solution
  */
 
 struct bst {
@@ -80,6 +82,7 @@ node_visited(struct bst* node)
     return node->visited;
 }
 
+// This solution is too complicated / un-necessarily complex.
 void
 bst_intersection(struct bst* root, struct bst* root2)
 {
@@ -213,6 +216,74 @@ bst_intersection(struct bst* root, struct bst* root2)
 }
 
 void
+bst_intersection2(struct bst* root, struct bst* root2)
+{
+    struct bst* temp = root;
+    struct bst* temp2 = root2;
+
+    bool node1_done = FALSE;
+    bool node2_done = FALSE;
+
+    if (root == NULL || root2 == NULL) {
+        return;
+    }
+
+    // Init the stack for iterative traversal.
+    stack_head_t s;
+    stack_init(&s);
+
+    stack_head_t s2;
+    stack_init(&s2);
+
+    while (TRUE) {
+        while (temp) {
+            push(&s, temp);
+            temp = temp->left;
+        }
+
+        while (temp2) {
+            push(&s2, temp2);
+            temp2 = temp2->left;
+        }
+
+        if (stack_is_empty(&s) || stack_is_empty(&s2)) {
+            // done
+            break;
+        }
+
+        temp = (struct bst*)pop(&s);
+        temp2 = (struct bst*)pop(&s2);
+
+		if (temp->data == temp2->data) {
+        	printf("%d ", temp->data);
+        	temp = temp->right;
+        	temp2 = temp2->right;
+		} else if (temp->data < temp2->data) {
+        	temp = temp->right;
+            push(&s2, temp2);
+			temp2 = NULL;
+		} else {
+        	temp2 = temp2->right;
+            push(&s, temp);
+			temp2 = NULL;
+		}
+    }
+
+	// Empty the stack if something is pending.
+    while (!stack_is_empty(&s)) {
+		pop(&s);
+	}
+
+    while (!stack_is_empty(&s2)) {
+		pop(&s2);
+	}
+
+    // un-init the stack
+    stack_uninit(&s2);
+    stack_uninit(&s);
+}
+
+void
 bst_walk_inorder(struct bst* root)
 {
 	if (root == NULL) {
@@ -311,6 +382,10 @@ main(int argc, char** argv)
 	//
 	printf("Intresection: \n");
 	bst_intersection(root, root2);
+	printf("\n");
+
+	printf("Intresection2: \n");
+	bst_intersection2(root, root2);
 	printf("\n");
 
 	return 0;

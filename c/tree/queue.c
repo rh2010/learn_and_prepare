@@ -162,6 +162,27 @@ push(stack_head_t *head, void *data)
 	enqueue((queue_head_t *)head, data);
 }
 
+// Returns the top element of the stack
+// without removing it
+//
+void *
+peek(stack_head_t *head)
+{
+	stack_t *temp;
+	void *data;
+
+	assert(head != NULL);
+
+	temp = head->head;
+
+	if (temp == NULL) {
+		printf("Empty Stack!");
+		return NULL;
+	}
+
+	return temp->data;
+}
+
 // remove an element from the stack
 //
 void *

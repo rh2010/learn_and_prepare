@@ -61,6 +61,10 @@ void push(stack_head_t *head, void *data);
 // remove an element from the stack
 //
 void *pop(stack_head_t *head);
+// Returns the top element of the stack
+// without removing it
+//
+void *peek(stack_head_t *head);
 // return the size of the stack
 //
 int stack_size(stack_head_t *head);
