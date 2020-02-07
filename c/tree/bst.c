@@ -317,6 +317,39 @@ node_visited(struct bst* node)
 }
 
 void
+bst_walk_inorder_iter2(struct bst* root)
+{
+    struct bst* temp = root;
+
+    if (temp == NULL) {
+        return;
+    }
+
+    // Init the stack for iterative traversal.
+    stack_head_t s;
+    stack_init(&s);
+
+    while (TRUE) {
+        while (temp) {
+            push(&s, temp);
+            temp = temp->left;
+        }
+
+        if (stack_is_empty(&s)) {
+            // done
+            break;
+        }
+
+        temp = (struct bst*)pop(&s);
+        printf("%d ", temp->data);
+        temp = temp->right;
+    }
+
+    // un-init the stack
+    stack_uninit(&s);
+}
+
+void
 bst_walk_inorder_iter(struct bst* root)
 {
     struct bst* temp = NULL;
@@ -775,6 +808,10 @@ main(int argc, char** argv)
 	//
 	printf("Inorder Traversal Iterative: \n");
 	bst_walk_inorder_iter(root);
+	printf("\n");
+
+	printf("Inorder Traversal Iterative2: \n");
+	bst_walk_inorder_iter2(root);
 	printf("\n");
 
 	printf("Inorder Traversal: \n");
