@@ -310,7 +310,7 @@ visit_node(struct bst* node)
 }
 
 bool
-visited(struct bst* node)
+node_visited(struct bst* node)
 {
     assert(node);
     return node->visited;
@@ -352,7 +352,9 @@ bst_walk_inorder_iter(struct bst* root)
         if (temp->right) {
             push(&s, temp->right);
         }
-        // push the root again.
+
+        // visit and push the root again.
+        visit_node(temp);
         push(&s, temp);
 
         // left
