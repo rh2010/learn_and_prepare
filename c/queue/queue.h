@@ -41,26 +41,36 @@ queue_t *queue_get_new_element(void *data);
 void queue_uninit(queue_head_t *head);
 
 
-/* API For Stack*/
+/*
+ * API For Stack
+ *
+ * - bool init(stack_t *)
+ * - void push(item)
+ * - item pop()
+ * - int size()
+ * - bool empty()
+ * - uninit(stack_t *)
+ */
+
 // Init a stack
 //
 void stack_init(stack_head_t *head);
-// Add a new element to the queue
+// Add a new element to the stack
 //
 void push(stack_head_t *head, void *data);
-// remove an element from the queue
+// remove an element from the stack
 //
 void *pop(stack_head_t *head);
-// return the size of the queue
+// return the size of the stack
 //
 int stack_size(stack_head_t *head);
-// return is the queue is empty or not
+// return is the stack is empty or not
 //
 bool stack_is_empty(stack_head_t *head);
-// get memory for the new element in the queue
+// get memory for the new element in the stack
 //
 stack_t *stack_get_new_element(void *data);
-// Un-init a queue
+// Un-init a stack
 //
 void stack_uninit(stack_head_t *head);
 

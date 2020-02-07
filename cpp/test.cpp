@@ -148,6 +148,14 @@ struct bsons {
     int *wrapper;
 };
 
+void set_type(string &t)
+{
+    cout << "t: " << t << endl;
+    string str("Rohit");
+    t = str;
+    cout << "t: " << t << endl;
+}
+
 int
 main(void)
 {
@@ -176,7 +184,6 @@ main(void)
 	cout << "ed1: " << ed << endl;
 	ed = (static_cast<double>(edge_density) / 100);
 	cout << "ed2: " << ed << endl;
-    */
 
     base* b = new base;
     derived* d = new derived;
@@ -202,6 +209,7 @@ main(void)
     //free(msgBuf);
     delete bsonsPtr;
     cout << "Test bsons End" << endl;
+    */
     //b.a(1);
     //b.b(2);
     //b.e(9);
@@ -212,10 +220,9 @@ main(void)
     //d.d(6);
     //d.f(7);
     cout << "==== String ======" << endl;
-    string name("Rohit");
-    cout << "length: " << name.size() << ", " <<  name << endl;
-    name.clear();
-    cout << "length: " << name.size() << ", " << name << endl;
+    string name = "";
+    set_type(name);
+    cout << "Name: " << name << endl;
 	return (0);
 }
 

@@ -16,7 +16,7 @@ splay:
 
 bst:
 	rm -f bst
-	gcc -o bst bst.c
+	gcc -o bst bst.c queue.c
 
 bst2:
 	rm -f bst2

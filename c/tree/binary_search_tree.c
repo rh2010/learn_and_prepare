@@ -13,7 +13,7 @@
  * LCA
  *
  * Traversals.
- *  - In-order
+ *  - In-order (Recursive / Iterative)
  *  - Pre-order
  *  - Post-order
  *  - Euler

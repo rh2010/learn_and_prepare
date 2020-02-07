@@ -1,4 +1,5 @@
 #include "../util.h"
+#include "queue.h"
 
 /*
  * Implemenet a binary search tree.
@@ -12,7 +13,7 @@
  * Delete node
  *
  * Traversals.
- *  - In-order
+ *  - In-order (Recursive / Iterative)
  *  - Pre-order
  *  - Post-order
  *  - Euler
@@ -29,6 +30,7 @@ struct bst {
 	int data;
 	struct bst* left;
 	struct bst* right;
+    bool visited;
 };
 
 struct bst *root;
@@ -49,6 +51,7 @@ bst_new_node(int data)
 	new->data = data;
 	new->left = NULL;
 	new->right = NULL;
+    new->visited = FALSE;
 
 	return new;
 }
@@ -297,6 +300,68 @@ bst_delete_node(struct bst* root, int data)
 	}
 
 	return root;
+}
+
+bool
+visit_node(struct bst* node)
+{
+    assert(node);
+    node->visited = TRUE;
+}
+
+bool
+visited(struct bst* node)
+{
+    assert(node);
+    return node->visited;
+}
+
+void
+bst_walk_inorder_iter(struct bst* root)
+{
+    struct bst* temp = NULL;
+    if (root == NULL) {
+        return;
+    }
+
+    // Init the stack
+    stack_head_t s;
+    stack_init(&s);
+
+    // Push the root to the stack
+    temp = root;
+    push(&s, root);
+
+    // iter
+    while (!stack_is_empty(&s)) {
+        // pop the top
+        temp = (struct bst*)pop(&s);
+
+        if (node_visited(temp)) {
+            printf("%d ", temp->data);
+            continue;
+        }
+
+        // if no children, then print and continue
+        if ((!temp->left) && (!temp->right)) {
+            printf("%d ", temp->data);
+            continue;
+        }
+
+        // right
+        if (temp->right) {
+            push(&s, temp->right);
+        }
+        // push the root again.
+        push(&s, temp);
+
+        // left
+        if (temp->left) {
+            push(&s, temp->left);
+        }
+    }
+
+    stack_uninit(&s);
 }
 
 void
@@ -706,6 +771,10 @@ main(int argc, char** argv)
 	printf("Checking traversals\n");
 	// print the tree in in-order
 	//
+	printf("Inorder Traversal Iterative: \n");
+	bst_walk_inorder_iter(root);
+	printf("\n");
+
 	printf("Inorder Traversal: \n");
 	bst_walk_inorder(root);
 	printf("\n");
