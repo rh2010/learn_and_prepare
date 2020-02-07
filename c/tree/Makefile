@@ -38,7 +38,12 @@ rb_tree:
 	rm -f rb_tree
 	gcc -o rb_tree red_black_tree.c queue.c
 
+intersection:
+	rm -f intersection
+	gcc -o intersection intersection.c queue.c
+
 clean:
+	rm -f intersection
 	rm -f rb_tree
 	rm -f splay
 	rm -f bst
