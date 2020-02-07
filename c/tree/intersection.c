@@ -108,19 +108,16 @@ node_visited(struct bst* node)
 }
 
 void
-bst_walk_inorder_iter(struct bst* root, struct bst* root2)
+bst_intersection(struct bst* root, struct bst* root2)
 {
     struct bst* temp = NULL;
     struct bst* temp2 = NULL;
-    if (root == NULL) {
+
+    if (root == NULL || root2 == NULL) {
         return;
     }
 
-    if (root2 == NULL) {
-        return;
-    }
-
-    // Init the stack
+    // Init the stack for traversal
     stack_head_t s;
     stack_init(&s);
 
@@ -136,32 +133,80 @@ bst_walk_inorder_iter(struct bst* root, struct bst* root2)
 
     // iter
     while (!stack_is_empty(&s) && !stack_is_empty(&s2)) {
+        bool node1_done = FALSE;
+        bool node2_done = FALSE;
+
         // pop the top
         temp = (struct bst*)pop(&s);
+        temp2 = (struct bst*)pop(&s2);
 
-        if (node_visited(temp)) {
-            printf("%d ", temp->data);
-            continue;
+
+        if (node_visited(temp) ||
+            ((!temp->left) && (!temp->right))) {
+            node1_done = TRUE;
+        }
+
+        if (node_visited(temp2) ||
+            ((!temp2->left) && (!temp2->right))) {
+            node2_done = TRUE;
         }
 
         // if no children, then print and continue
         if ((!temp->left) && (!temp->right)) {
-            printf("%d ", temp->data);
+        }
+
+        if (node1_done && node2_done) {
+            if (temp->data == temp2->data) {
+                printf("%d ", temp->data);
+            } else if (temp->data < temp2->data) {
+                // If the node in tree1 is smaller then put the node in tree2
+                // back on the stack.
+                push(&s2, temp2);
+            } else {
+                // and vice-versa
+                push(&s, temp);
+            }
             continue;
         }
+       
+        // Tree 1
+        if (!node1_done) {
+            // right
+            if (temp->right) {
+                push(&s, temp->right);
+            }
 
-        // right
-        if (temp->right) {
-            push(&s, temp->right);
+            // visit and push the root again.
+            visit_node(temp);
+            push(&s, temp);
+
+            // left
+            if (temp->left) {
+                push(&s, temp->left);
+            }
+        } else {
+            // put back on stack
+            push(&s, temp);
         }
 
-        // visit and push the root again.
-        visit_node(temp);
-        push(&s, temp);
+        // Tree 2
+        if (!node2_done) {
+            // right
+            if (temp2->right) {
+                push(&s2, temp2->right);
+            }
 
-        // left
-        if (temp->left) {
-            push(&s, temp->left);
+            // visit and push the root again.
+            visit_node(temp2);
+            push(&s2, temp2);
+
+            // left
+            if (temp2->left) {
+                push(&s2, temp2->left);
+            }
+        } else {
+            // put back on stack
+            push(&s2, temp2);
         }
     }
 
@@ -268,7 +313,7 @@ main(int argc, char** argv)
 	// print the common nodes in the two trees.
 	//
 	printf("Intresection: \n");
-	//bst_walk_inorder_iter(root, root2);
+	bst_intersection(root, root2);
 	printf("\n");
 
 	return 0;
