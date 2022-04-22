@@ -8,8 +8,8 @@ def print_subsets(r, s):
         print(r)
         return
 
-    print_subsets(r+s[0], s[1:])
     print_subsets(r, s[1:])
+    print_subsets(r+s[0], s[1:])
     return
 
 def subsets(s):
@@ -52,13 +52,16 @@ def subsets_dup(s):
 
 if __name__=="__main__":
     s = list(raw_input())
-    #print(s)
-    subsets(s)
+    print(s, len(s))
+    #print ("One")
+    #subsets(s)
 
     # Subsets method 2.
-    print(subsets_2(s))
+    #print ("Two")
+    #print(subsets_2(s))
     #subsets_2(s)
 
-    s2 = list(raw_input())
+    #s2 = list(raw_input())
+    print ("Third")
     # Subsets with duplicates
-    print(subsets_dup(s2))
+    print(subsets_dup(s))

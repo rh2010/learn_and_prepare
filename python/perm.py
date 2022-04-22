@@ -67,14 +67,28 @@ def recursive_perm(string, start, end):
 
     # End of recursive_perm
 
+def rperm(prefix, s):
+    if len(s) is 0:
+        print prefix
+    else:
+        for i in range(0, len(s)):
+            rperm(prefix+s[i], s[:i]+s[i+1:])
+    # End of rperm
+
 if __name__ == "__main__":
     string = "abcd"
     test_string = list(string)
 
     # Iterative permutations
+    print "Iterative Permutations"
     perm(test_string)
 
     # Recursive permutations
+    print "Recursive Permutations"
     recursive_perm(test_string, 0, len(test_string) - 1)
+
+    # Recursive permutations, 2
+    print "Recursive Permutations, 2nd approach"
+    rperm("", string)
 
     # End of Main.

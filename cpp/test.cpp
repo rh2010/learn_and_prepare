@@ -2,8 +2,13 @@
 #include <ctime>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 
 using namespace std;
+
+#define SFHC_OBSERVER(x) (dynamic_cast<derived*>(x))
+#define MAX_RANGE (4999)
+
 /*
 const int max_val = 52;
 
@@ -94,7 +99,7 @@ private:
 
 class derived : public base {
 public:
-    derived () {
+    derived () : msg(1) {
         cout << "Ctor of derived" << endl;
     }
 
@@ -118,6 +123,8 @@ public:
     void get_uuid() {
         cout << "Derived get_uuid" << endl;
     }
+
+	int msg;
 };
 
 double
@@ -154,6 +161,12 @@ void set_type(string &t)
     string str("Rohit");
     t = str;
     cout << "t: " << t << endl;
+}
+
+void
+foo(base* b)
+{
+	cout << "foo: " << SFHC_OBSERVER(b)->msg << endl;
 }
 
 int
@@ -219,10 +232,52 @@ main(void)
     //d.c(5);
     //d.d(6);
     //d.f(7);
-    cout << "==== String ======" << endl;
-    string name = "";
-    set_type(name);
-    cout << "Name: " << name << endl;
+	//
+	derived* d = new derived;
+	foo(d);
+    //cout << "==== String ======" << endl;
+    //string name = "";
+    //set_type(name);
+    //cout << "Name: " << name << endl;
+	/*
+	vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+	int iter = 0;
+
+	while (iter++ < v.size()) {
+		cout << "iter: " << iter << endl;
+	}
+
+	iter = 0;
+	while (++iter < v.size()) {
+		cout << "iter: " << iter << endl;
+	}
+
+	for (iter = 0; iter < v.size(); ++iter) 
+		cout << "iter: " << iter << endl;
+
+	for (iter = 0; iter < v.size(); iter++) 
+		cout << "iter: " << iter << endl;
+	*/
+	string s("abracadabra");
+
+	printf("s: %s\n", s.c_str());
+	printf("s 0: %s", s.substr(0, 0).c_str());
+	printf("s 0-1: %s", s.substr(0, 1).c_str());
+	printf("s 0-2: %s", s.substr(0, 2).c_str());
+	printf("s 0-3: %s\n", s.substr(0, 3).c_str());
+
+	vector<char> line = {'.', '3', '.', '5'};
+	int num = 3;
+	int num2 = 9;
+	//printf("is three: %d, (%c)\n", (line[1]==itoa(num)), line[1]);
+	printf("is five: %d, (%c)\n", (line[3]==(char)num), line[3]);
+	printf("is empty: %d\n", (line[0]=='.'));
+	printf("1) %d\n", line[1]-'0');
+	line[2] = num2+'0';
+	printf("2) %d\n", line[2]-'0');
 	return (0);
 }
 

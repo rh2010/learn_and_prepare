@@ -63,8 +63,8 @@ main(void)
 	printf("Original array\n");
 	print_int_arr(orig_arr, ARRAY_SIZE);
 
-//	insertion_sort_increasing(arr, ARRAY_SIZE);
-	insertion_sort_decreasing(arr, ARRAY_SIZE);
+	insertion_sort_increasing(arr, ARRAY_SIZE);
+//	insertion_sort_decreasing(arr, ARRAY_SIZE);
 
 	printf("Sorted array\n");
 	print_int_arr(arr, ARRAY_SIZE);

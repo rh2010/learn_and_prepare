@@ -19,6 +19,21 @@ selection_sort(int *arr, int size)
 	}
 }
 
+void
+bubble_sort(int *arr, int size)
+{
+	int i, j;
+
+	for (i = 0; i < size-1; i++) {
+		for (j = 1; j < size-i; j++) {
+			if (arr[j] < arr[j-1]) {
+				SWAP((arr+j-1), (arr+j));
+			}
+			print_int_arr(arr, size);
+		}
+	}
+}
+
 int
 main(int argc, char **argv)
 {

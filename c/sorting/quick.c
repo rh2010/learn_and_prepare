@@ -15,19 +15,19 @@ partition(int *arr, int s, int e)
 	// i partition index
 	// j till where the partition is done
 	p = arr[s]; // let's use the first element as the pivot element to partition around
-	i = s+1;
+	i = s;
 
 	for (j=s+1; j<=e;j++) {
 		if (arr[j] <= p) {
+			i++;
 			if (i != j) {
 				SWAP((arr+i), (arr+j));
 			}
-			i++;
 		}
 	}
-	SWAP((arr+s), (arr+i-1));
+	SWAP((arr+s), (arr+i));
 
-	return i-1;
+	return i;
 }
 
 void

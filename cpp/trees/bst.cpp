@@ -147,7 +147,7 @@ class tree {
 		// get number of lines
 		int vertices; // number of rows
 		tree_file >> vertices;
-		
+
 		cout << "Total nodes in tree: " << vertices << endl;
 
 		// build the tree
