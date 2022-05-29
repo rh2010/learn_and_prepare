@@ -3,4 +3,23 @@
 **/cscope.out
 **/cscope.po.out
 **/tags
+CloudComputing
+Coursera
+__MACOSX
+**/a.out
+a.out
+cpp/trees/Coursera_DS_Programming-Assignment-4*
+cpp/Coursera*
+cpp/uuid_test.cpp
+c/tmp.c
+cpp/atomic*
+cpp/pure_storage.cpp
+cpp/test*
+cpp/t.cpp
 
+# ignore binaries
+cpp/trees/bst
+cpp/trees/bst2
+cpp/strings/substr
+cpp/trees/is_bst
+python/dp/temp

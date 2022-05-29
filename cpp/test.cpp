@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <vector>
+#include <cctype>
 
 using namespace std;
 
@@ -278,6 +279,10 @@ main(void)
 	printf("1) %d\n", line[1]-'0');
 	line[2] = num2+'0';
 	printf("2) %d\n", line[2]-'0');
+
+
+	string str("ABZ");
+	printf("Upper %d, %d, %d : Lower %d, %d, %d \n", (str[0]), (str[1]), (str[2]), tolower(str[0]), tolower(str[1]), tolower(str[2]));
 	return (0);
 }
 
